@@ -7,15 +7,15 @@ import { Subject } from 'rxjs';
 import { takeUntil, startWith } from 'rxjs/internal/operators';
 import * as _ from 'lodash';
 
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
-import { Cam } from '@noctua.form/models/annoton/cam';
-import { CamRow } from '@noctua.form/models/cam-row';
+import { AnnotonNode } from 'noctua-form-base';
+import { Cam } from 'noctua-form-base';
+import { CamRow } from 'noctua-form-base';
 import { MatTableDataSource, MatSort } from '@angular/material';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService } from '@noctua.form/services/config/noctua-form-config.service';
-import { NoctuaGraphService } from '@noctua.form/services/graph.service';
-import { NoctuaLookupService } from '@noctua.form/services/lookup.service';
+import { NoctuaFormConfigService } from 'noctua-form-base';
+import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaLookupService } from 'noctua-form-base';
 
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 import { CamTableService } from './../cam-table/services/cam-table.service';

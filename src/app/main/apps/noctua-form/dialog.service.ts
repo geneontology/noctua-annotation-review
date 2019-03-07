@@ -13,10 +13,10 @@ import { SelectEvidenceDialogComponent } from './dialogs/select-evidence/select-
 import { SearchDatabaseDialogComponent } from './dialogs/search-database/search-database.component';
 import { CamConnectorDialogComponent } from './dialogs/cam-connector/cam-connector.component';
 
-import { Cam } from '@noctua.form/models/annoton/cam';
-import { Annoton } from '@noctua.form/models/annoton/annoton';
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
-import { Evidence } from '@noctua.form/models/annoton/evidence';
+import { Cam } from 'noctua-form-base';
+import { Annoton } from 'noctua-form-base';
+import { AnnotonNode } from 'noctua-form-base';
+import { Evidence } from 'noctua-form-base';
 
 import 'rxjs/add/operator/map';
 

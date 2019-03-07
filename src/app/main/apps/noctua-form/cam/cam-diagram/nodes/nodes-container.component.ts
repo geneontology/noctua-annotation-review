@@ -8,10 +8,10 @@ import { ContextMenuComponent } from 'ngx-contextmenu';
 import { NodeService } from './services/node.service';
 import { CamDiagramService } from './../services/cam-diagram.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { NoctuaFormGridService } from '@noctua.form/services/form-grid.service';
-import { CamService } from '@noctua.form/services/cam.service'
-import { Annoton } from '@noctua.form/models/annoton/annoton';
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
+import { NoctuaFormGridService } from 'noctua-form-base';
+import { CamService } from 'noctua-form-base'
+import { Annoton } from 'noctua-form-base';
+import { AnnotonNode } from 'noctua-form-base';
 import { ComponentFactoryResolver } from '@angular/core/src/render3';
 
 @Component({

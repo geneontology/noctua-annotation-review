@@ -4,11 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoctuaFormComponent } from './noctua-form.component';
 import { NoctuaSharedModule } from '@noctua/shared.module';
 import { NoctuaFormDialogService } from './dialog.service';
-import { NoctuaAnnotonConnectorService } from '@noctua.form/services/annoton-connector.service';
-import { NoctuaFormGridService } from '@noctua.form/services/form-grid.service';
+import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
+import { NoctuaFormGridService } from 'noctua-form-base';
 import { ContextMenuModule } from 'ngx-contextmenu';
 
-import { CamService } from '@noctua.form/services/cam.service';
+import { CamService } from 'noctua-form-base';
 
 import { CamFormComponent } from './cam/cam-form/cam-form.component';
 import { CamFormEntityComponent } from './cam/cam-form/cam-entity/cam-entity.component';

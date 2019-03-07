@@ -16,9 +16,9 @@ import "rxjs/add/operator/distinctUntilChanged";
 import { forEach } from '@angular/router/src/utils/collection';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService } from '@noctua.form/services/config/noctua-form-config.service';
-import { NoctuaGraphService } from '@noctua.form/services/graph.service';
-import { NoctuaLookupService } from '@noctua.form/services/lookup.service';
+import { NoctuaFormConfigService } from 'noctua-form-base';
+import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaLookupService } from 'noctua-form-base';
 
 
 import { locale as english } from './../i18n/en';

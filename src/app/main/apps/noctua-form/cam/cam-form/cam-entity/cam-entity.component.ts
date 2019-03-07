@@ -20,16 +20,16 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { NoctuaFormService } from '../../../services/noctua-form.service';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormGridService } from '@noctua.form/services/form-grid.service';
-import { NoctuaFormConfigService } from '@noctua.form/services/config/noctua-form-config.service';
-import { NoctuaLookupService } from '@noctua.form/services/lookup.service';
+import { NoctuaFormGridService } from 'noctua-form-base';
+import { NoctuaFormConfigService } from 'noctua-form-base';
+import { NoctuaLookupService } from 'noctua-form-base';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 import { NoctuaFormDialogService } from './../../../dialog.service';
 
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
-import { Evidence } from '@noctua.form/models/annoton/evidence';
+import { AnnotonNode } from 'noctua-form-base';
+import { Evidence } from 'noctua-form-base';
 
 @Component({
   selector: 'noc-cam-entity',

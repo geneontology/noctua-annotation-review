@@ -11,17 +11,17 @@ import * as _ from 'lodash';
 
 const each = require('lodash/forEach');
 
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
-import { Evidence } from '@noctua.form/models/annoton/evidence';
+import { AnnotonNode } from 'noctua-form-base';
+import { Evidence } from 'noctua-form-base';
 
-import { Cam } from '@noctua.form/models/annoton/cam';
-import { CamRow } from '@noctua.form/models/cam-row';
+import { Cam } from 'noctua-form-base';
+import { CamRow } from 'noctua-form-base';
 import { MatTableDataSource, MatSort } from '@angular/material';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService } from '@noctua.form/services/config/noctua-form-config.service';
-import { NoctuaGraphService } from '@noctua.form/services/graph.service';
-import { NoctuaLookupService } from '@noctua.form/services/lookup.service';
+import { NoctuaFormConfigService } from 'noctua-form-base';
+import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaLookupService } from 'noctua-form-base';
 
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 

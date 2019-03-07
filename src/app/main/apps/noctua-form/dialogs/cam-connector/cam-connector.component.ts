@@ -20,22 +20,22 @@ import { forEach } from '@angular/router/src/utils/collection';
 
 import { NoctuaFormService } from '../../services/noctua-form.service';
 
-import { NoctuaAnnotonConnectorService } from '@noctua.form/services/annoton-connector.service';
-import { NoctuaGraphService } from '@noctua.form/services/graph.service';
-import { NoctuaFormGridService } from '@noctua.form/services/form-grid.service';
-import { NoctuaFormConfigService } from '@noctua.form/services/config/noctua-form-config.service';
-import { NoctuaLookupService } from '@noctua.form/services/lookup.service';
+import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
+import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaFormGridService } from 'noctua-form-base';
+import { NoctuaFormConfigService } from 'noctua-form-base';
+import { NoctuaLookupService } from 'noctua-form-base';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
-import { CamService } from '@noctua.form/services/cam.service';
+import { CamService } from 'noctua-form-base';
 import { CamDiagramService } from './../../cam/cam-diagram/services/cam-diagram.service';
 import { CamTableService } from './../../cam/cam-table/services/cam-table.service';
 
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 
-import { Cam } from '@noctua.form/models/annoton/cam';
-import { Annoton } from '@noctua.form/models/annoton/annoton';
-import { AnnotonNode } from '@noctua.form/models/annoton/annoton-node';
-import { Evidence } from '@noctua.form/models/annoton/evidence';
+import { Cam } from 'noctua-form-base';
+import { Annoton } from 'noctua-form-base';
+import { AnnotonNode } from 'noctua-form-base';
+import { Evidence } from 'noctua-form-base';
 
 @Component({
   selector: 'app-cam-connector',
