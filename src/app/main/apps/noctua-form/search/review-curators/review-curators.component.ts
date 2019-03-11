@@ -46,7 +46,7 @@ export class ReviewCuratorsComponent implements OnInit, OnDestroy {
     private sparqlService: SparqlService,
     private noctuaTranslationLoader: NoctuaTranslationLoaderService) {
     this.curators = this.reviewService.curators;
-
+    this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
     this.unsubscribeAll = new Subject();
 
     this.groupsForm = this.formBuilder.group({
@@ -60,14 +60,12 @@ export class ReviewCuratorsComponent implements OnInit, OnDestroy {
       .subscribe(curators => {
         this.curators = curators;
         let grouped = this.reviewService.groupCurators();
-        console.log('-----', grouped)
       });
 
     this.reviewService.onGroupsChanged
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(groups => {
         this.groups = groups;
-        console.log('-++----', groups)
       });
 
     //this.searchForm = this.createSearchForm();

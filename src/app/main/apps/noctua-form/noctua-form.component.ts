@@ -121,12 +121,12 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     this.sparqlService.getAllCurators().subscribe((response: any) => {
       this.reviewService.curators = response;
       this.reviewService.onCuratorsChanged.next(response);
-      this.searchFormData['curator'].searchResults = response;
+      //  this.searchFormData['curator'].searchResults = response;
 
       this.sparqlService.getAllGroups().subscribe((response: any) => {
         this.reviewService.groups = response;
         this.reviewService.onGroupsChanged.next(response);
-        this.searchFormData['providedBy'].searchResults = response;
+        //    this.searchFormData['providedBy'].searchResults = response;
 
         this.sparqlService.addGroupCurators(this.reviewService.groups, this.reviewService.curators)
       });

@@ -83,7 +83,7 @@ export class CamTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.cam
+    console.log(this.cam)
   }
 
   search() {
