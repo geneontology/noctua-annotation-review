@@ -1,0 +1,47 @@
+<div class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start">
+  <div class="noc-sidemenu" fxLayout="column" fxLayoutAlign="start center">
+    <button mat-icon-button class="noc-bb" (click)="toggleLeftDrawer(reviewService.leftPanel.search)" matTooltip="Search"
+      [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <mat-icon> search </mat-icon>
+    </button>
+    <button mat-icon-button class="noc-bb" (click)="toggleLeftDrawer(reviewService.leftPanel.curator)" matTooltip="Search by curator"
+      [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+      <mat-icon> group </mat-icon>
+    </button>
+    <button mat-icon-button class="noc-bb" (click)="toggleLeftDrawer(reviewService.leftPanel.species)" matTooltip="Search by species"
+      [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+      <mat-icon> pets </mat-icon>
+    </button>
+    <button mat-button class="noc-bb" (click)="noctuaFormService.openMiddlePanel(noctuaFormService.panel.camDiagram)"
+      matTooltip="Search" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500" [ngClass]="{'noc-active':noctuaFormService.selectedMiddlePanel.id===noctuaFormService.panel.camDiagram.id}">
+      <mat-icon> scatter_plot </mat-icon>
+    </button>
+    <button mat-button class="noc-bb" (click)="noctuaFormService.openMiddlePanel(noctuaFormService.panel.camTable)"
+      matTooltip="Search" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500" [ngClass]="{'noc-active':noctuaFormService.selectedMiddlePanel.id===noctuaFormService.panel.camTable.id}">
+      <mat-icon> table_chart </mat-icon>
+    </button>
+  </div>
+  <mat-drawer-container class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start" autosize>
+    <mat-drawer #leftDrawer class="noc-left-drawer" fxFlex="200px" mode="side" position="start">
+      <div [ngSwitch]="reviewService.selectedLeftPanel.id" class="h-100-p">
+        <noc-review-search *ngSwitchCase="reviewService.leftPanel.search.id"></noc-review-search>
+        <noc-review-curators *ngSwitchCase="reviewService.leftPanel.curator.id"></noc-review-curators>
+        <noc-review-species *ngSwitchCase="reviewService.leftPanel.species.id"></noc-review-species>
+      </div>
+    </mat-drawer>
+    <mat-drawer-content class="noc-section-body w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start">
+      <div [ngSwitch]="noctuaFormService.selectedMiddlePanel.id" class="h-100-p w-100-p">
+        <noc-cams-table *ngSwitchCase="noctuaFormService.panel.camsTable.id"></noc-cams-table>
+        <noc-cam-diagram *ngSwitchCase="noctuaFormService.panel.camDiagram.id" [cam]="cam"></noc-cam-diagram>
+        <noc-cam-table *ngSwitchCase="noctuaFormService.panel.camTable.id" [cam]="cam"></noc-cam-table>
+      </div>
+    </mat-drawer-content>
+    <mat-drawer #rightDrawer class="noc-right-drawer" noctuaPerfectScrollbar mode="side" position="end">
+      <div [ngSwitch]="noctuaFormService.selectedRightPanel.id" class="h-100-p">
+        <noc-cam-row *ngSwitchCase="noctuaFormService.panel.camRow.id"> </noc-cam-row>
+        <noc-cam-form [panelDrawer]='rightDrawer' *ngSwitchCase="noctuaFormService.panel.camForm.id"></noc-cam-form>
+        <noc-cam-connector [panelDrawer]='rightDrawer' *ngSwitchCase="noctuaFormService.panel.connectorForm.id"></noc-cam-connector>
+      </div>
+    </mat-drawer>
+  </mat-drawer-container>
+</div>
