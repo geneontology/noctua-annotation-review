@@ -7,7 +7,6 @@ import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { noctuaAnimations } from '@noctua/animations';
-import { NoctuaUtils } from '@noctua/utils/noctua-utils';
 
 import { takeUntil, startWith } from 'rxjs/internal/operators';
 
@@ -110,9 +109,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  openCamEdit(cam) {
-    this.reviewDialogService.openCamRowEdit(cam);
-  }
+
 
   selectCam(cam) {
     this.sparqlService.onCamChanged.next(cam);

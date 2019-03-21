@@ -15,7 +15,6 @@ import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
 import { forEach } from '@angular/router/src/utils/collection';
 
-import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
 import { NoctuaFormConfigService } from 'noctua-form-base';
 import { NoctuaGraphService } from 'noctua-form-base';
 import { NoctuaLookupService } from 'noctua-form-base';
@@ -24,11 +23,7 @@ import { NoctuaLookupService } from 'noctua-form-base';
 import { ReviewService } from './services/review.service';
 import { ReviewDialogService } from './services/review-dialog.service';
 
-
-import { locale as english } from './i18n/en';
-
 import { NoctuaFormService } from './services/noctua-form.service';
-import { NoctuaFormDialogService } from './services/noctua-form-dialog.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 import { CamService } from 'noctua-form-base'
 
@@ -81,11 +76,9 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     public noctuaFormConfigService: NoctuaFormConfigService,
     private noctuaSearchService: NoctuaSearchService,
     public noctuaFormService: NoctuaFormService,
-    private noctuaFormDialogService: NoctuaFormDialogService,
     private noctuaLookupService: NoctuaLookupService,
     private noctuaGraphService: NoctuaGraphService,
     private sparqlService: SparqlService,
-    private noctuaTranslationLoader: NoctuaTranslationLoaderService,
     public reviewService: ReviewService,
     private reviewDialogService: ReviewDialogService,
 
@@ -171,10 +164,6 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
         //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
       });
     }
-  }
-
-  openCamEdit(cam) {
-    this.reviewDialogService.openCamRowEdit(cam);
   }
 
   selectCam(cam) {

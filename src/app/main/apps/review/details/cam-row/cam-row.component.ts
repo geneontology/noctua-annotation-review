@@ -98,7 +98,6 @@ export class CamRowComponent implements OnInit, OnDestroy {
     this.cam.destNode.setEvidence(evidenceArray);
 
     // this.openSummary()
-    this.noctuaGraphService.edit(this.cam.graph, this.cam.srcNode, this.cam.destNode);
   }
 
   openSummary() {
