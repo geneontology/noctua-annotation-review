@@ -1,8 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import {
+    Cam,
+    Curator,
+    CamService,
+    NoctuaUserService,
+    NoctuaFormConfigService,
+    NoctuaGraphService,
+    NoctuaAnnotonFormService,
+} from 'noctua-form-base';
+
 import { NoctuaConfigService } from '@noctua/services/config.service';
+import { NoctuaFormService } from 'app/main/apps/noctua-annotation-review/services/noctua-form.service';
 
 @Component({
     selector: 'noctua-toolbar',
@@ -10,7 +21,9 @@ import { NoctuaConfigService } from '@noctua/services/config.service';
     styleUrls: ['./toolbar.component.scss']
 })
 
-export class NoctuaToolbarComponent {
+export class NoctuaToolbarComponent implements OnInit {
+    public user: Curator;
+    public cam: Cam;
     userStatusOptions: any[];
     languages: any;
     selectedLanguage: any;
@@ -24,7 +37,11 @@ export class NoctuaToolbarComponent {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
+        private camService: CamService,
         private noctuaConfig: NoctuaConfigService,
+        public noctuaUserService: NoctuaUserService,
+        public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+        public noctuaFormService: NoctuaFormService,
         private translate: TranslateService
     ) {
         console.log(window.location)
@@ -45,10 +62,9 @@ export class NoctuaToolbarComponent {
             .queryParams
             .subscribe(params => {
                 // Defaults to 0 if no query param provided.
-                let baristaToken = params['barista_token'] || 0;
-                noctuaConfig.baristaToken = baristaToken;
             });
 
+        this.getUserInfo();
         this.router.events.subscribe(
             (event) => {
                 if (event instanceof NavigationStart) {
@@ -59,6 +75,42 @@ export class NoctuaToolbarComponent {
                 }
             });
 
+    }
+
+    ngOnInit(): void {
+        this.camService.onCamChanged.subscribe((cam) => {
+            if (!cam) return;
+
+            this.cam = cam
+            this.cam.onGraphChanged.subscribe((annotons) => {
+            });
+        });
+    }
+
+    getUserInfo() {
+        const self = this;
+
+        this.noctuaUserService.onUserChanged.subscribe((response) => {
+            if (response) {
+                this.user = new Curator()
+                this.user.name = response.nickname;
+                this.user.groups = response.groups;
+            }
+        });
+    }
+
+    addAnnoton() {
+        this.openAnnotonForm(location);
+    }
+
+    openCamForm() {
+        //  this.noctuaFormService.initializeForm();
+        this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.camForm)
+    }
+
+    openAnnotonForm(location?) {
+        this.noctuaAnnotonFormService.initializeForm();
+        this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.annotonForm)
     }
 
     search(value): void {

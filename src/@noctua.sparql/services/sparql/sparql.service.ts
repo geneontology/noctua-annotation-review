@@ -1,20 +1,19 @@
-import { environment } from 'environments/environment';
+import { environment } from './../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
 import { map, finalize, filter, reduce, catchError, retry, tap } from 'rxjs/operators';
 
-import { NoctuaUtils } from '@noctua/utils/noctua-utils';
-import { CurieService } from '@noctua.curie/services/curie.service';
-import { NoctuaGraphService } from 'noctua-form-base';
-
-import { AnnotonNode } from 'noctua-form-base';
-import { NoctuaFormConfigService } from 'noctua-form-base';
-
-import { Cam } from 'noctua-form-base';
-import { CamRow } from 'noctua-form-base';
-import { Curator } from 'noctua-form-base';
-import { Group } from 'noctua-form-base';
+import { CurieService } from './../../../@noctua.curie/services/curie.service';
+import {
+  NoctuaGraphService,
+  AnnotonNode,
+  NoctuaFormConfigService,
+  Cam,
+  CamRow,
+  Curator,
+  Group
+} from 'noctua-form-base'
 
 import * as _ from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -225,14 +224,15 @@ export class SparqlService {
     let result: Array<Curator> = [];
 
     res.forEach((erg) => {
-      result.push({
-        orcid: erg.orcid.value,
-        name: erg.name.value,
-        cams: erg.cams.value,
-        group: {
-          url: erg.affiliations.value
-        }
-      });
+      let curator = new Curator()
+
+      curator.orcid = erg.orcid.value;
+      curator.name = erg.name.value;
+      curator.cams = erg.cams.value;
+      curator.group = {
+        url: erg.affiliations.value
+      }
+      result.push(curator);
     });
     return result;
   }

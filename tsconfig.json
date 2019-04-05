@@ -8,27 +8,17 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "paths": {
-      "@noctua": [
-        "@noctua/"
-      ],
-      "@noctua.common": [
-        "@noctua.common"
-      ],
-      "@noctua.curie": [
-        "@noctua.curie/"
-      ],
-      "@noctua.sparql": [
-        "@noctua.sparql/"
-      ],
-      "@noctua.search": [
-        "@noctua.search/"
-      ]
-    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
     ],
+    "paths": {
+      "noctua-form": [
+        "./src/app/main/apps/noctua-form"
+      ],
+    },
     "lib": [
       "es2017",
       "dom"

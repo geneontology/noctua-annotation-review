@@ -7,10 +7,11 @@ import * as _ from 'lodash';
 
 export const NOCTUA_CONFIG = new InjectionToken('noctuaCustomConfig');
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class NoctuaConfigService {
     private _configSubject: BehaviorSubject<any>;
-    private _baristaToken;
     private readonly _defaultConfig: any;
 
     constructor(
@@ -31,17 +32,6 @@ export class NoctuaConfigService {
 
     get config(): any | Observable<any> {
         return this._configSubject.asObservable();
-    }
-
-    set baristaToken(value) {
-        this._baristaToken = value;
-        localStorage.setItem('barista_token', value);
-
-        console.log('barista___token', value);
-    }
-
-    get baristaToken() {
-        return this._baristaToken;
     }
 
     get defaultConfig(): any {

@@ -1,23 +1,9 @@
-import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { MatDrawer } from '@angular/material';
-import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
-import { map, filter, reduce, catchError, retry, tap } from 'rxjs/operators';
-
-import { NoctuaUtils } from '@noctua/utils/noctua-utils';
-import { CurieService } from '@noctua.curie/services/curie.service';
-import { NoctuaGraphService } from 'noctua-form-base';
-
-import { NoctuaFormConfigService } from 'noctua-form-base';
-
-
-import { Curator } from 'noctua-form-base';
-import { Group } from 'noctua-form-base';
 
 import * as _ from 'lodash';
-import { v4 as uuid } from 'uuid';
 declare const require: any;
 const each = require('lodash/forEach');
 
@@ -29,22 +15,17 @@ export class NoctuaFormService {
   panel = {
     camForm: {
       id: 1
-    },
-    connectorForm: {
+    }, annotonForm: {
       id: 2
-    },
-    camRow: {
+    }, annotonEntityForm: {
       id: 3
-    },
-    camDiagram: {
+    }, camDiagram: {
       id: 4
-    },
-    camTable: {
+    }, camTable: {
       id: 5
-    },
-    camsTable: {
+    }, connectorForm: {
       id: 6
-    }
+    },
   }
 
   selectedLeftPanel;
@@ -55,11 +36,9 @@ export class NoctuaFormService {
   private rightDrawer: MatDrawer;
 
   constructor() {
-
-    this.selectedLeftPanel = this.panel.camForm;
-    this.selectedMiddlePanel = this.panel.camsTable;
-    this.selectedRightPanel = this.panel.camForm;
-
+    this.selectedLeftPanel = this.panel.annotonForm;
+    this.selectedMiddlePanel = this.panel.camTable;
+    this.selectedRightPanel = this.panel.annotonForm;
   }
 
   selectLeftPanel(panel) {

@@ -78,10 +78,10 @@ export class NoctuaUtils {
 
     public static handleize(text) {
         return text.toString().toLowerCase()
-            .replace(/\s+/g, '-')           // Replace spaces with -
-            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-            .replace(/^-+/, '')             // Trim - from start of text
-            .replace(/-+$/, '');            // Trim - from end of text
+            .replace(new RegExp("/\s+/g"), '-')           // Replace spaces with -
+            .replace(new RegExp("/[^\w\-]+/g"), '')       // Remove all non-word chars
+            .replace(new RegExp("/\-\-+/g"), '-')         // Replace multiple - with single -
+            .replace(new RegExp("/^-+/"), '')             // Trim - from start of text
+            .replace(new RegExp("/-+$/"), '');            // Trim - from end of text
     }
 }

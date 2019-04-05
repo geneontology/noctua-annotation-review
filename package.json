@@ -1,22 +1,24 @@
 {
-  "name": "noctua",
-  "version": "0.0.1",
+  "name": "noctua-annotation-review",
+  "version": "0.1.0",
   "license": "",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4201  --extra-webpack-config webpack.extra.js",
+    "build": "ng build --prod --index src/inject.tmpl  --base-href  /workbench/noctua-annotation-review/ --extra-webpack-config webpack.extra.js",
     "start-hmr": "ng serve --configuration hmr -sm=false",
     "start-hmr-sourcemaps": "ng serve --hmr -e=hmr",
-    "build": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev",
+    "build-dev": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev",
     "build-stats": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev --stats-json",
     "build-prod": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod",
     "build-prod-stats": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod --stats-json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "bundle-report": "webpack-bundle-analyzer dist/stats.json"
+    "bundle-report": "webpack-bundle-analyzer dist/stats.json",
+    "packagr": "ng-packagr -p ng-package.json"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@agm/core": "1.0.0-beta.5",
     "@angular/animations": "7.0.1",
@@ -78,9 +80,8 @@
     "ngx-color-picker": "7.0.1",
     "ngx-contextmenu": "^5.1.1",
     "ngx-cookie-service": "1.0.10",
-    "noctua-form-base": "file:../@noctua-form-base/dist/noctua-form-base-0.1.0.tgz",
-    "noctua-form": "file:../noctua-form/dist/noctua-form-0.0.3.tgz",
     "node-bourbon": "^4.2.8",
+    "noctua-form-base": "file:../noctua-form-base/dist/noctua-form-base-0.1.3.tgz",
     "perfect-scrollbar": "1.4.0",
     "primeng": "^7.0.0-beta.1",
     "prismjs": "1.15.0",
@@ -112,6 +113,7 @@
     "ng-packagr": "^4.7.1",
     "protractor": "5.4.1",
     "ts-node": "7.0.1",
+    "tsickle": "^0.34.3",
     "tslint": "5.11.0",
     "typescript": "3.1.4",
     "webpack-bundle-analyzer": "3.0.3"
