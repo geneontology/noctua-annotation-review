@@ -65,7 +65,7 @@ export class ReviewSearchComponent implements OnInit, OnDestroy {
     });
 
     this.sparqlService.getAllGroups().subscribe((response: any) => {
-      this.searchFormData['providedBy'].searchResults = response;
+      // this.searchFormData['providedBy'].searchResults = response;
     });
 
   }

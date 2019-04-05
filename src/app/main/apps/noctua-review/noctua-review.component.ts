@@ -1,35 +1,32 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { MatDrawer } from '@angular/material';
+import { Subject } from 'rxjs';
 
-import { noctuaAnimations } from '@noctua/animations';
-import { NoctuaUtils } from '@noctua/utils/noctua-utils';
+import { noctuaAnimations } from './../../../../@noctua/animations';
 
-import { takeUntil, startWith } from 'rxjs/internal/operators';
+import {
+  Cam,
+  Curator,
+  NoctuaUserService,
+  NoctuaFormConfigService,
+  NoctuaGraphService,
+  NoctuaAnnotonFormService,
+  CamService
+} from 'noctua-form-base';
 
-import "rxjs/add/operator/debounceTime";
-import "rxjs/add/operator/distinctUntilChanged";
-import { forEach } from '@angular/router/src/utils/collection';
-
-import { NoctuaFormConfigService } from 'noctua-form-base';
-import { NoctuaGraphService } from 'noctua-form-base';
-import { NoctuaLookupService } from 'noctua-form-base';
-
+import { NoctuaFormService } from './../noctua-form/services/noctua-form.service';
+import { FormGroup } from '@angular/forms';
 
 import { ReviewService } from './services/review.service';
 import { ReviewDialogService } from './services/review-dialog.service';
-
-import { NoctuaFormService } from './services/noctua-form.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
-import { CamService } from 'noctua-form-base'
+
 
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
+import { takeUntil } from 'rxjs/operators';
 
-import { Cam } from 'noctua-form-base';
+
 
 @Component({
   selector: 'app-noctua-review',
@@ -46,7 +43,10 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
   @ViewChild('rightDrawer')
   rightDrawer: MatDrawer;
 
-  cam: Cam;
+
+  public cam: Cam;
+  public user: Curator;
+  searchResults = [];
   modelId: string = '';
   baristaToken: string = '';
   searchCriteria: any = {};
@@ -62,16 +62,17 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     detail: {}
   }
   cams: any[] = [];
-  searchResults = [];
 
   private unsubscribeAll: Subject<any>;
 
   constructor(private route: ActivatedRoute,
     private camService: CamService,
+    public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
+    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
     private noctuaSearchService: NoctuaSearchService,
     public noctuaFormService: NoctuaFormService,
-    private noctuaLookupService: NoctuaLookupService,
+    // private noctuaLookupService: NoctuaLookupService,
     private noctuaGraphService: NoctuaGraphService,
     private sparqlService: SparqlService,
     public reviewService: ReviewService,
@@ -87,8 +88,8 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
       .subscribe(params => {
         this.modelId = params['model_id'] || null;
         this.baristaToken = params['barista_token'] || null;
-
         this.noctuaGraphService.baristaToken = this.baristaToken;
+        this.getUserInfo();
         this.loadCams();
       });
 
@@ -97,9 +98,27 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     //   });
   }
 
+  getUserInfo() {
+    const self = this;
+
+    this.noctuaUserService.getUser().subscribe((response) => {
+      if (response) {
+        this.user = new Curator()
+        this.user.name = response.nickname;
+        this.user.groups = response.groups;
+        // user.manager.use_groups([self.userInfo.selectedGroup.id]);
+        this.noctuaUserService.user = this.user;
+        this.noctuaUserService.onUserChanged.next(this.user);
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.reviewService.setLeftDrawer(this.leftDrawer);
-    this.reviewService.setRightDrawer(this.rightDrawer);
+    //  this.reviewService.setRightDrawer(this.rightDrawer);
+    this.noctuaFormService.setRightDrawer(this.rightDrawer);
+
+    console.log()
 
     this.sparqlService.getCamsByCurator('http://orcid.org/0000-0002-1706-4196').subscribe((response: any) => {
       this.cams = this.sparqlService.cams = response;

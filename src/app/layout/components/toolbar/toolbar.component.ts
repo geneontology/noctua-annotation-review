@@ -13,7 +13,6 @@ import {
 } from 'noctua-form-base';
 
 import { NoctuaConfigService } from '@noctua/services/config.service';
-import { NoctuaFormService } from 'app/main/apps/noctua-annotation-review/services/noctua-form.service';
 
 @Component({
     selector: 'noctua-toolbar',
@@ -41,7 +40,7 @@ export class NoctuaToolbarComponent implements OnInit {
         private noctuaConfig: NoctuaConfigService,
         public noctuaUserService: NoctuaUserService,
         public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-        public noctuaFormService: NoctuaFormService,
+        //public noctuaFormService: NoctuaFormService,
         private translate: TranslateService
     ) {
         console.log(window.location)
@@ -99,19 +98,6 @@ export class NoctuaToolbarComponent implements OnInit {
         });
     }
 
-    addAnnoton() {
-        this.openAnnotonForm(location);
-    }
-
-    openCamForm() {
-        //  this.noctuaFormService.initializeForm();
-        this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.camForm)
-    }
-
-    openAnnotonForm(location?) {
-        this.noctuaAnnotonFormService.initializeForm();
-        this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.annotonForm)
-    }
 
     search(value): void {
         console.log(value);
