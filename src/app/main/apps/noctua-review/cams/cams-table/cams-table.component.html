@@ -17,12 +17,12 @@
       </div>
       <span fxFlex=""></span>
       <div class="" fxFlex="150px" fxLayout="row" fxLayoutAlign="end center">
-        <button mat-icon-button (click)="refresh(cam)" class="noc-bl">
+        <button mat-icon-button (click)="refresh()" class="noc-bl">
           <mat-icon class="">
             refresh
           </mat-icon>
         </button>
-        <button mat-icon-button (click)="toggleSummaryExpand(cam)" class="noc-bl">
+        <button mat-icon-button (click)="toggleSummaryExpand()" class="noc-bl">
           <mat-icon *ngIf="!summary.expanded" class="">
             keyboard_arrow_down
           </mat-icon>
@@ -36,7 +36,8 @@
       <h2>
         Search Summary
       </h2>
-      <div class="pt-16 pb-16" *ngFor="let summaryDetail of summary.detail | keyvalue" fxLayout="row" fxLayoutAlign="start center">
+      <div class="pt-16 pb-16" *ngFor="let summaryDetail of summary.detail | keyvalue" fxLayout="row"
+        fxLayoutAlign="start center">
         <div fxFlex="200px">
           <strong> {{summaryDetail.key}}</strong>
         </div>
@@ -64,12 +65,12 @@
         </div>
         <div class="" fxFlex="200px">
           <div class="text-truncate">
-            <small>Id: </small> {{cam.model?.id }}
+            <small>Id: </small> {{cam.id }}
           </div>
         </div>
         <div class="" fxFlex="50%">
           <div class="text-truncate">
-            <small>Title: </small> {{cam.model?.title }}
+            <small>Title: </small> {{cam.title }}
           </div>
         </div>
         <span fxFlex=""></span>
@@ -99,7 +100,8 @@
           </button>
         </div>
       </div>
-      <noc-cam-table [cam]="cam" *ngIf="cam.expanded" class="noc-cam-table-body" fxLayout="row" fxLayoutAlign="start center">
+      <noc-cam-table [cam]="cam" *ngIf="cam.expanded" class="noc-cam-table-body" fxLayout="row"
+        fxLayoutAlign="start center">
       </noc-cam-table>
     </div>
   </div>

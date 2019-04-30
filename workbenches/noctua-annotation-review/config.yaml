@@ -2,6 +2,3 @@ menu-name: "Noctua Annotation Review"
 page-name: "Noctua Annotation Review 1.0"
 type: "universal"
 help-link: "https://github.com/geneontology/noctua-annotation-review/issues"
-javascript:
-  - main.js
-css: []

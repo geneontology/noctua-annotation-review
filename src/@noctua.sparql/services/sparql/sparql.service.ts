@@ -203,18 +203,13 @@ export class SparqlService {
 
       cam.id = uuid();
       cam.graph = null;
+      cam.id = modelId;
+      cam.title = response.modelTitle.value;
+
       cam.model = Object.assign({}, {
-        id: modelId,
-        title: response.modelTitle.value,
         modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)
       }),
-        cam.annotatedEntity = {};
-      // aspect: this.noctuaFormConfigService.getAspect(this.curieUtil.getCurie(cam.aspect.value)),
-      // term: Object.assign({}, {
-      //    id: this.curieUtil.getCurie(cam.term.value),
-      //  label: cam.termLabel.value
-      //   }),;
-      result.push(cam);
+        result.push(cam);
     });
 
     return result;
@@ -312,7 +307,7 @@ export class SparqlService {
   }
 
   buildCamsByGoTermQuery(goTerm) {
-    goTerm = goTerm.replace(":", "_");
+    let goTermId = goTerm.id.replace(":", "_");
     var query = `
     	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -330,7 +325,7 @@ export class SparqlService {
                   dc:title ?modelTitle .   
             ?entity rdf:type owl:NamedIndividual .
             ?entity rdf:type ?term .
-            FILTER(?term = <http://purl.obolibrary.org/obo/` + goTerm + `>)
+            FILTER(?term = <http://purl.obolibrary.org/obo/` + goTermId + `>)
           }
           VALUES ?aspect { BP: MF: CC: } .
           ?entity rdf:type ?aspect .

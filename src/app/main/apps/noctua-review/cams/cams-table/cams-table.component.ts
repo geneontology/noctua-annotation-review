@@ -100,7 +100,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       cam.expanded = false;
     } else {
       cam.expanded = true;
-      this.noctuaGraphService.getGraphInfo(cam, cam.model.id)
+      this.noctuaGraphService.getGraphInfo(cam, cam.id)
       cam.onGraphChanged.subscribe((annotons) => {
         //  let data = this.summaryGridService.getGrid(annotons);
         // this.sparqlService.addCamChildren(cam, data);
@@ -109,6 +109,9 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  refresh() {
+
+  }
 
 
   selectCam(cam) {
