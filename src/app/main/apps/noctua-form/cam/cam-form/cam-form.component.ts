@@ -67,11 +67,11 @@ export class CamFormComponent implements OnInit, OnDestroy {
       });
 
     this.camService.onCamChanged.subscribe((cam) => {
+      if (!cam) return;
+
       this.cam = cam
       this.camService.initializeForm(cam);
     });
-
-    console.log(this.noctuaUserService.user)
   }
 
   checkErrors() {

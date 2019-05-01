@@ -47,19 +47,12 @@ import { NodeService } from './cam/cam-diagram/nodes/services/node.service';
 import { AnnotonConnectorFormComponent } from './cam/annoton/annoton-connector-form/annoton-connector-form.component';
 import { AnnotonTableComponent } from './cam/cam-table/annoton-table/annoton-table.component';
 
-const routes = [
-  {
-    path: '',
-    component: NoctuaFormComponent
-  }
-];
 
 @NgModule({
   imports: [
     NoctuaSharedModule,
     CommonModule,
     // NoctuaModule.forRoot(noctuaConfig),
-    //RouterModule.forChild(routes),
     ContextMenuModule.forRoot(),
   ],
   exports: [

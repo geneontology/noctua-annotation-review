@@ -19,14 +19,16 @@
       <mat-label>{{entity.label}}</mat-label>
       <textarea type="text" matInput formControlName="term" [matAutocomplete]="termAuto" row="2">
     </textarea>
-      <mat-autocomplete #termAuto="matAutocomplete" [displayWith]="termDisplayFn">
+      <mat-autocomplete #termAuto="matAutocomplete" [displayWith]="termDisplayFn" class="noc-term-autocomplete">
         <mat-option *ngFor="let item of entity?.term.lookup.results" [value]="item">
           <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-            <div>
-              {{ item.id }}
+            <div class="noc-term-label">
+              {{ item.label }}
             </div>
             <span fxFlex></span>
-            {{ item.label }}
+            <div class="noc-term-id">
+              {{ item.id }}
+            </div>
           </div>
         </mat-option>
       </mat-autocomplete>
@@ -41,14 +43,17 @@
             <mat-label>Evidence</mat-label>
             <textarea type="text" matInput formControlName="evidence" [matAutocomplete]="evidenceAuto"
               rows="2"></textarea>
-            <mat-autocomplete #evidenceAuto="matAutocomplete" [displayWith]="evidenceDisplayFn">
+            <mat-autocomplete #evidenceAuto="matAutocomplete" [displayWith]="evidenceDisplayFn"
+              class="noc-term-autocomplete">
               <mat-option *ngFor="let item of entity?.evidence[i]?.evidence.lookup.results" [value]="item">
                 <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-                  <div>
-                    {{ item.id }}
+                  <div class="noc-term-label">
+                    {{ item.label }}
                   </div>
                   <span fxFlex></span>
-                  {{ item.label }}
+                  <div class="noc-term-id">
+                    {{ item.id }}
+                  </div>
                 </div>
               </mat-option>
             </mat-autocomplete>
@@ -75,6 +80,7 @@
           <button mat-menu-item *ngIf="entity.aspect" class="" (click)="openSearchDatabaseDialog(entity)">
             Search Database
           </button>
+          <!--
           <h6 class="noc-menu-heading"> Evidence</h6>
           <button mat-menu-item class="" (click)="openSelectEvidenceDialog(evidence)">
             Clone Evidence
@@ -98,6 +104,7 @@
           <button mat-menu-item class="" (click)="entity.clearValues()">
             Clear
           </button>
+          -->
         </mat-menu>
       </div>
     </div>

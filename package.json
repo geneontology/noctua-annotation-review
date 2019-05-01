@@ -81,7 +81,7 @@
     "ngx-contextmenu": "^5.1.1",
     "ngx-cookie-service": "2.1.0",
     "node-bourbon": "^4.2.8",
-    "noctua-form-base": "file:../noctua-form-base/dist/noctua-form-base-0.2.0.tgz",
+    "noctua-form-base": "file:../noctua-form-base/dist/noctua-form-base-0.2.1.tgz",
     "perfect-scrollbar": "1.4.0",
     "primeng": "^7.1.2",
     "prismjs": "1.16.0",

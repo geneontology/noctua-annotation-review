@@ -123,27 +123,20 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         aspect: entity.aspect,
         entity: entity,
         params: {
-          term: entity.term.control.value.id,
-          evidence: entity.evidence[0].evidence.control.value.id
+          term: '',
+          evidence: ''
         }
       }
 
-      console.log(data)
-
       let success = function (selected) {
-        entity.setTerm(selected.term);
-        entity.resetEvidence();
-        for (let i = 0; i < selected.annotations.length; i++) {
-          let evidence = entity.evidence[0];
-          if (i > 0) {
-            evidence = entity.addEvidence()
-          }
+        if (selected.term) {
+          entity.setTerm(selected.term.getTerm());
 
-          evidence.setEvidence(selected.annotations[i].evidence[0].getEvidence());
-          evidence.setReference(selected.annotations[i].evidence[0].getReference());
-          evidence.setWith(selected.annotations[i].evidence[0].getWith());
-          evidence.setAssignedBy(selected.annotations[i].evidence[0].getAssignedBy());
-        };
+          if (selected.evidences && selected.evidences.length > 0) {
+            entity.setEvidence(selected.evidences);
+          }
+          self.noctuaAnnotonFormService.initializeForm();
+        }
       }
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success)
     } else {

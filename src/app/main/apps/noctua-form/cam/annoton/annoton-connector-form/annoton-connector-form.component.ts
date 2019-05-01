@@ -46,6 +46,14 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
   @Input('panelDrawer')
   panelDrawer: MatDrawer;
 
+  panel = {
+    selectConnector: {
+      id: 1
+    }, annotonConnectorForm: {
+      id: 2
+    },
+  };
+  selectedPanel: any;
   annoton: Annoton;
   mfNode: AnnotonNode;
 
@@ -63,6 +71,7 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<any>;
 
+
   constructor(private route: ActivatedRoute,
     private camService: CamService,
     private formBuilder: FormBuilder,
@@ -79,7 +88,6 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
     private sparqlService: SparqlService
   ) {
     this.unsubscribeAll = new Subject();
-    // this.annoton = self.noctuaAnnotonFormService.annoton;
   }
 
   ngOnInit(): void {
@@ -96,13 +104,31 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
       });
 
     this.camService.onCamChanged.subscribe((cam) => {
+      if (!cam) return;
+
       this.cam = cam
-      this.cam.onGraphChanged.subscribe((annotons) => {
-        //  let data = this.summaryGridService.getGrid(annotons);
-        //  this.sparqlService.addCamChildren(cam, data);
-        //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
-      });
     });
+
+    this.noctuaAnnotonConnectorService.onAnnotonChanged.subscribe((annoton) => {
+      this.annoton = annoton;
+      this.selectPanel(this.panel.selectConnector);
+    });
+
+    this.selectPanel(this.panel.selectConnector);
+  }
+
+  selectPanel(panel) {
+    this.selectedPanel = panel;
+  }
+
+  openAnnotonConnector(connector: Annoton) {
+    this.noctuaAnnotonConnectorService.createConnection(this.noctuaAnnotonConnectorService.annoton.connectionId, connector.connectionId);
+    this.selectPanel(this.panel.annotonConnectorForm);
+  }
+
+  openEditAnnotonConnector(connector: Annoton) {
+    this.noctuaAnnotonConnectorService.createConnection(this.noctuaAnnotonConnectorService.annoton.connectionId, connector.connectionId, true);
+    this.selectPanel(this.panel.annotonConnectorForm);
   }
 
   evidenceDisplayFn(evidence): string | undefined {
@@ -111,15 +137,11 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
 
   save() {
     const self = this;
-
-    self.noctuaAnnotonConnectorService.connectorFormToAnnoton();
-    self.noctuaGraphService.saveConnection(self.cam,
-      this.noctuaAnnotonConnectorService.annoton,
-      this.noctuaAnnotonConnectorService.subjectMFNode,
-      this.noctuaAnnotonConnectorService.objectMFNode).then(function (data) {
-        // self.noctuaAnnotonFormService.clearForm();
-        // self.dialogService.openSuccessfulSaveToast();
-      });
+    this.noctuaAnnotonConnectorService.save().then(() => {
+      self.selectPanel(self.panel.selectConnector);
+      self.noctuaAnnotonConnectorService.getConnections();
+      self.noctuaFormDialogService.openSuccessfulSaveToast('Causal relation successfully created.', 'OK');
+    });
   }
 
   addEvidence() {
