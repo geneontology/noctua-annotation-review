@@ -1,12 +1,16 @@
-import { environment } from '../../environments/environment';
+import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import * as _ from 'lodash';
 import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
 import { map, filter, reduce, catchError, retry, tap } from 'rxjs/operators';
 
-import { SparqlService } from './../../@noctua.sparql/services/sparql/sparql.service';
+import { NoctuaUtils } from '@noctua/utils/noctua-utils';
+import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
+import { Cam, Contributor } from 'noctua-form-base';
 
-export interface Cam {
+export interface Cam202 {
     model?: {};
     annotatedEntity?: {};
     relationship?: string;
@@ -35,38 +39,43 @@ export class NoctuaSearchService {
     }
 
     search(searchCriteria) {
-        if (searchCriteria.goTerm) {
-            this.sparqlService.getCamsByGoTerm(searchCriteria.goTerm).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
-            });
-        }
+        this.sparqlService.getCams(searchCriteria).subscribe((response: any) => {
+            this.sparqlService.cams = this.cams = response;
+            this.sparqlService.onCamsChanged.next(this.cams);
+        });
+    }
 
-        if (searchCriteria.gp) {
-            this.sparqlService.getCamsByGP(searchCriteria.gp).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
+    filterByContributor(cams, contributor) {
+        return _.filter(cams, (cam: Cam) => {
+            let found = _.find(cam.contributors, (contributor: Contributor) => {
+                return contributor.orcid === contributor.orcid;
             });
-        }
 
-        if (searchCriteria.pmid) {
-            this.sparqlService.getCamsByPMID(searchCriteria.pmid).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
-            });
-        }
+            return found ? true : false
+        });
+    }
 
-        if (searchCriteria.organism) {
-            this.sparqlService.getCamsBySpecies(searchCriteria.organism).subscribe((response: any) => {
+    searchByGroup(searchCriteria) {
+        if (searchCriteria.group) {
+            this.sparqlService.getCamsByGroup(searchCriteria.group).subscribe((response: any) => {
                 this.cams = this.sparqlService.cams = response;
                 this.sparqlService.onCamsChanged.next(this.cams);
             });
         }
     }
 
-    searchByCurator(searchCriteria) {
-        if (searchCriteria.curator) {
-            this.sparqlService.getCamsByCurator(searchCriteria.curator).subscribe((response: any) => {
+    searchByContributor(searchCriteria) {
+        if (searchCriteria.contributor) {
+            this.sparqlService.getCamsByContributor(searchCriteria.contributor).subscribe((response: any) => {
+                this.cams = this.sparqlService.cams = response;
+                this.sparqlService.onCamsChanged.next(this.cams);
+            });
+        }
+    }
+
+    searchBySpecies(searchCriteria) {
+        if (searchCriteria.organism) {
+            this.sparqlService.getCamsBySpecies(searchCriteria.organism).subscribe((response: any) => {
                 this.cams = this.sparqlService.cams = response;
                 this.sparqlService.onCamsChanged.next(this.cams);
             });

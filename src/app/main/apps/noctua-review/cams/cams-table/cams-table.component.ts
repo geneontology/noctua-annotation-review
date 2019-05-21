@@ -14,17 +14,25 @@ import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
 import { forEach } from '@angular/router/src/utils/collection';
 
-import { NoctuaFormConfigService } from 'noctua-form-base';
-import { NoctuaGraphService } from 'noctua-form-base';
-import { NoctuaLookupService } from 'noctua-form-base';
-
-
-
 import { ReviewService } from './../../services/review.service';
 import { ReviewDialogService } from './../../services/review-dialog.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
-
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
+
+import {
+  NoctuaGraphService,
+  NoctuaFormConfigService,
+  NoctuaLookupService,
+  CamService
+} from 'noctua-form-base';
+
+import {
+  Cam,
+  Annoton,
+  AnnotonNode
+} from 'noctua-form-base';
+
+
 
 @Component({
   selector: 'noc-cams-table',
@@ -40,11 +48,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   loadingSpinner: any = {
     color: 'primary',
     mode: 'indeterminate'
-  }
-
-  summary: any = {
-    expanded: false,
-    detail: {}
   }
 
   cams: any[] = [];
@@ -72,7 +75,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(cams => {
         this.cams = cams;
-        this.summary.detail = this.sparqlService.searchSummary;
         this.loadCams();
       });
   }
@@ -89,10 +91,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   loadCams() {
     this.cams = this.sparqlService.cams;
-  }
-
-  toggleSummaryExpand() {
-    this.summary.expanded = !this.summary.expanded;
   }
 
   toggleExpand(cam) {
@@ -113,8 +111,11 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   }
 
+  changeCamDisplayView(cam: Cam, displayType) {
+    cam.displayType = displayType;
+  }
 
-  selectCam(cam) {
+  selectCam(cam: Cam) {
     this.sparqlService.onCamChanged.next(cam);
   }
 

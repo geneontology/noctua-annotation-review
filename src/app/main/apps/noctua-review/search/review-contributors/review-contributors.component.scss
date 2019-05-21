@@ -64,17 +64,17 @@
 
   }
 
-  .noc-group-row {
-    padding: 0 5px;
-    @include deep-height(40px);
-    border-bottom: #CCC solid 1px;
-  }
 
-  .noc-curator-row {
+  .noc-contributor-row {
     padding: 0 10px;
     @include deep-height(50px);
     border-top: #CCC solid 1px;
     font-size: 12px;
+
+
+    .noc-name {
+      font-size: 14px;
+    }
 
     .noc-cams-number {
       padding: 2px 5px;
@@ -160,44 +160,6 @@
           }
         }
       }
-    }
-
-
-    .noc-tree-input {
-      $border-color: rgba(#000, 0.12);
-      @include deep-width(20px);
-      border-right: $border-color solid 1px;
-
-      &.noc-level-0 {
-        border: none;
-      }
-    }
-
-    md-input-container {
-      margin: 0; //border-bottom: #555 solid 1px; 
-      padding-top: 20px;
-      padding-bottom: 8px;
-
-      label {
-        top: 0px;
-        bottom: auto !important;
-        left: 5px;
-      }
-
-      .md-errors-spacer {
-        visibility: hidden;
-        display: none;
-      }
-
-      input {
-        padding-left: 5px;
-      }
-    }
-
-    .noc-submit-row {
-      margin: 10px 0;
-      padding: 10px 0;
-      background-color: #FFF;
     }
   }
 }

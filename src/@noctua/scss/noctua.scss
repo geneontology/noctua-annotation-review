@@ -32,7 +32,7 @@ $noc-secondary-color: #995014;
 }
 
 textarea {
-  resize: none !important;
+  resize: none;
   overflow: hidden;
 }
 
@@ -51,6 +51,8 @@ textarea {
     }
   }
 }
+
+
 
 .noc-dropdown-menu {
   .noc-menu-heading {

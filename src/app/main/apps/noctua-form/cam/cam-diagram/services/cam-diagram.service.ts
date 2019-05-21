@@ -18,7 +18,7 @@ import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
 import { NoctuaFormConfigService } from 'noctua-form-base';
 
 
-import { Curator } from 'noctua-form-base';
+import { Contributor } from 'noctua-form-base';
 import { Group } from 'noctua-form-base';
 
 import * as _ from 'lodash';

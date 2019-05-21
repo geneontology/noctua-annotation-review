@@ -19,7 +19,7 @@ import { CamTableService } from './../cam-table/services/cam-table.service';
 
 import {
   Cam,
-  Curator,
+  Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,

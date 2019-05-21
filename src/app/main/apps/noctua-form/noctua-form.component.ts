@@ -7,7 +7,7 @@ import { noctuaAnimations } from './../../../../@noctua/animations';
 
 import {
   Cam,
-  Curator,
+  Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,
@@ -33,7 +33,7 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
   rightDrawer: MatDrawer;
 
   public cam: Cam;
-  public user: Curator;
+  public user: Contributor;
   searchResults = [];
   modelId: string = '';
   baristaToken: string = '';
@@ -67,7 +67,7 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
     this.noctuaUserService.getUser().subscribe((response) => {
       if (response) {
-        this.user = new Curator()
+        this.user = new Contributor()
         this.user.name = response.nickname;
         this.user.groups = response.groups;
         // user.manager.use_groups([self.userInfo.selectedGroup.id]);

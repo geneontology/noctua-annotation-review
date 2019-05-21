@@ -7,7 +7,8 @@ import { noctuaAnimations } from './../../../../@noctua/animations';
 
 import {
   Cam,
-  Curator,
+  Contributor,
+  Annoton,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,
@@ -45,7 +46,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
 
 
   public cam: Cam;
-  public user: Curator;
+  public user: Contributor;
   searchResults = [];
   modelId: string = '';
   baristaToken: string = '';
@@ -103,7 +104,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
 
     this.noctuaUserService.getUser().subscribe((response) => {
       if (response) {
-        this.user = new Curator()
+        this.user = new Contributor()
         this.user.name = response.nickname;
         this.user.groups = response.groups;
         // user.manager.use_groups([self.userInfo.selectedGroup.id]);
@@ -118,25 +119,32 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     //  this.reviewService.setRightDrawer(this.rightDrawer);
     this.noctuaFormService.setRightDrawer(this.rightDrawer);
 
-    console.log()
-
-    this.sparqlService.getCamsByCurator('http://orcid.org/0000-0002-1706-4196').subscribe((response: any) => {
+    /*
+    this.sparqlService.getCamsByContributor('http://orcid.org/0000-0002-1706-4196').subscribe((response: any) => {
       this.cams = this.sparqlService.cams = response;
       this.sparqlService.onCamsChanged.next(this.cams);
     });
+    */
 
-    this.sparqlService.getAllCurators().subscribe((response: any) => {
-      this.reviewService.curators = response;
-      this.reviewService.onCuratorsChanged.next(response);
-      //  this.searchFormData['curator'].searchResults = response;
-
-      this.sparqlService.getAllGroups().subscribe((response: any) => {
-        this.reviewService.groups = response;
-        this.reviewService.onGroupsChanged.next(response);
-        //    this.searchFormData['providedBy'].searchResults = response;
-
-        this.sparqlService.addGroupCurators(this.reviewService.groups, this.reviewService.curators)
+    this.sparqlService.getAllContributors().subscribe((response: any) => {
+      this.reviewService.contributors = response;
+      this.reviewService.onContributorsChanged.next(response);
+      this.sparqlService.getCamsByGoTerm({ id: 'GO:0017127' }).subscribe((response: any) => {
+        this.cams = this.sparqlService.cams = response;
+        this.sparqlService.onCamsChanged.next(this.cams);
       });
+    });
+
+    this.sparqlService.getAllGroups().subscribe((response: any) => {
+      this.reviewService.groups = response;
+      this.reviewService.onGroupsChanged.next(response);
+    });
+
+
+
+    this.sparqlService.getAllOrganisms().subscribe((response: any) => {
+      this.reviewService.organisms = response;
+      this.reviewService.onOrganismsChanged.next(response);
     });
 
     this.sparqlService.onCamsChanged
@@ -146,6 +154,19 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
         this.summary.detail = this.sparqlService.searchSummary;
         this.loadCams();
       });
+
+    this.reviewService.onContributorsChanged
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(contributors => {
+        this.noctuaUserService.contributors = contributors;
+      });
+
+    this.reviewService.onGroupsChanged
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(groups => {
+        this.noctuaUserService.groups = groups;
+      });
+
   }
 
   toggleLeftDrawer(panel) {
@@ -171,12 +192,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
       cam.expanded = false;
     } else {
       cam.expanded = true;
-      this.noctuaGraphService.getGraphInfo(cam, cam.model.id)
-      cam.onGraphChanged.subscribe((annotons) => {
-        //  let data = this.summaryGridService.getGrid(annotons);
-        // this.sparqlService.addCamChildren(cam, data);
-        //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
-      });
+      this.noctuaGraphService.getGraphInfo(cam, cam.model.id);
     }
   }
 

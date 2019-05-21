@@ -8,16 +8,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoctuaFormComponent } from './noctua-form.component';
 import { NoctuaSharedModule } from './../../../../@noctua/shared.module';
 import { NoctuaFormDialogService } from './services/dialog.service';
-import {
-  NoctuaUserService,
-  NoctuaAnnotonConnectorService,
-  NoctuaGraphService,
-  NoctuaFormConfigService,
-  NoctuaAnnotonFormService,
-  NoctuaLookupService,
-  NoctuaAnnotonEntityService,
-  CamService
-} from 'noctua-form-base';
 
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { AnnotonFormComponent } from './cam/annoton/annoton-form/annoton-form.component';
@@ -45,6 +35,7 @@ import { CamDiagramService } from './cam/cam-diagram/services/cam-diagram.servic
 import { CamTableService } from './cam/cam-table/services/cam-table.service';
 import { NodeService } from './cam/cam-diagram/nodes/services/node.service';
 import { AnnotonConnectorFormComponent } from './cam/annoton/annoton-connector-form/annoton-connector-form.component';
+import { AnnotonEntityTableComponent } from './cam/cam-table/annoton-entity-table/annoton-entity-table.component';
 import { AnnotonTableComponent } from './cam/cam-table/annoton-table/annoton-table.component';
 
 
@@ -73,15 +64,10 @@ import { AnnotonTableComponent } from './cam/cam-table/annoton-table/annoton-tab
     NodeComponent,
     NodesContainerComponent,
     AnnotonConnectorFormComponent,
+    AnnotonEntityTableComponent,
     AnnotonTableComponent,
   ],
   providers: [
-    // NoctuaAnnotonConnectorService,
-    // NoctuaGraphService,
-    // NoctuaFormConfigService,
-    // NoctuaAnnotonFormService,
-    // NoctuaLookupService,
-    // NoctuaAnnotonEntityService,
     NoctuaFormDialogService,
     NodeService,
     CamDiagramService,
@@ -106,6 +92,7 @@ import { AnnotonTableComponent } from './cam/cam-table/annoton-table/annoton-tab
     NodeComponent,
     NodesContainerComponent,
     AnnotonConnectorFormComponent,
+    AnnotonEntityTableComponent,
     AnnotonTableComponent,
   ],
   entryComponents: [

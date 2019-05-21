@@ -15,58 +15,61 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { ReviewService } from '../../services/review.service';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService } from 'noctua-form-base';
+import {
+  NoctuaFormConfigService,
+  NoctuaUserService
+} from 'noctua-form-base';
 import { NoctuaLookupService } from 'noctua-form-base';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
-
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
-import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
 
 @Component({
-  selector: 'noc-review-species',
-  templateUrl: './review-species.component.html',
-  styleUrls: ['./review-species.component.scss'],
+  selector: 'noc-review-organisms',
+  templateUrl: './review-organisms.component.html',
+  styleUrls: ['./review-organisms.component.scss'],
 })
 
-export class ReviewSpeciesComponent implements OnInit, OnDestroy {
+export class ReviewOrganismsComponent implements OnInit, OnDestroy {
   searchCriteria: any = {};
   searchForm: FormGroup;
+  groupsForm: FormGroup;
   searchFormData: any = []
-  organisms: any;
-  cams: any[] = [];
+  // groups: any[] = [];
+  // organisms: any[] = [];
 
   private unsubscribeAll: Subject<any>;
 
   constructor(private route: ActivatedRoute,
+    public noctuaUserService: NoctuaUserService,
     private noctuaSearchService: NoctuaSearchService,
+    private formBuilder: FormBuilder,
     public noctuaFormConfigService: NoctuaFormConfigService,
     private noctuaLookupService: NoctuaLookupService,
-    private reviewService: ReviewService,
+    public reviewService: ReviewService,
     private sparqlService: SparqlService,
-    private noctuaDataService: NoctuaDataService,
     private noctuaTranslationLoader: NoctuaTranslationLoaderService) {
-    this.searchForm = this.createSearchForm();
-
+    // this.organisms = this.reviewService.organisms;
+    this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
     this.unsubscribeAll = new Subject();
 
-    this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
-    this.organisms = this.noctuaDataService.organisms;
-
+    this.groupsForm = this.formBuilder.group({
+      groups: []
+    })
   }
 
   ngOnInit(): void {
 
+
   }
 
   selectOrganism(organism) {
-    let searchCriteria = {
-      organism: organism
-    }
-
-    this.search(searchCriteria)
+    this.searchCriteria.organism = organism;
+    this.noctuaSearchService.search(this.searchCriteria)
   }
 
-  search(searchCriteria) {
+
+  search() {
+    let searchCriteria = this.searchForm.value;
 
     console.dir(searchCriteria)
     this.noctuaSearchService.search(searchCriteria);
@@ -79,6 +82,7 @@ export class ReviewSpeciesComponent implements OnInit, OnDestroy {
   createSearchForm() {
     return new FormGroup({
       term: new FormControl(),
+      groups: this.groupsForm,
     });
   }
 
@@ -86,5 +90,4 @@ export class ReviewSpeciesComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
-
 }

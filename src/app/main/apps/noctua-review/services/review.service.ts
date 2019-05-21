@@ -10,12 +10,12 @@ import { map, filter, reduce, catchError, retry, tap } from 'rxjs/operators';
 
 import { NoctuaUtils } from '@noctua/utils/noctua-utils';
 import { CurieService } from '@noctua.curie/services/curie.service';
-import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaGraphService, Organism } from 'noctua-form-base';
 
 import { NoctuaFormConfigService } from 'noctua-form-base';
 
 
-import { Curator } from 'noctua-form-base';
+import { Contributor } from 'noctua-form-base';
 import { Group } from 'noctua-form-base';
 
 import * as _ from 'lodash';
@@ -31,28 +31,32 @@ export class ReviewService {
   leftPanel = {
     search: {
       id: 1
-    },
-    curator: {
+    }, group: {
       id: 2
-    }, species: {
+    }, contributor: {
       id: 3
+    }, species: {
+      id: 4
     }
   }
 
   selectedLeftPanel;
 
-  onCuratorsChanged: BehaviorSubject<any>;
+  onContributorsChanged: BehaviorSubject<any>;
   onGroupsChanged: BehaviorSubject<any>;
+  onOrganismsChanged: BehaviorSubject<any>;
 
-  curators: Curator[] = [];
+  contributors: Contributor[] = [];
   groups: Group[] = [];
+  organisms: Organism[] = [];
 
   private leftDrawer: MatDrawer;
   private rightDrawer: MatDrawer;
 
   constructor() {
-    this.onCuratorsChanged = new BehaviorSubject([]);
+    this.onContributorsChanged = new BehaviorSubject([]);
     this.onGroupsChanged = new BehaviorSubject([]);
+    this.onOrganismsChanged = new BehaviorSubject([]);
 
     this.selectedLeftPanel = this.leftPanel.search;
     console.log(this.selectedLeftPanel)
@@ -96,11 +100,17 @@ export class ReviewService {
     return this.rightDrawer.close();
   }
 
-  public groupCurators() {
-    return _.groupBy(this.curators, function (curator) {
-      return curator.group;
+  public groupContributors() {
+    return _.groupBy(this.contributors, function (contributor) {
+      return contributor.group;
     });
 
+  }
+
+  public filterOrganisms(value: string): any[] {
+    const filterValue = value.toLowerCase();
+
+    return this.organisms.filter(organism => organism.taxonName.toLowerCase().indexOf(filterValue) === 0);
   }
 
 }

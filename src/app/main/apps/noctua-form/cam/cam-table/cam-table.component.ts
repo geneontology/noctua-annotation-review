@@ -15,24 +15,27 @@ import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
 import { forEach } from '@angular/router/src/utils/collection';
 
-import { NoctuaTranslationLoaderService } from './../../../../../../@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService } from 'noctua-form-base';
-import { NoctuaGraphService } from 'noctua-form-base';
-import { NoctuaLookupService } from 'noctua-form-base';
-
-import { NoctuaAnnotonFormService } from 'noctua-form-base';
-
 import { NoctuaFormService } from './../../services/noctua-form.service';
-import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
 import { CamTableService } from './services/cam-table.service';
 import { NoctuaFormDialogService } from './../../services/dialog.service';
 import { NoctuaSearchService } from './../../../../../../@noctua.search/services/noctua-search.service';
-import { CamService } from 'noctua-form-base'
 
+import {
+  noctuaFormConfig,
+  NoctuaAnnotonConnectorService,
+  NoctuaGraphService,
+  NoctuaFormConfigService,
+  NoctuaAnnotonFormService,
+  NoctuaLookupService,
+  NoctuaAnnotonEntityService,
+  CamService
+} from 'noctua-form-base';
 
-import { Cam } from 'noctua-form-base';
-import { Annoton } from 'noctua-form-base';
-
+import {
+  Cam,
+  Annoton,
+  AnnotonNode
+} from 'noctua-form-base';
 
 @Component({
   selector: 'noc-cam-table',
@@ -45,6 +48,7 @@ export class CamTableComponent implements OnInit, OnDestroy {
   searchCriteria: any = {};
   searchFormData: any = []
   searchForm: FormGroup;
+  camDisplayType = noctuaFormConfig.camDisplayType.options;
 
   @Input('cam')
   public cam: Cam;
@@ -82,7 +86,14 @@ export class CamTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.cam
+    this.cam.onGraphChanged.subscribe((annotons: Annoton[]) => {
+      if (annotons) {
+        this.cam.applyFilter();
+        //  let data = this.summaryGridService.getGrid(annotons);
+        // this.sparqlService.addCamChildren(cam, data);
+        //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
+      }
+    });
   }
 
   addAnnoton() {
