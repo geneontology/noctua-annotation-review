@@ -8,7 +8,8 @@
       <div class="noc-cam-table-heading" fxLayout="row" fxLayoutAlign="start center">
         <div fxFlex="50px" (click)="$event.stopPropagation()">
           <button mat-icon-button (click)="toggleExpand(cam)" class="">
-            <mat-icon *ngIf="!cam.expanded" class="s-16 fa fa-caret-right">
+            <mat-icon *ngIf="!cam.expanded" class="s-32">
+              arrow_right
             </mat-icon>
             <mat-icon *ngIf="cam.expanded" class="s-12 mat-icon-rtl-mirror">
               signal_cellular_4_bar
@@ -25,7 +26,8 @@
         </div>
         <div class="" fxFlex="">
           <mat-chip-list>
-            <mat-chip *ngFor="let contributor of cam.contributors">
+            <mat-chip *ngFor="let contributor of cam.contributors"
+              (click)="noctuaSearchService.filter(noctuaSearchService.filterType.contributors, contributor)">
               <mat-icon class="s-12">person</mat-icon>
               <span>{{contributor.name}}</span>
             </mat-chip>

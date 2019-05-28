@@ -33,6 +33,7 @@ import {
 
 import * as _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+import { SearchCriteria } from '@noctua.search/models/search-criteria';
 declare const require: any;
 const each = require('lodash/forEach');
 
@@ -368,8 +369,8 @@ export class SparqlService {
   addGroupContributors(groups, contributors) {
     const self = this;
 
-    _.each(groups, (group) => {
-      _.each(group.contributors, (contributor) => {
+    each(groups, (group) => {
+      each(group.contributors, (contributor) => {
         let srcContributor = _.find(contributors, { orcid: contributor.orcid })
         contributor.name = srcContributor['name'];
         contributor.cams = srcContributor['cams'];
@@ -439,40 +440,40 @@ export class SparqlService {
   }
 
   //GO:0003723
-  buildCamsByGoTermQuery(goTerm) {
+  buildCamsByGoTermQuery(goterm) {
     let query = new NoctuaQuery();
 
-    query.goterm(goTerm.id);
+    query.goterm(goterm.id);
     query.limit(100);
     return '?query=' + encodeURIComponent(query.build());
   }
 
-  buildCamsQuery(searchCriteria) {
+  buildCamsQuery(searchCriteria: SearchCriteria) {
     let query = new NoctuaQuery();
 
-    if (searchCriteria.goTerm) {
-      query.goterm(searchCriteria.goTerm.id)
-    }
+    each(searchCriteria.goterms, (goterm) => {
+      query.goterm(goterm.id)
+    });
 
-    if (searchCriteria.contributor) {
-      let orcid = this.getOrcid(searchCriteria.contributor.orcid);
-      query.contributor(orcid)
-    }
+    each(searchCriteria.groups, (group: Group) => {
+      query.group(this.getXSD(group.url));
+    });
 
-    if (searchCriteria.gp) {
-      const gpIri = this.curieUtil.getIri(searchCriteria.gp.id)
-      query.gp(gpIri);
-    }
+    each(searchCriteria.contributors, (contributor: Contributor) => {
+      query.contributor(this.getXSD(contributor.orcid));
+    });
 
-    if (searchCriteria.pmid) {
-      query.pmid(searchCriteria.pmid);
-    }
+    each(searchCriteria.gps, (gp) => {
+      query.gp(this.curieUtil.getIri(gp.id));
+    });
 
-    if (searchCriteria.organism) {
-      //   let taxonUrl = `http://purl.obolibrary.org/obo/NCBITaxon_${searchCriteria.organism.taxon_id}`;
+    each(searchCriteria.pmids, (pmid) => {
+      query.pmid(pmid);
+    });
 
-      query.taxon(searchCriteria.organism.taxonIri);
-    }
+    each(searchCriteria.organisms, (organism: Organism) => {
+      query.taxon(organism.taxonIri);
+    });
 
     query.limit(50);
 
@@ -589,7 +590,7 @@ export class SparqlService {
 
 
   buildCamsByContributorQuery(orcid) {
-    let modOrcid = this.getOrcid(orcid);
+    let modOrcid = this.getXSD(orcid);
 
     let query = new NoctuaQuery();
     query.contributor(modOrcid);
@@ -729,8 +730,8 @@ export class SparqlService {
     return '?query=' + encodeURIComponent(query);
   }
 
-  getOrcid(orcid) {
-    return "\"" + orcid + "\"^^xsd:string";
+  getXSD(s) {
+    return "\"" + s + "\"^^xsd:string";
   }
 
 }

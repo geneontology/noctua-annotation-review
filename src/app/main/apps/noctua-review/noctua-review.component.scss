@@ -32,7 +32,7 @@
     margin-bottom: 4px;
     padding: 0 10px;
     @include deep-height(40px);
-    min-height: 40px; //min-height: 35px;
+    //  min-height: 40px; //min-height: 35px;
     background-color: #FFF;
     font-size: 16px;
     overflow: hidden;
@@ -40,7 +40,13 @@
     @include mat-elevation(2);
 
     &.noc-expanded {
-      @include deep-height(100px);
+      @include deep-height(150px);
+    }
+
+    mat-chip {
+      font-size: 14px;
+      font-weight: normal;
+      @include deep-height(30px);
     }
 
     .noc-summary-bar-section {

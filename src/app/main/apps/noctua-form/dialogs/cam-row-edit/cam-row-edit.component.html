@@ -27,7 +27,7 @@
         <mat-form-field class="">
           <input type="text" matInput formControlName="term" placeholder="Go Term" [matAutocomplete]="termAuto" />
           <mat-autocomplete #termAuto="matAutocomplete" class="noc-term-autocomplete">
-            <mat-option *ngFor="let item of searchFormData['goTerm']?.searchResults" [value]="item.id">
+            <mat-option *ngFor="let item of searchFormData['goterm']?.searchResults" [value]="item.id">
               <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
                 <div class="noc-term-label">
                   {{ item.label }}

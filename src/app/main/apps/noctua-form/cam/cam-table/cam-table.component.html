@@ -8,7 +8,8 @@
       <div class="noc-annoton-table-heading" fxLayout="row" fxLayoutAlign="start center">
         <div fxFlex="50px" (click)="$event.stopPropagation()">
           <button mat-icon-button (click)="toggleExpand(annoton)" class="">
-            <mat-icon *ngIf="!annoton.expanded" class="s-16 fa fa-caret-right">
+            <mat-icon *ngIf="!annoton.expanded" class="s-32">
+              arrow_right
             </mat-icon>
             <mat-icon *ngIf="annoton.expanded" class="s-12 mat-icon-rtl-mirror">
               signal_cellular_4_bar

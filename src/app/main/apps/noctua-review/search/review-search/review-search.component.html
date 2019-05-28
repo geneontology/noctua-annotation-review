@@ -2,7 +2,7 @@
   class="noc-drawer w-100-p h-100-p">
   <div class="noc-drawer-header" fxLayout="row" fxLayoutAlign="start center">
     <span class="noc-drawer-header-title">
-      General Search</span>
+      Search</span>
     <span fxFlex></span>
     <button mat-stroked-button (click)="close()" class="noc-rounded-button noc-sm" color="primary"
       aria-label="Close dialog">
@@ -11,19 +11,13 @@
   </div>
   <div class="noc-drawer-body noc-annoton-form" noctuaPerfectScrollbar>
     <div class="noc-table-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
-      <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
-        <div class="noc-section-heading">
-          Required
-        </div>
-        <span fxFlex></span>
-      </div>
       <div class="noc-section-body pt-8" fxLayout="column" fxLayoutAlign="start stretch">
         <div class="noc-annoton-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm">
             <mat-label>Go Term</mat-label>
-            <textarea type="text" matInput formControlName="goTerm" [matAutocomplete]="goTermAuto" rows="2"></textarea>
-            <mat-autocomplete #goTermAuto="matAutocomplete" [displayWith]="termDisplayFn" class="noc-term-autocomplete">
-              <mat-option class="noc-term-autocomplete" *ngFor="let item of searchFormData['goTerm']?.searchResults"
+            <textarea type="text" matInput formControlName="goterm" [matAutocomplete]="gotermAuto" rows="2"></textarea>
+            <mat-autocomplete #gotermAuto="matAutocomplete" [displayWith]="termDisplayFn" class="noc-term-autocomplete">
+              <mat-option class="noc-term-autocomplete" *ngFor="let item of searchFormData['goterm']?.searchResults"
                 [value]="item">
                 <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
                   <div class="noc-term-label">
@@ -91,10 +85,8 @@
             </mat-autocomplete>
           </mat-form-field>
           <mat-form-field appearance="outline" class="noc-sm">
-            <input type="text" matInput formControlName="providedBy" placeholder="Group"
-              [matAutocomplete]="providedByAuto" />
-            <mat-autocomplete #providedByAuto="matAutocomplete" class="noc-term-autocomplete"
-              [displayWith]="groupDisplayFn">
+            <input type="text" matInput formControlName="group" placeholder="Group" [matAutocomplete]="groupAuto" />
+            <mat-autocomplete #groupAuto="matAutocomplete" class="noc-term-autocomplete" [displayWith]="groupDisplayFn">
               <mat-option *ngFor="let item of filteredGroups | async" [value]="item">
                 <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
                   <div class="noc-term-label">

@@ -32,7 +32,7 @@ $noc-secondary-color: #995014;
 }
 
 textarea {
-  resize: none;
+  resize: none !important;
   overflow: hidden;
 }
 

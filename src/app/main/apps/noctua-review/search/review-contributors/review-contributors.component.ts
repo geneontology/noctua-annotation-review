@@ -64,8 +64,8 @@ export class ReviewContributorsComponent implements OnInit, OnDestroy {
   }
 
   selectContributor(contributor) {
-    this.searchCriteria.contributor = contributor.orcid;
-    this.noctuaSearchService.searchByContributor(this.searchCriteria)
+    this.searchCriteria.contributor = contributor;
+    this.noctuaSearchService.search(this.searchCriteria)
   }
 
 

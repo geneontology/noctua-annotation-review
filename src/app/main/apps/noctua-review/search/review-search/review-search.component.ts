@@ -75,27 +75,25 @@ export class ReviewSearchComponent implements OnInit, OnDestroy {
 
   createAnswerForm() {
     return new FormGroup({
-      gp: new FormControl(this.searchCriteria.gp),
-      goTerm: new FormControl(this.searchCriteria.goTerm),
-      pmid: new FormControl(this.searchCriteria.pmid),
-      contributor: new FormControl(this.searchCriteria.contributor),
-      providedBy: new FormControl(this.searchCriteria.providedBy),
-      organism: new FormControl(this.searchCriteria.organism),
+      gp: new FormControl(),
+      goterm: new FormControl(),
+      pmid: new FormControl(),
+      contributor: new FormControl(),
+      group: new FormControl(),
+      organism: new FormControl(),
     });
   }
-
-
 
   onValueChanges() {
     const self = this;
 
-    this.searchForm.get('goTerm').valueChanges
+    this.searchForm.get('goterm').valueChanges
       .distinctUntilChanged()
       .debounceTime(400)
       .subscribe(data => {
-        let searchData = self.searchFormData['goTerm'];
+        let searchData = self.searchFormData['goterm'];
         this.noctuaLookupService.golrTermLookup(data, searchData.id).subscribe(response => {
-          self.searchFormData['goTerm'].searchResults = response
+          self.searchFormData['goterm'].searchResults = response
         });
       });
 
@@ -124,7 +122,7 @@ export class ReviewSearchComponent implements OnInit, OnDestroy {
         map(contributor => contributor ? this.noctuaUserService.filterContributors(contributor) : this.noctuaUserService.contributors.slice())
       )
 
-    this.filteredGroups = this.searchForm.controls.providedBy.valueChanges
+    this.filteredGroups = this.searchForm.controls.group.valueChanges
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value['name']),

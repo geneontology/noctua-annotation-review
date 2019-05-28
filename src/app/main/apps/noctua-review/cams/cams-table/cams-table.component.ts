@@ -41,6 +41,7 @@ import {
   animations: noctuaAnimations
 })
 export class CamsTableComponent implements OnInit, OnDestroy {
+  private _unsubscribeAll: Subject<any>;
 
   searchCriteria: any = {};
   searchFormData: any = []
@@ -54,11 +55,10 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   searchResults = [];
 
 
-  private unsubscribeAll: Subject<any>;
 
   constructor(private route: ActivatedRoute,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    private noctuaSearchService: NoctuaSearchService,
+    public noctuaSearchService: NoctuaSearchService,
     public reviewService: ReviewService,
     private reviewDialogService: ReviewDialogService,
     private noctuaLookupService: NoctuaLookupService,
@@ -66,13 +66,13 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     public sparqlService: SparqlService) {
 
     this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
   }
 
   ngOnInit(): void {
 
     this.sparqlService.onCamsChanged
-      .pipe(takeUntil(this.unsubscribeAll))
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(cams => {
         this.cams = cams;
         this.loadCams();
@@ -98,12 +98,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       cam.expanded = false;
     } else {
       cam.expanded = true;
-      this.noctuaGraphService.getGraphInfo(cam, cam.id)
-      cam.onGraphChanged.subscribe((annotons) => {
-        //  let data = this.summaryGridService.getGrid(annotons);
-        // this.sparqlService.addCamChildren(cam, data);
-        //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
-      });
+      this.noctuaGraphService.getGraphInfo(cam, cam.id);
     }
   }
 
@@ -120,7 +115,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }

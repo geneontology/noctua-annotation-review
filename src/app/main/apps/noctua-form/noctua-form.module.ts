@@ -38,12 +38,19 @@ import { AnnotonConnectorFormComponent } from './cam/annoton/annoton-connector-f
 import { AnnotonEntityTableComponent } from './cam/cam-table/annoton-entity-table/annoton-entity-table.component';
 import { AnnotonTableComponent } from './cam/cam-table/annoton-table/annoton-table.component';
 
+const routes = [
+  {
+    path: 'f',
+    component: NoctuaFormComponent
+  }
+];
 
 @NgModule({
   imports: [
     NoctuaSharedModule,
     CommonModule,
     // NoctuaModule.forRoot(noctuaConfig),
+    RouterModule.forChild(routes),
     ContextMenuModule.forRoot(),
   ],
   exports: [

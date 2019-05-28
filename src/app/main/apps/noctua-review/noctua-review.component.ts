@@ -8,7 +8,6 @@ import { noctuaAnimations } from './../../../../@noctua/animations';
 import {
   Cam,
   Contributor,
-  Annoton,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,
@@ -64,54 +63,48 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
   }
   cams: any[] = [];
 
-  private unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any>;
 
   constructor(private route: ActivatedRoute,
-    private camService: CamService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    private noctuaSearchService: NoctuaSearchService,
+    public noctuaSearchService: NoctuaSearchService,
     public noctuaFormService: NoctuaFormService,
     // private noctuaLookupService: NoctuaLookupService,
     private noctuaGraphService: NoctuaGraphService,
     private sparqlService: SparqlService,
     public reviewService: ReviewService,
-    private reviewDialogService: ReviewDialogService,
 
 
   ) {
 
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
 
     this.route
       .queryParams
       .subscribe(params => {
-        this.modelId = params['model_id'] || null;
         this.baristaToken = params['barista_token'] || null;
-        this.noctuaGraphService.baristaToken = this.baristaToken;
+        this.noctuaUserService.baristaToken = this.baristaToken;
         this.getUserInfo();
         this.loadCams();
       });
-
-    //  this.camService.setAnnotonLocation('aaa', 4, 5).subscribe((res) => {
-    //  console.log(res)
-    //   });
   }
 
   getUserInfo() {
-    const self = this;
 
-    this.noctuaUserService.getUser().subscribe((response) => {
-      if (response) {
-        this.user = new Contributor()
-        this.user.name = response.nickname;
-        this.user.groups = response.groups;
-        // user.manager.use_groups([self.userInfo.selectedGroup.id]);
-        this.noctuaUserService.user = this.user;
-        this.noctuaUserService.onUserChanged.next(this.user);
-      }
-    });
+    this.noctuaUserService.getUser()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response) => {
+        if (response && response.nickname) {
+          this.user = new Contributor()
+          this.user.name = response.nickname;
+          this.user.groups = response.groups;
+          // user.manager.use_groups([self.userInfo.selectedGroup.id]);
+          this.noctuaUserService.user = this.user;
+          this.noctuaUserService.onUserChanged.next(this.user);
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -126,29 +119,33 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     });
     */
 
-    this.sparqlService.getAllContributors().subscribe((response: any) => {
-      this.reviewService.contributors = response;
-      this.reviewService.onContributorsChanged.next(response);
-      this.sparqlService.getCamsByGoTerm({ id: 'GO:0017127' }).subscribe((response: any) => {
-        this.cams = this.sparqlService.cams = response;
-        this.sparqlService.onCamsChanged.next(this.cams);
+    this.sparqlService.getAllContributors()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response: any) => {
+        this.reviewService.contributors = response;
+        this.reviewService.onContributorsChanged.next(response);
+
+        this.noctuaSearchService.updateSearch();
       });
-    });
 
-    this.sparqlService.getAllGroups().subscribe((response: any) => {
-      this.reviewService.groups = response;
-      this.reviewService.onGroupsChanged.next(response);
-    });
+    this.sparqlService.getAllGroups()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response: any) => {
+        this.reviewService.groups = response;
+        this.reviewService.onGroupsChanged.next(response);
+      });
 
 
 
-    this.sparqlService.getAllOrganisms().subscribe((response: any) => {
-      this.reviewService.organisms = response;
-      this.reviewService.onOrganismsChanged.next(response);
-    });
+    this.sparqlService.getAllOrganisms()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response: any) => {
+        this.reviewService.organisms = response;
+        this.reviewService.onOrganismsChanged.next(response);
+      });
 
     this.sparqlService.onCamsChanged
-      .pipe(takeUntil(this.unsubscribeAll))
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(cams => {
         this.cams = cams;
         this.summary.detail = this.sparqlService.searchSummary;
@@ -156,13 +153,13 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
       });
 
     this.reviewService.onContributorsChanged
-      .pipe(takeUntil(this.unsubscribeAll))
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(contributors => {
         this.noctuaUserService.contributors = contributors;
       });
 
     this.reviewService.onGroupsChanged
-      .pipe(takeUntil(this.unsubscribeAll))
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(groups => {
         this.noctuaUserService.groups = groups;
       });
@@ -196,13 +193,22 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  refresh() {
+    this.noctuaSearchService.updateSearch();
+  }
+
   selectCam(cam) {
     this.sparqlService.onCamChanged.next(cam);
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
+
+
+
+
+
 }
 

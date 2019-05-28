@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4202  --extra-webpack-config webpack.extra.js",
-    "build": "ng build --prod --index src/inject.tmpl  --base-href  /workbench/noctua-form/ --extra-webpack-config webpack.extra.js",
+    "build": "ng build --index src/inject.tmpl  --base-href  /workbench/noctua-annotation-review/ --extra-webpack-config webpack.extra.js",
     "start-hmr": "ng serve --configuration hmr -sm=false",
     "start-hmr-sourcemaps": "ng serve --hmr -e=hmr",
     "build-dev": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev",
@@ -74,7 +74,7 @@
     "material-steppers": "^2.0.0",
     "minerva-requests": "0.0.17",
     "moment": "2.24.0",
-    "noctua-form-base": "file:../noctua-form-base/dist/noctua-form-base-0.3.1.tgz",
+    "noctua-form-base": "file:../noctua-form-base/dist/noctua-form-base-0.3.4.tgz",
     "ng2-charts": "2.2.2",
     "ngrx-store-freeze": "0.2.4",
     "ngx-build-plus": "^7.8.2",
@@ -89,7 +89,7 @@
     "rxjs": "6.5.1",
     "rxjs-compat": "6.5.1",
     "sparql-query-builder": "file:../sparql-query-builder/sparql-query-builder-0.0.31.tgz",
-    "noctua-sparql-query-builder": "file:../noctua-sparql-query-builder/noctua-sparql-query-builder-0.0.36.tgz",
+    "noctua-sparql-query-builder": "file:../noctua-sparql-query-builder/noctua-sparql-query-builder-0.0.37.tgz",
     "uuid": "^3.3.2",
     "web-animations-js": "2.3.1",
     "zone.js": "0.9.0"

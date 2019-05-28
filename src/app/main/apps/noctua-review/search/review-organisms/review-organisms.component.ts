@@ -71,7 +71,6 @@ export class ReviewOrganismsComponent implements OnInit, OnDestroy {
   search() {
     let searchCriteria = this.searchForm.value;
 
-    console.dir(searchCriteria)
     this.noctuaSearchService.search(searchCriteria);
   }
 

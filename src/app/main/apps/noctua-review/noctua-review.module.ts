@@ -10,6 +10,7 @@ import { CamService } from 'noctua-form-base';
 import { CamsTableComponent } from './cams/cams-table/cams-table.component';
 
 //Search and Browse
+import { ReviewFilterComponent } from './search/review-filter/review-filter.component';
 import { ReviewSearchComponent } from './search/review-search/review-search.component';
 import { ReviewContributorsComponent } from './search/review-contributors/review-contributors.component';
 import { ReviewGroupsComponent } from './search/review-groups/review-groups.component';
@@ -41,6 +42,7 @@ const routes = [
   declarations: [
     NoctuaReviewComponent,
     CamsTableComponent,
+    ReviewFilterComponent,
     ReviewSearchComponent,
     ReviewContributorsComponent,
     ReviewGroupsComponent,

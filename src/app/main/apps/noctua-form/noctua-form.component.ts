@@ -55,7 +55,6 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
       .subscribe(params => {
         this.modelId = params['model_id'] || null;
         this.baristaToken = params['barista_token'] || null;
-
         this.noctuaUserService.baristaToken = this.baristaToken;
         this.getUserInfo();
         this.loadCam(this.modelId);
@@ -66,7 +65,7 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     const self = this;
 
     this.noctuaUserService.getUser().subscribe((response) => {
-      if (response) {
+      if (response && response.nickname) {
         this.user = new Contributor()
         this.user.name = response.nickname;
         this.user.groups = response.groups;

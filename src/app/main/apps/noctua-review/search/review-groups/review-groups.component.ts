@@ -66,14 +66,13 @@ export class ReviewGroupsComponent implements OnInit, OnDestroy {
 
   selectGroup(group) {
     this.searchCriteria.group = group;
-    this.noctuaSearchService.searchByGroup(this.searchCriteria);
+    this.noctuaSearchService.search(this.searchCriteria);
   }
 
 
   search() {
     let searchCriteria = this.searchForm.value;
 
-    console.dir(searchCriteria)
     this.noctuaSearchService.search(searchCriteria);
   }
 

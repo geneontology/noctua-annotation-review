@@ -5,6 +5,11 @@
       [matTooltipShowDelay]="1500">
       <mat-icon> search </mat-icon>
     </button>
+    <button mat-icon-button color="primary" class="noc-rounded-button"
+      (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" matTooltip="Filter" [matTooltipPosition]="'after'"
+      [matTooltipShowDelay]="1500">
+      <mat-icon> filter_list </mat-icon>
+    </button>
     <button mat-icon-button color="primary" class="noc-rounded-button" (click)="
       toggleLeftDrawer(reviewService.leftPanel.group)" matTooltip="Search by group" [matTooltipPosition]="'after'"
       [matTooltipShowDelay]="1000">
@@ -25,6 +30,7 @@
     <mat-drawer #leftDrawer class="noc-left-drawer" mode="side" position="start">
       <div [ngSwitch]="reviewService.selectedLeftPanel.id" class="h-100-p">
         <noc-review-search *ngSwitchCase="reviewService.leftPanel.search.id"></noc-review-search>
+        <noc-review-filter *ngSwitchCase="reviewService.leftPanel.filter.id"></noc-review-filter>
         <noc-review-groups *ngSwitchCase="reviewService.leftPanel.group.id"></noc-review-groups>
         <noc-review-contributors *ngSwitchCase="reviewService.leftPanel.contributor.id"></noc-review-contributors>
         <noc-review-organisms *ngSwitchCase="reviewService.leftPanel.species.id"></noc-review-organisms>
@@ -34,20 +40,50 @@
       <div class="noc-summary-bar" [ngClass]="{'noc-expanded': summary.expanded}" fxLayout="column"
         fxLayoutAlign="start stretch">
         <div class="noc-cams-table-header w-100-p" fxLayout="row" fxLayoutAlign="start center">
-          <div fxFlex="50px" (click)="$event.stopPropagation()">
-            <button mat-icon-button (click)="toggleSummaryExpand()" class="noc-br">
-              <mat-icon *ngIf="!summary.expanded" class="s-16 fa fa-caret-right">
-              </mat-icon>
-              <mat-icon *ngIf="summary.expanded" class="s-12 mat-icon-rtl-mirror">
-                signal_cellular_4_bar
-              </mat-icon>
-            </button>
+          <div class="mr-12">
+            <small>Models: </small> {{ cams.length}}
           </div>
-          <div class="" fxFlex="200px">
-            <div class="">
-              <small>Models: </small> {{cams?.length }}
-            </div>
-          </div>
+
+          <small class="mr-12">Filtered By: </small>
+          <mat-chip-list>
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.gps.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.gps)">
+              <small>GPs: </small> ({{ noctuaSearchService.searchCriteria.gps.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.goterms.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.goterms)">
+              <small>GO Terms: </small> ({{ noctuaSearchService.searchCriteria.goterms.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.contributors.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.contributors)">
+              <small>Contributors: </small> ({{ noctuaSearchService.searchCriteria.contributors.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.groups.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.groups)">
+              <small>Groups: </small> ({{ noctuaSearchService.searchCriteria.groups.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.organisms.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.organisms)">
+              <small>Species: </small> ({{ noctuaSearchService.searchCriteria.organisms.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+
+            <mat-chip *ngIf="noctuaSearchService.searchCriteria.pmids.length>0"
+              (click)="toggleLeftDrawer(reviewService.leftPanel.filter)" [removable]="true"
+              (removed)="noctuaSearchService.removeFilterType(noctuaSearchService.filterType.pmids)">
+              <small>PMIDs: </small> ({{ noctuaSearchService.searchCriteria.pmids.length}})
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
           <span fxFlex=""></span>
           <div class="" fxFlex="150px" fxLayout="row" fxLayoutAlign="end center">
             <button mat-icon-button (click)="refresh()" class="noc-bl">
@@ -55,25 +91,6 @@
                 refresh
               </mat-icon>
             </button>
-            <button mat-icon-button (click)="toggleSummaryExpand()" class="noc-bl">
-              <mat-icon *ngIf="!summary.expanded" class="">
-                keyboard_arrow_down
-              </mat-icon>
-              <mat-icon *ngIf="summary.expanded" class="">
-                keyboard_arrow_up
-              </mat-icon>
-            </button>
-          </div>
-        </div>
-        <div class="noc-cam-table-body p-8 w-100-p" fxLayout="column" fxLayoutAlign="start">
-          <div class="pt-16 pb-16" *ngFor="let summaryDetail of summary.detail | keyvalue" fxLayout="row"
-            fxLayoutAlign="start center">
-            <div fxFlex="200px">
-              <strong> {{summaryDetail.key}}</strong>
-            </div>
-            <div>
-              :{{summaryDetail.value}}
-            </div>
           </div>
         </div>
       </div>
