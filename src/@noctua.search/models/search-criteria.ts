@@ -7,6 +7,7 @@ export class SearchCriteria {
     contributors: Contributor[] = [];
     groups: Group[] = [];
     organisms: Organism[] = [];
+    states: any[] = [];
 
     constructor() {
     }

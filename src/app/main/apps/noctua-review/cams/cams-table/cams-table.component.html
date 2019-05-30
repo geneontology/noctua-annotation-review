@@ -16,13 +16,19 @@
             </mat-icon>
           </button>
         </div>
-        <div class="" fxFlex="300px">
+        <div class="pr-8" fxFlex="250px">
           <div class="noc-title">
             {{cam.title }}
           </div>
         </div>
-        <div class="" fxFlex="120px" fxLayout="row" fxLayoutAlign="start center">
-          <mat-icon>date_range</mat-icon> <span>{{cam.date }}</span>
+        <div class="noc-model-state pr-12" fxFlex="110px" fxLayout="row" fxLayoutAlign="start center">
+          <mat-chip *ngIf="cam.state" class="w-100-p"
+            (click)="noctuaSearchService.filter(noctuaSearchService.filterType.states, cam.state)">
+            <mat-icon class="s-16">playlist_add_check</mat-icon> <span> {{cam.state.label }}</span>
+          </mat-chip>
+        </div>
+        <div class="noc-date" fxFlex="100px" fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon class="s-16">date_range</mat-icon> <span>{{cam.date }}</span>
         </div>
         <div class="" fxFlex="">
           <mat-chip-list>
@@ -55,14 +61,6 @@
           <button mat-icon-button (click)="refresh(cam)" class="">
             <mat-icon class="">
               refresh
-            </mat-icon>
-          </button>
-          <button mat-icon-button (click)="toggleExpand(cam)" class="">
-            <mat-icon *ngIf="!cam.expanded" class="">
-              keyboard_arrow_down
-            </mat-icon>
-            <mat-icon *ngIf="cam.expanded" class="">
-              keyboard_arrow_up
             </mat-icon>
           </button>
         </div>

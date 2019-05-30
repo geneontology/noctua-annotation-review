@@ -60,18 +60,7 @@ export class ReviewSearchComponent implements OnInit, OnDestroy {
     this.onValueChanges();
   }
 
-  ngOnInit(): void {
-
-
-  }
-
-
-  search() {
-    let searchCriteria = this.searchForm.value;
-
-    console.dir(searchCriteria)
-    this.noctuaSearchService.search(searchCriteria);
-  }
+  ngOnInit(): void { }
 
   createAnswerForm() {
     return new FormGroup({
@@ -148,6 +137,22 @@ export class ReviewSearchComponent implements OnInit, OnDestroy {
 
   organismDisplayFn(organism): string | undefined {
     return organism ? organism.taxonName : undefined;
+  }
+
+  search() {
+    let searchCriteria = this.searchForm.value;
+
+    this.noctuaSearchService.search(searchCriteria);
+    this.clear();
+  }
+
+  clear() {
+    this.searchForm.controls.gp.setValue('');
+    this.searchForm.controls.goterm.setValue('');
+    this.searchForm.controls.pmid.setValue('');
+    this.searchForm.controls.contributor.setValue('');
+    this.searchForm.controls.group.setValue('');
+    this.searchForm.controls.organism.setValue('');
   }
 
   close() {

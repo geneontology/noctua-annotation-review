@@ -10,10 +10,10 @@
   mat-chip {
     font-size: 12px;
     font-weight: normal;
-    @include deep-height(30px);
-    max-width: 200px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    //min-height: 30px;
+    //  max-width: 200px;
+    // text-overflow: ellipsis;
+    //  white-space: nowrap;
   }
 
   .noc-search-form {

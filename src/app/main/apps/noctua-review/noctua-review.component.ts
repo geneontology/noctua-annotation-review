@@ -124,7 +124,6 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
       .subscribe((response: any) => {
         this.reviewService.contributors = response;
         this.reviewService.onContributorsChanged.next(response);
-
         this.noctuaSearchService.updateSearch();
       });
 

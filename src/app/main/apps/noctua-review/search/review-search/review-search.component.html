@@ -14,7 +14,7 @@
       <div class="noc-section-body pt-8" fxLayout="column" fxLayoutAlign="start stretch">
         <div class="noc-annoton-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm">
-            <mat-label>Go Term</mat-label>
+            <mat-label>GO Term</mat-label>
             <textarea type="text" matInput formControlName="goterm" [matAutocomplete]="gotermAuto" rows="2"></textarea>
             <mat-autocomplete #gotermAuto="matAutocomplete" [displayWith]="termDisplayFn" class="noc-term-autocomplete">
               <mat-option class="noc-term-autocomplete" *ngFor="let item of searchFormData['goterm']?.searchResults"
@@ -139,7 +139,7 @@
       Why is the "Search" button disabled?
     </button>
     <span fxFlex></span>
-    <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">Clear</button>
+    <button (click)='clear()' type="button" mat-raised-button color="" class="mr-8">Clear</button>
     <button (click)="search()" type="button" mat-raised-button color="primary">Search</button>
   </div>
 </form>

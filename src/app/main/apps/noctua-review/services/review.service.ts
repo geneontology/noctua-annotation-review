@@ -51,18 +51,18 @@ export class ReviewService {
   contributors: Contributor[] = [];
   groups: Group[] = [];
   organisms: Organism[] = [];
+  states: any[] = [];
 
   private leftDrawer: MatDrawer;
   private rightDrawer: MatDrawer;
 
-  constructor() {
+  constructor(private noctuaFormConfigService: NoctuaFormConfigService) {
     this.onContributorsChanged = new BehaviorSubject([]);
     this.onGroupsChanged = new BehaviorSubject([]);
     this.onOrganismsChanged = new BehaviorSubject([]);
 
     this.selectedLeftPanel = this.leftPanel.search;
-    console.log(this.selectedLeftPanel)
-
+    this.states = this.noctuaFormConfigService.modelState.options;
   }
 
   selectLeftPanel(panel) {
@@ -113,6 +113,12 @@ export class ReviewService {
     const filterValue = value.toLowerCase();
 
     return this.organisms.filter(organism => organism.taxonName.toLowerCase().indexOf(filterValue) === 0);
+  }
+
+  public filterStates(value: string): any[] {
+    const filterValue = value.toLowerCase();
+
+    return this.states.filter(state => state.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
 }

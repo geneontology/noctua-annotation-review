@@ -29,7 +29,8 @@ export class NoctuaSearchService {
         pmids: 'pmids',
         contributors: 'contributors',
         groups: 'groups',
-        organisms: 'organisms'
+        organisms: 'organisms',
+        states: 'states'
     }
 
     constructor(private httpClient: HttpClient, private sparqlService: SparqlService) {
@@ -55,6 +56,7 @@ export class NoctuaSearchService {
         searchCriteria.goterm ? this.searchCriteria.goterms.push(searchCriteria.goterm) : null;
         searchCriteria.gp ? this.searchCriteria.gps.push(searchCriteria.gp) : null;
         searchCriteria.organism ? this.searchCriteria.organisms.push(searchCriteria.organism) : null;
+        searchCriteria.state ? this.searchCriteria.states.push(searchCriteria.state) : null;
 
         this.updateSearch();
     }
@@ -75,48 +77,10 @@ export class NoctuaSearchService {
 
     removeFilter(filterType, filter) {
         this.searchCriteria[filterType] = null;
-
     }
 
     clearSearchCriteria() {
         this.searchCriteria = new SearchCriteria();
         this.updateSearch();
-    }
-
-    filterByContributor(cams, contributor) {
-        return _.filter(cams, (cam: Cam) => {
-            let found = _.find(cam.contributors, (contributor: Contributor) => {
-                return contributor.orcid === contributor.orcid;
-            });
-
-            return found ? true : false
-        });
-    }
-
-    searchByGroup(searchCriteria) {
-        if (searchCriteria.group) {
-            this.sparqlService.getCamsByGroup(searchCriteria.group).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
-            });
-        }
-    }
-
-    searchByContributor(searchCriteria) {
-        if (searchCriteria.contributor) {
-            this.sparqlService.getCamsByContributor(searchCriteria.contributor).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
-            });
-        }
-    }
-
-    searchBySpecies(searchCriteria) {
-        if (searchCriteria.organism) {
-            this.sparqlService.getCamsBySpecies(searchCriteria.organism).subscribe((response: any) => {
-                this.cams = this.sparqlService.cams = response;
-                this.sparqlService.onCamsChanged.next(this.cams);
-            });
-        }
     }
 }

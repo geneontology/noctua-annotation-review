@@ -128,7 +128,6 @@
         </div>
       </div>
     </div>
-
     <div class="noc-table-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
       <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
         <div class="noc-section-heading">
@@ -169,7 +168,6 @@
         </div>
       </div>
     </div>
-
     <div class="noc-table-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
       <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
         <div class="noc-section-heading">
@@ -210,8 +208,6 @@
         </div>
       </div>
     </div>
-
-
     <div class="noc-table-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
       <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
         <div class="noc-section-heading">
@@ -236,7 +232,41 @@
         </div>
       </div>
     </div>
-
+    <div class="noc-table-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
+      <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
+        <div class="noc-section-heading">
+          Filter By State
+        </div>
+        <span fxFlex></span>
+      </div>
+      <div class="noc-section-body p-0" fxLayout="column" fxLayoutAlign="start stretch">
+        <div class="noc-annoton-state-row" fxLayout="column">
+          <mat-form-field appearance="outline" class="noc-sm w-100-p">
+            <mat-chip-list #stateChipList>
+              <mat-chip *ngFor="let state of noctuaSearchService.searchCriteria.states" [selectable]="true"
+                [removable]="true" (removed)="remove(state, noctuaSearchService.filterType.states)">
+                {{state.name}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input formControlName="states" placeholder="Add State Filter" [matAutocomplete]="stateAuto" #stateInput
+                [matChipInputFor]="stateChipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="false">
+            </mat-chip-list>
+            <mat-autocomplete #stateAuto="matAutocomplete"
+              (optionSelected)="selected($event, noctuaSearchService.filterType.states)" [displayWith]="stateDisplayFn"
+              class="noc-term-autocomplete">
+              <mat-option class="noc-term-autocomplete" *ngFor="let item of filteredStates | async" [value]="item">
+                <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
+                  <div class="noc-term-label">
+                    {{ item.label }}
+                  </div>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="start center" class="noc-drawer-footer noc-submit-row">
     <span fxFlex></span>

@@ -75,161 +75,12 @@ export class SparqlService {
         tap(val => console.dir(val)),
         map(res => this.addCam(res)),
         tap(val => console.dir(val)),
-        tap(res => {
-          self.searchSummary = searchCriteria
-        }),
         finalize(() => {
           self.loading = false;
         })
       );
   }
 
-  //GO:0099160
-  getCamsByGoTerm(term): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsByGoTermQuery(term))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)),
-        tap(res => {
-          self.searchSummary =
-            {
-              term: term
-            }
-        }),
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
-
-  //PMID:25869803
-  getCamsByPMID(pmid): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsPMIDQuery(pmid))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)), tap(res => {
-          self.searchSummary =
-            {
-              PMID: pmid
-            }
-        }),
-
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
-
-  //Ina Rnor (RGD:2911)
-  getCamsByGP(gp): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsByGP(gp))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)),
-        tap(res => {
-          self.searchSummary =
-            {
-              'Gene Product': gp
-            }
-        }),
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
-
-  getCamsByGroup(group): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsByGroupQuery(group))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)),
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
-
-  getCamsByContributor(orcid): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsByContributorQuery(orcid))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(res => {
-          self.searchSummary =
-            {
-              contributor: orcid
-            }
-        }),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)),
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
-
-  getCamsBySpecies(species): Observable<any> {
-    const self = this;
-
-    self.loading = true;
-    self.searchSummary = {}
-    return this.httpClient
-      .get(this.baseUrl + this.buildCamsBySpeciesQuery(species.taxon_id))
-      .pipe(
-        map(res => res['results']),
-        map(res => res['bindings']),
-        tap(res => {
-          self.searchSummary =
-            {
-              species: species.long_name
-            }
-        }),
-        tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
-        tap(val => console.dir(val)),
-        finalize(() => {
-          self.loading = false;
-        })
-      );
-  }
 
   getAllContributors(): Observable<any> {
     return this.httpClient
@@ -278,6 +129,7 @@ export class SparqlService {
       cam.id = uuid();
       cam.graph = null;
       cam.id = modelId;
+      cam.state = self.noctuaFormConfigService.findModelState(response.modelState.value);
       cam.title = response.modelTitle.value;
       cam.model = Object.assign({}, {
         modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)
@@ -290,7 +142,7 @@ export class SparqlService {
       if (response.groups) {
         cam.groups = <Group[]>response.groups.value.split(self.separator).map(function (url) {
           return { url: url };
-        }); ``
+        });
       }
 
       if (response.contributors) {
@@ -439,15 +291,6 @@ export class SparqlService {
     return result;
   }
 
-  //GO:0003723
-  buildCamsByGoTermQuery(goterm) {
-    let query = new NoctuaQuery();
-
-    query.goterm(goterm.id);
-    query.limit(100);
-    return '?query=' + encodeURIComponent(query.build());
-  }
-
   buildCamsQuery(searchCriteria: SearchCriteria) {
     let query = new NoctuaQuery();
 
@@ -473,6 +316,10 @@ export class SparqlService {
 
     each(searchCriteria.organisms, (organism: Organism) => {
       query.taxon(organism.taxonIri);
+    });
+
+    each(searchCriteria.states, (state: any) => {
+      query.state(this.getXSD(state.name));
     });
 
     query.limit(50);
@@ -506,50 +353,6 @@ export class SparqlService {
         'BIND(IF(bound(?name), ?name, ?orcid) as ?name)')
       .groupBy('?orcid ?name')
       .orderBy('?name', 'ASC');
-    return '?query=' + encodeURIComponent(query.build());
-  }
-
-  buildCamsByGroupQuery(group) {
-    let query = new Query();
-    let graphQuery = new Query();
-    graphQuery.graph('?model',
-      '?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; dc:contributor ?orcid; providedBy: ?providedBy',
-      'BIND( IRI(?orcid) AS ?orcidIRI )',
-      'BIND( IRI(?providedBy) AS ?providedByIRI )'
-    );
-
-    query.prefix(
-      prefix('rdf', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>'),
-      prefix('rdfs', '<http://www.w3.org/2000/01/rdf-schema#>'),
-      prefix('dc', '<http://purl.org/dc/elements/1.1/>'),
-      prefix('metago', '<http://model.geneontology.org/>'),
-      prefix('owl', '<http://www.w3.org/2002/07/owl#>'),
-      prefix('GO', '<http://purl.obolibrary.org/obo/GO_>'),
-      prefix('BP', '<http://purl.obolibrary.org/obo/GO_0008150>'),
-      prefix('MF', '<http://purl.obolibrary.org/obo/GO_0003674>'),
-      prefix('CC', '<http://purl.obolibrary.org/obo/GO_0005575>'),
-      prefix('providedBy', '<http://purl.org/pav/providedBy>'),
-      prefix('vcard', '<http://www.w3.org/2006/vcard/ns#>'),
-      prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
-      prefix('enabled_by', '<http://purl.obolibrary.org/obo/RO_0002333>'),
-      prefix('obo', '<http://www.geneontology.org/formats/oboInOwl#>'))
-      .select(
-        'distinct ?model ?modelTitle ?date',
-        '(GROUP_CONCAT(distinct ?entity;separator="@@") as ?entities)',
-        '(GROUP_CONCAT(distinct ?orcid;separator="@@") as ?contributors)'
-      ).where(
-        `BIND("${group.name}" as ?groupName)`,
-        graphQuery,
-        optional(
-          triple('?providedByIRI', 'rdfs:label', '?providedByLabel')
-        ),
-        'FILTER(?providedByLabel = ?groupName )',
-        'BIND(IF(bound(?name), ?name, ?orcid) as ?name)',
-      )
-      .groupBy('?model ?modelTitle ?aspect ?date')
-      .orderBy('?date', 'DESC')
-      .limit(100)
-
     return '?query=' + encodeURIComponent(query.build());
   }
 
@@ -588,16 +391,6 @@ export class SparqlService {
     return '?query=' + encodeURIComponent(query.build());
   }
 
-
-  buildCamsByContributorQuery(orcid) {
-    let modOrcid = this.getXSD(orcid);
-
-    let query = new NoctuaQuery();
-    query.contributor(modOrcid);
-
-    return '?query=' + encodeURIComponent(query.build());
-  }
-
   buildAllGroupsQuery() {
     let query = `
         PREFIX metago: <http://model.geneontology.org/>
@@ -620,113 +413,6 @@ export class SparqlService {
         }
         GROUP BY ?url ?name`
 
-    return '?query=' + encodeURIComponent(query);
-  }
-
-  buildCamsPMIDQuery(pmid) {
-    let query = `
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX dc: <http://purl.org/dc/elements/1.1/> 
-    PREFIX metago: <http://model.geneontology.org/>
-    PREFIX providedBy: <http://purl.org/pav/providedBy>
-            
-    SELECT distinct ?model ?modelTitle ?aspect ?term ?termLabel ?date
-                        (GROUP_CONCAT( ?entity;separator="@@") as ?entities)
-                        (GROUP_CONCAT(distinct ?contributor;separator="@@") as ?contributors)
-                        (GROUP_CONCAT( ?providedBy;separator="@@") as ?providedBys)
-    WHERE 
-    {
-        GRAPH ?model {
-            ?model metago:graphType metago:noctuaCam ;    
-                dc:date ?date;
-                dc:title ?modelTitle; 
-                dc:contributor ?contributor .
-            optional {?model providedBy: ?providedBy } .
-            ?entity dc:source ?source .
-            BIND(REPLACE(?source, " ", "") AS ?source) .
-            FILTER((CONTAINS(?source, "${pmid}")))
-        }           
-    }
-    GROUP BY ?model ?modelTitle ?aspect ?term ?termLabel ?date
-    ORDER BY DESC(?date)`
-
-    return '?query=' + encodeURIComponent(query);
-  }
-
-  buildCamsByGP(gp) {
-
-    const id = this.curieUtil.getIri(gp.id)
-
-    console.log(id, "===")
-    let query = `
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> 
-    PREFIX dc: <http://purl.org/dc/elements/1.1/> 
-    PREFIX metago: <http://model.geneontology.org/>    
-    PREFIX enabled_by: <http://purl.obolibrary.org/obo/RO_0002333>    
-    PREFIX providedBy: <http://purl.org/pav/providedBy>
-            
-    SELECT distinct ?model ?modelTitle ?aspect ?term ?termLabel ?date
-                        (GROUP_CONCAT(distinct  ?entity;separator="@@") as ?entities)
-                        (GROUP_CONCAT(distinct  ?contributor;separator="@@") as ?contributors)
-                        (GROUP_CONCAT(distinct  ?providedBy;separator="@@") as ?providedBys)
-    
-    WHERE 
-    {
-    
-      GRAPH ?model {
-        ?model metago:graphType metago:noctuaCam;
-            dc:date ?date;
-            dc:title ?modelTitle; 
-            dc:contributor ?contributor .
-
-        optional {?model providedBy: ?providedBy } .
-        ?s enabled_by: ?entity .    
-        ?entity rdf:type ?identifier .
-        FILTER(?identifier = <` + id + `>) .         
-      }
-      
-    }
-    GROUP BY ?model ?modelTitle ?aspect ?term ?termLabel ?date
-    ORDER BY DESC(?date)`
-
-    return '?query=' + encodeURIComponent(query);
-  }
-
-
-  buildCamsBySpeciesQuery(taxon) {
-    let taxonUrl = "<http://purl.obolibrary.org/obo/NCBITaxon_" + taxon + ">";
-
-    let query = `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-          PREFIX owl: <http://www.w3.org/2002/07/owl#>
-          PREFIX metago: <http://model.geneontology.org/>
-          PREFIX dc: <http://purl.org/dc/elements/1.1/>
-  
-          PREFIX enabled_by: <http://purl.obolibrary.org/obo/RO_0002333>
-          PREFIX in_taxon: <http://purl.obolibrary.org/obo/RO_0002162>
-  
-          SELECT distinct ?model ?modelTitle
-  
-          WHERE 
-          {
-              GRAPH ?model {
-                  ?model metago:graphType metago:noctuaCam;
-                      dc:title ?modelTitle .
-                  ?s enabled_by: ?entity .    
-                  ?entity rdf:type ?identifier .
-                  FILTER(?identifier != owl:NamedIndividual) .         
-              }
-  
-              ?identifier rdfs:subClassOf ?v0 . 
-              ?identifier rdfs:label ?name .
-              
-              ?v0 owl:onProperty in_taxon: . 
-              ?v0 owl:someValuesFrom ` + taxonUrl + `
-          }
-          LIMIT 100`
     return '?query=' + encodeURIComponent(query);
   }
 

@@ -16,7 +16,7 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { ReviewService } from '../../services/review.service';
 
 import { NoctuaTranslationLoaderService } from '@noctua/services/translation-loader.service';
-import { NoctuaFormConfigService, NoctuaUserService, Group, Contributor } from 'noctua-form-base';
+import { NoctuaFormConfigService, NoctuaUserService, Group, Contributor, Organism } from 'noctua-form-base';
 import { NoctuaLookupService } from 'noctua-form-base';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 
@@ -46,6 +46,7 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
   filteredOrganisms: Observable<any[]>;
   filteredGroups: Observable<any[]>;
   filteredContributors: Observable<any[]>;
+  filteredStates: Observable<any[]>;
 
 
   private unsubscribeAll: Subject<any>;
@@ -87,7 +88,8 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
       pmids: new FormControl(),
       contributors: new FormControl(),
       groups: new FormControl(),
-      organisms: new FormControl()
+      organisms: new FormControl(),
+      states: new FormControl()
     });
   }
 
@@ -137,6 +139,14 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
           value => typeof value === 'string' ? value : value['name']),
         map(group => group ? this.noctuaUserService.filterGroups(group) : this.noctuaUserService.groups.slice())
       )
+
+    this.filteredStates = this.filterForm.controls.states.valueChanges
+      .pipe(
+        startWith(''),
+        map(
+          value => typeof value === 'string' ? value : value['name']),
+        map(state => state ? this.reviewService.filterStates(state) : this.reviewService.states.slice())
+      )
   }
 
   termDisplayFn(term): string | undefined {
@@ -147,16 +157,20 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
     return evidence ? evidence.label : undefined;
   }
 
-  contributorDisplayFn(contributor): string | undefined {
+  contributorDisplayFn(contributor: Contributor): string | undefined {
     return contributor ? contributor.name : undefined;
   }
 
-  groupDisplayFn(group): string | undefined {
+  groupDisplayFn(group: Group): string | undefined {
     return group ? group.name : undefined;
   }
 
-  organismDisplayFn(organism): string | undefined {
+  organismDisplayFn(organism: Organism): string | undefined {
     return organism ? organism.taxonName : undefined;
+  }
+
+  stateDisplayFn(state): string | undefined {
+    return state ? state.name : undefined;
   }
 
   close() {
@@ -172,9 +186,6 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-
-
-
   add(event: MatChipInputEvent, filterType): void {
     const input = event.input;
     const value = event.value;
@@ -188,8 +199,6 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
     if (input) {
       input.value = '';
     }
-
-    this.filterForm.controls.contributor.setValue(null);
   }
 
   remove(item: Contributor | Group, filterType): void {
@@ -204,7 +213,6 @@ export class ReviewFilterComponent implements OnInit, OnDestroy {
   selected(event: MatAutocompleteSelectedEvent, filterType): void {
     this.noctuaSearchService.searchCriteria[filterType].push(event.option.value);
     this.noctuaSearchService.updateSearch();
-    // this.contributorInput.nativeElement.value = '';
     this.filterForm.controls[filterType].setValue('');
   }
 
