@@ -12,10 +12,12 @@ import { NoctuaReviewModule } from './noctua-review/noctua-review.module';
     TranslateModule,
     NoctuaSharedModule,
     NoctuaFormModule,
-    NoctuaReviewModule
+    NoctuaReviewModule,
   ],
   exports: [
-    NoctuaFormModule
+    NoctuaFormModule,
+    NoctuaFormModule,
+    NoctuaReviewModule,
   ],
   providers: [
 
