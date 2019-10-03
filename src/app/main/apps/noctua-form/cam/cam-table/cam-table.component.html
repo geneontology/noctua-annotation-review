@@ -4,6 +4,17 @@
       ACTIVITIES
     </span>
     <span fxFlex></span>
+    <button mat-icon-button class="" fxFlex="40px" color="primary" [matMenuTriggerFor]="activityOptionMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #activityOptionMenu="matMenu" class="noc-dropdown-menu">
+      <button mat-menu-item class="" (click)="expandAll(true)">
+        Expand All
+      </button>
+      <button mat-menu-item class="" (click)="expandAll(false)">
+        Collapse All
+      </button>
+    </mat-menu>
   </div>
   <ng-container [ngSwitch]="cam?.displayType.name">
     <noc-annoton-entity-table *ngSwitchCase="camDisplayTypeOptions.entity.name" [cam]="cam" class="noc-cam-table-body"
@@ -28,6 +39,7 @@
           </div>
           <div class="noc-title mr-12">
             <div class="text-truncate">
+              <strong> {{annoton?.presentation.qualifier}} </strong>
               {{annoton?.presentation.title}}
             </div>
           </div>
@@ -41,10 +53,10 @@
               matTooltip="connect activity causal relation" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
               <small>Connect</small>
             </button>
-            <button mat-stroked-button (click)="openAnnotonForm(annoton)" color="primary"
+            <!-- <button mat-stroked-button (click)="openAnnotonForm(annoton)" color="primary"
               class="noc-rounded-button noc-sm mr-8">
               <small>Edit</small>
-            </button>
+            </button> -->
             <button mat-icon-button class="noc-rounded-button noc-sm" fxFlex="40px" color="primary"
               [matMenuTriggerFor]="connectionOptionMenu">
               <mat-icon>more_vert</mat-icon>

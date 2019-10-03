@@ -81,7 +81,7 @@ export class CamTableComponent implements OnInit, OnDestroy {
     private noctuaGraphService: NoctuaGraphService,
   ) {
 
-    this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
+    this.searchFormData = this.noctuaFormConfigService.createSearchFormData();
     this._unsubscribeAll = new Subject();
   }
 
@@ -103,6 +103,10 @@ export class CamTableComponent implements OnInit, OnDestroy {
     let searchCriteria = this.searchForm.value;
     console.dir(searchCriteria)
     this.noctuaSearchService.search(searchCriteria);
+  }
+
+  expandAll(expand: boolean) {
+    this.cam.expandAllAnnotons(expand);
   }
 
   toggleExpand(annoton: Annoton) {

@@ -17,12 +17,9 @@ import {
 
 import { NoctuaFormService } from './../noctua-form/services/noctua-form.service';
 import { FormGroup } from '@angular/forms';
-
 import { ReviewService } from './services/review.service';
 import { ReviewDialogService } from './services/review-dialog.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
-
-
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 import { takeUntil } from 'rxjs/operators';
 
@@ -108,7 +105,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.reviewService.setLeftDrawer(this.leftDrawer);
+    this.noctuaSearchService.setLeftDrawer(this.leftDrawer);
     this.noctuaFormService.setRightDrawer(this.rightDrawer);
 
     /*
@@ -123,8 +120,8 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     this.sparqlService.getAllContributors()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response: any) => {
-        this.reviewService.contributors = response;
-        this.reviewService.onContributorsChanged.next(response);
+        this.noctuaSearchService.contributors = response;
+        this.noctuaSearchService.onContributorsChanged.next(response);
         this.noctuaSearchService.searchCriteria.goterms.push(
           {
             "id": "GO:0042632",
@@ -137,8 +134,8 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     this.sparqlService.getAllGroups()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response: any) => {
-        this.reviewService.groups = response;
-        this.reviewService.onGroupsChanged.next(response);
+        this.noctuaSearchService.groups = response;
+        this.noctuaSearchService.onGroupsChanged.next(response);
       });
 
 
@@ -146,8 +143,8 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     this.sparqlService.getAllOrganisms()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response: any) => {
-        this.reviewService.organisms = response;
-        this.reviewService.onOrganismsChanged.next(response);
+        this.noctuaSearchService.organisms = response;
+        this.noctuaSearchService.onOrganismsChanged.next(response);
       });
 
     this.sparqlService.onCamsChanged
@@ -158,13 +155,13 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
         this.loadCams();
       });
 
-    this.reviewService.onContributorsChanged
+    this.noctuaSearchService.onContributorsChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(contributors => {
         this.noctuaUserService.contributors = contributors;
       });
 
-    this.reviewService.onGroupsChanged
+    this.noctuaSearchService.onGroupsChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(groups => {
         this.noctuaUserService.groups = groups;
@@ -173,7 +170,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
   }
 
   toggleLeftDrawer(panel) {
-    this.reviewService.toggleLeftDrawer(panel);
+    this.noctuaSearchService.toggleLeftDrawer(panel);
   }
 
   search() {
@@ -209,10 +206,5 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }
-
-
-
-
-
 }
 

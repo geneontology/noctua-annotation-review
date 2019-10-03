@@ -60,6 +60,7 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
     this.route
       .queryParams
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(params => {
         this.modelId = params['model_id'] || null;
         this.baristaToken = params['barista_token'] || null;
@@ -73,16 +74,18 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
   getUserInfo() {
     const self = this;
 
-    this.noctuaUserService.getUser().subscribe((response) => {
-      if (response && response.nickname) {
-        this.user = new Contributor()
-        this.user.name = response.nickname;
-        this.user.groups = response.groups;
-        // user.manager.use_groups([self.userInfo.selectedGroup.id]);
-        this.noctuaUserService.user = this.user;
-        this.noctuaUserService.onUserChanged.next(this.user);
-      }
-    });
+    this.noctuaUserService.getUser()
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response) => {
+        if (response && response.nickname) {
+          this.user = new Contributor()
+          this.user.name = response.nickname;
+          this.user.groups = response.groups;
+          // user.manager.use_groups([self.userInfo.selectedGroup.id]);
+          this.noctuaUserService.user = this.user;
+          this.noctuaUserService.onUserChanged.next(this.user);
+        }
+      });
   }
 
   ngOnInit(): void {

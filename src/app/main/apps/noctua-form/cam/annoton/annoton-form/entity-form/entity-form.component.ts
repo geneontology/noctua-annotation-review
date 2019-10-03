@@ -1,41 +1,21 @@
-import { Component, Input, Inject, OnInit, ElementRef, OnDestroy, ViewEncapsulation, ViewChild, NgZone } from '@angular/core';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators';
-
-
-import * as _ from 'lodash';
-declare const require: any;
-const each = require('lodash/forEach');
-
-import { noctuaAnimations } from './../../../../../../../../@noctua/animations';
-
-
-import { NoctuaFormService } from '../../../../services/noctua-form.service';
-
-import { NoctuaTranslationLoaderService } from './../../../../../../../../@noctua/services/translation-loader.service';
-
-import { NoctuaSearchService } from './../../../../../../../../@noctua.search/services/noctua-search.service';
+import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { MatMenuTrigger } from '@angular/material';
+import { Subject } from 'rxjs';
 import { NoctuaFormDialogService } from './../../../../services/dialog.service';
-
-import { SparqlService } from './../../../../../../../../@noctua.sparql/services/sparql/sparql.service';
-
 import {
   CamService,
   NoctuaFormConfigService,
   NoctuaAnnotonFormService,
-  NoctuaLookupService,
   AnnotonNode,
   Evidence,
   noctuaFormConfig,
   Entity,
-  EntityDefinition,
-  AnnotonNodeType
+  InsertEntityDefinition,
+  AnnotonError
 } from 'noctua-form-base';
+import { InlineReferenceService } from '@noctua.editor/inline-reference/inline-reference.service';
+import { each, find } from 'lodash';
 
 @Component({
   selector: 'noc-entity-form',
@@ -57,27 +37,17 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<any>;
 
-  constructor(private route: ActivatedRoute,
-    private ngZone: NgZone,
-    private formBuilder: FormBuilder,
+  constructor(
     private noctuaFormDialogService: NoctuaFormDialogService,
     private camService: CamService,
-    private noctuaSearchService: NoctuaSearchService,
+    private inlineReferenceService: InlineReferenceService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    private noctuaLookupService: NoctuaLookupService,
-    private noctuaFormService: NoctuaFormService,
-    private sparqlService: SparqlService, ) {
+    public noctuaAnnotonFormService: NoctuaAnnotonFormService) {
     this.unsubscribeAll = new Subject();
-
   }
 
   ngOnInit(): void {
-
     this.entity = this.noctuaAnnotonFormService.annoton.getNode(this.entityFormGroup.get('id').value);
-
-    this.evidenceDBForm = this._createEvidenceDBForm();
-    this.insertMenuItems = this.noctuaFormConfigService.getInsertEntityMenuItems(this.entity.type);
   }
 
   ngOnDestroy(): void {
@@ -100,9 +70,31 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   toggleIsComplement(entity: AnnotonNode) {
+    const self = this;
+    const errors = [];
+    let canToggle = true;
+
+    each(entity.nodeGroup.nodes, function (node: AnnotonNode) {
+      if (node.isExtension) {
+        canToggle = false;
+        const meta = {
+          aspect: node.label
+        };
+        const error = new AnnotonError('error',
+          1,
+          `Cannot add 'NOT Qualifier', Remove Extension'${node.label}'`, meta);
+        errors.push(error);
+      }
+    });
+
+    if (canToggle) {
+      entity.toggleIsComplement();
+      self.noctuaAnnotonFormService.initializeForm();
+    } else {
+      self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+    }
 
   }
-
   openSearchDatabaseDialog(entity: AnnotonNode) {
     const self = this;
     const gpNode = this.noctuaAnnotonFormService.annoton.getGPNode();
@@ -128,28 +120,24 @@ export class EntityFormComponent implements OnInit, OnDestroy {
           }
           self.noctuaAnnotonFormService.initializeForm();
         }
-      }
+      };
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      const errors = [];
-      const meta = {
-        aspect: gpNode ? gpNode.label : 'Gene Product'
-      }
       // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
       //errors.push(error);
       // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
     }
   }
 
-  insertEntity(nodeType: AnnotonNodeType) {
-    this.noctuaFormConfigService.insertAnnotonNode(this.noctuaAnnotonFormService.annoton, this.entity, nodeType);
+  insertEntity(nodeDescription: InsertEntityDefinition.InsertNodeDescription) {
+    this.noctuaFormConfigService.insertAnnotonNode(this.noctuaAnnotonFormService.annoton, this.entity, nodeDescription);
     this.noctuaAnnotonFormService.initializeForm();
   }
 
   addRootTerm() {
     const self = this;
 
-    const term = _.find(noctuaFormConfig.rootNode, (rootNode) => {
+    const term = find(noctuaFormConfig.rootNode, (rootNode) => {
       return rootNode.aspect === self.entity.aspect;
     });
 
@@ -187,20 +175,15 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     self.noctuaFormDialogService.openSelectEvidenceDialog(evidences, success);
   }
 
-  onSubmitEvidedenceDb(evidence: FormGroup, name: string) {
-    console.log(evidence);
-    console.log(this.evidenceDBForm.value);
+  openAddReference(event, evidence: FormGroup, name: string) {
 
-    const DB = this.evidenceDBForm.value.db;
-    const accession = this.evidenceDBForm.value.accession;
+    const data = {
+      formControl: evidence.controls[name] as FormControl,
+    };
+    this.inlineReferenceService.open(event.target, { data });
 
-    const control: FormControl = evidence.controls[name] as FormControl;
-    control.setValue(DB.name + ':' + accession);
   }
 
-  cancelEvidenceDb() {
-    this.evidenceDBForm.controls['accession'].setValue('');
-  }
 
   termDisplayFn(term): string | undefined {
     return term ? term.label : undefined;
@@ -208,12 +191,5 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   evidenceDisplayFn(evidence): string | undefined {
     return evidence ? evidence.label : undefined;
-  }
-
-  private _createEvidenceDBForm() {
-    return new FormGroup({
-      db: new FormControl(this.noctuaFormConfigService.evidenceDBs.selected),
-      accession: new FormControl()
-    });
   }
 }

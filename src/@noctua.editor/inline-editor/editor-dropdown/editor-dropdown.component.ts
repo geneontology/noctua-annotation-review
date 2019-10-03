@@ -1,30 +1,14 @@
-import { Component, Inject, Input, OnInit, ElementRef, OnDestroy, ViewEncapsulation, ViewChild, NgZone } from '@angular/core';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, Subscription, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, take, distinctUntilChanged, map } from 'rxjs/operators';
-
-
-import * as _ from 'lodash';
-declare const require: any;
-const each = require('lodash/forEach');
-
-import { noctuaAnimations } from './../../../@noctua/animations';
-
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { Subscription, Subject } from 'rxjs';
 import {
-  NoctuaGraphService,
   NoctuaFormConfigService,
   NoctuaAnnotonFormService,
-  NoctuaLookupService,
   NoctuaAnnotonEntityService,
   CamService,
   Entity,
-  AnnotonNodeType,
-  noctuaFormConfig
+  noctuaFormConfig,
+  InsertEntityDefinition
 } from 'noctua-form-base';
 
 import { Cam } from 'noctua-form-base';
@@ -36,6 +20,9 @@ import { editorDropdownData } from './editor-dropdown.tokens';
 import { EditorDropdownOverlayRef } from './editor-dropdown-ref';
 import { NoctuaFormDialogService } from 'app/main/apps/noctua-form';
 import { EditorCategory } from './../../models/editor-category';
+import { takeUntil } from 'rxjs/operators';
+import { find } from 'lodash';
+import { InlineReferenceService } from './../../inline-reference/inline-reference.service';
 
 @Component({
   selector: 'noc-editor-dropdown',
@@ -45,7 +32,6 @@ import { EditorCategory } from './../../models/editor-category';
 
 export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
   EditorCategory = EditorCategory;
-  evidenceDBForm: FormGroup;
   annoton: Annoton;
   cam: Cam;
   entity: AnnotonNode;
@@ -57,7 +43,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
 
   termNode: AnnotonNode;
 
-  private unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any>;
 
   displaySection = {
     term: false,
@@ -66,20 +52,16 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     with: false,
   };
 
-  constructor(private route: ActivatedRoute,
-    public dialogRef: EditorDropdownOverlayRef,
+  constructor(public dialogRef: EditorDropdownOverlayRef,
     @Inject(editorDropdownData) public data: any,
     private noctuaFormDialogService: NoctuaFormDialogService,
-    private ngZone: NgZone,
     private camService: CamService,
-    private formBuilder: FormBuilder,
     private noctuaAnnotonEntityService: NoctuaAnnotonEntityService,
-    private noctuaGraphService: NoctuaGraphService,
+    private inlineReferenceService: InlineReferenceService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    private noctuaLookupService: NoctuaLookupService,
   ) {
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
 
     this.cam = data.cam;
     this.annoton = data.annoton;
@@ -90,25 +72,32 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._displaySection(this.category);
-    this.evidenceDBForm = this._createEvidenceDBForm();
     this.entityFormSub = this.noctuaAnnotonEntityService.entityFormGroup$
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(entityFormGroup => {
         if (!entityFormGroup) {
           return;
         }
-
         const evidenceFormArray = entityFormGroup.get('evidenceFormArray') as FormArray;
-
         this.entityFormGroup = entityFormGroup;
         this.evidenceFormGroup = evidenceFormArray.at(this.evidenceIndex) as FormGroup;
         console.log(this.evidenceFormGroup);
       });
   }
 
+  openAddReference(event, name: string) {
+
+    const data = {
+      formControl: this.evidenceFormGroup.controls[name] as FormControl,
+    };
+    this.inlineReferenceService.open(event.target, { data });
+
+  }
+
   save() {
     const self = this;
 
-    self.noctuaAnnotonEntityService.saveAnnoton().then((data) => {
+    self.noctuaAnnotonEntityService.saveAnnoton().then(() => {
       this.close();
       self.noctuaFormDialogService.openSuccessfulSaveToast('Activity successfully updated.', 'OK');
     });
@@ -128,7 +117,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     self.noctuaAnnotonFormService.initializeForm();
   }
 
-  toggleIsComplement(entity: AnnotonNode) {
+  toggleIsComplement() {
 
   }
 
@@ -160,25 +149,21 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
       }
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      const errors = [];
-      const meta = {
-        aspect: gpNode ? gpNode.label : 'Gene Product'
-      }
       // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
       //errors.push(error);
       // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
     }
   }
 
-  insertEntity(nodeType: AnnotonNodeType) {
-    this.noctuaFormConfigService.insertAnnotonNode(this.noctuaAnnotonFormService.annoton, this.entity, nodeType);
+  insertEntity(nodeDescription: InsertEntityDefinition.InsertNodeDescription) {
+    this.noctuaFormConfigService.insertAnnotonNode(this.noctuaAnnotonFormService.annoton, this.entity, nodeDescription);
     this.noctuaAnnotonFormService.initializeForm();
   }
 
   addRootTerm() {
     const self = this;
 
-    const term = _.find(noctuaFormConfig.rootNode, (rootNode) => {
+    const term = find(noctuaFormConfig.rootNode, (rootNode) => {
       return rootNode.aspect === self.entity.aspect;
     });
 
@@ -216,20 +201,6 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     self.noctuaFormDialogService.openSelectEvidenceDialog(evidences, success);
   }
 
-  onSubmitEvidedenceDb(evidence: FormGroup, name: string) {
-    console.log(evidence);
-    console.log(this.evidenceDBForm.value);
-
-    const DB = this.evidenceDBForm.value.db;
-    const accession = this.evidenceDBForm.value.accession;
-
-    const control: FormControl = evidence.controls[name] as FormControl;
-    control.setValue(DB.name + ':' + accession);
-  }
-
-  cancelEvidenceDb() {
-    this.evidenceDBForm.controls['accession'].setValue('');
-  }
 
   termDisplayFn(term): string | undefined {
     return term ? term.label : undefined;
@@ -239,12 +210,6 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     return evidence ? evidence.label : undefined;
   }
 
-  private _createEvidenceDBForm() {
-    return new FormGroup({
-      db: new FormControl(this.noctuaFormConfigService.evidenceDBs.selected),
-      accession: new FormControl()
-    });
-  }
 
   private _displaySection(category: EditorCategory) {
     switch (category) {
@@ -279,8 +244,8 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }
 

@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { MatButtonModule, MatIconModule, MatMenuModule, MatProgressBarModule, MatToolbarModule } from '@angular/material';
 import { NoctuaSharedModule } from '@noctua/shared.module';
 import { NoctuaToolbarComponent } from './toolbar.component';
-import { NoctuaSearchBarModule } from '@noctua.search';
 
 import {
     NoctuaUserService
@@ -21,7 +20,6 @@ import {
         MatProgressBarModule,
         MatToolbarModule,
         NoctuaSharedModule,
-        NoctuaSearchBarModule
     ],
     providers: [
     ],

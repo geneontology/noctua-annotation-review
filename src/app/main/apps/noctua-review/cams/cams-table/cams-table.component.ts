@@ -82,7 +82,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   }
 
   toggleLeftDrawer(panel) {
-    this.reviewService.toggleLeftDrawer(panel);
+    this.noctuaSearchService.toggleLeftDrawer(panel);
   }
 
   search() {

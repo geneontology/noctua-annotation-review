@@ -1,19 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import {
     Cam,
     Contributor,
     CamService,
     NoctuaUserService,
-    NoctuaFormConfigService,
     NoctuaGraphService,
     NoctuaAnnotonFormService,
     AnnotonType,
 } from 'noctua-form-base';
 
-import { NoctuaConfigService } from '@noctua/services/config.service';
 import { NoctuaFormService } from 'app/main/apps/noctua-form/services/noctua-form.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -52,9 +48,7 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
 
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
         private camService: CamService,
-        private noctuaConfig: NoctuaConfigService,
         private noctuaGraphService: NoctuaGraphService,
         public noctuaUserService: NoctuaUserService,
         public noctuaAnnotonFormService: NoctuaAnnotonFormService,
@@ -105,8 +99,6 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
             });
     }
 
-
-
     openCamForm() {
         this.camService.initializeForm(this.cam);
         this.noctuaFormService.openLeftDrawer(this.noctuaFormService.panel.camForm);
@@ -116,9 +108,6 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
         this.noctuaAnnotonFormService.setAnnotonType(annotonType);
         this.noctuaFormService.openLeftDrawer(this.noctuaFormService.panel.annotonForm);
     }
-
-
-
 
     search(value): void {
         console.log(value);

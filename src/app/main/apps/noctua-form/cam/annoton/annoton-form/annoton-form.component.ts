@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { merge, Observable, Subscription, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 
 
 import * as _ from 'lodash';
@@ -61,7 +61,7 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
   currentAnnoton: Annoton;
   state: AnnotonState;
 
-  private unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any>;
 
   constructor(private route: ActivatedRoute,
     private camService: CamService,
@@ -77,7 +77,7 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
     public noctuaFormService: NoctuaFormService,
     private sparqlService: SparqlService
   ) {
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
 
     // this.annoton = self.noctuaAnnotonFormService.annoton;
     //  this.annotonFormPresentation = this.noctuaAnnotonFormService.annotonPresentation;
@@ -85,6 +85,7 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.annotonFormSub = this.noctuaAnnotonFormService.annotonFormGroup$
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(annotonFormGroup => {
         if (!annotonFormGroup) {
           return;
@@ -95,17 +96,23 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
         this.annoton = this.noctuaAnnotonFormService.annoton;
         this.state = this.noctuaAnnotonFormService.state;
         this.molecularEntity = <FormGroup>this.annotonFormGroup.get('molecularEntity');
+
+        console.log(this.annotonFormGroup)
       });
 
-    this.camService.onCamChanged.subscribe((cam) => {
-      if (!cam) {
-        return;
-      }
+    this.camService.onCamChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((cam) => {
+        if (!cam) {
+          return;
+        }
 
-      this.cam = cam;
-      this.cam.onGraphChanged.subscribe((annotons) => {
+        this.cam = cam;
+        this.cam.onGraphChanged
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((annotons) => {
+          });
       });
-    });
   }
 
   checkErrors() {
@@ -145,7 +152,7 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }
