@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4203",
+    "clean": "rm -r workbenches/noctua-annotation-review/publix",
     "build": "ng build --index src/inject.tmpl  --base-href  /workbench/noctua-annotation-review/",
     "start-hmr": "ng serve --configuration hmr -sm=false",
     "start-hmr-sourcemaps": "ng serve --hmr -e=hmr",

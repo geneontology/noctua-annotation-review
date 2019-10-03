@@ -15,6 +15,4 @@ export class ReviewDialogService {
     constructor(private httpClient: HttpClient,
         private _matDialog: MatDialog) {
     }
-
-
 }

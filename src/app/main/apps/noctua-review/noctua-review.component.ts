@@ -2,28 +2,21 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDrawer } from '@angular/material';
 import { Subject } from 'rxjs';
-
 import { noctuaAnimations } from './../../../../@noctua/animations';
-
 import {
   Cam,
   Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,
-  NoctuaAnnotonFormService,
-  CamService
+  NoctuaAnnotonFormService
 } from 'noctua-form-base';
 
 import { NoctuaFormService } from './../noctua-form/services/noctua-form.service';
 import { FormGroup } from '@angular/forms';
-import { ReviewService } from './services/review.service';
-import { ReviewDialogService } from './services/review-dialog.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 import { takeUntil } from 'rxjs/operators';
-
-
 
 @Component({
   selector: 'app-noctua-review',
@@ -52,12 +45,11 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
   loadingSpinner: any = {
     color: 'primary',
     mode: 'indeterminate'
-  }
-
+  };
   summary: any = {
     expanded: false,
     detail: {}
-  }
+  };
   cams: any[] = [];
 
   private _unsubscribeAll: Subject<any>;
@@ -68,12 +60,7 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
     public noctuaSearchService: NoctuaSearchService,
     public noctuaFormService: NoctuaFormService,
-    // private noctuaLookupService: NoctuaLookupService,
-    private noctuaGraphService: NoctuaGraphService,
-    private sparqlService: SparqlService,
-    public reviewService: ReviewService,
-
-
+    private sparqlService: SparqlService
   ) {
 
     this._unsubscribeAll = new Subject();

@@ -1,20 +1,16 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { noctuaAnimations } from '@noctua/animations';
 
-import { takeUntil, startWith } from 'rxjs/internal/operators';
+import { takeUntil } from 'rxjs/internal/operators';
 
 import "rxjs/add/operator/debounceTime";
 import "rxjs/add/operator/distinctUntilChanged";
 
 
-import { ReviewService } from './../../services/review.service';
 import { ReviewDialogService } from './../../services/review-dialog.service';
 import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
 import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
@@ -23,18 +19,13 @@ import {
   NoctuaGraphService,
   NoctuaFormConfigService,
   NoctuaLookupService,
-  CamService,
-  noctuaFormConfig
+  CamService
 } from 'noctua-form-base';
 
 import {
-  Cam,
-  Annoton,
-  AnnotonNode
+  Cam
 } from 'noctua-form-base';
 import { NoctuaFormService } from './../../../noctua-form/services/noctua-form.service';
-
-
 
 @Component({
   selector: 'noc-cams-table',
@@ -46,7 +37,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
 
   searchCriteria: any = {};
-  searchFormData: any = []
+  searchFormData: any = [];
   searchForm: FormGroup;
   loadingSpinner: any = {
     color: 'primary',
@@ -56,18 +47,14 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   cams: any[] = [];
   searchResults = [];
 
-  constructor(private route: ActivatedRoute,
-    public noctuaFormConfigService: NoctuaFormConfigService,
+  constructor(public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaSearchService: NoctuaSearchService,
-    public reviewService: ReviewService,
     private camService: CamService,
     private noctuaFormService: NoctuaFormService,
-    private reviewDialogService: ReviewDialogService,
-    private noctuaLookupService: NoctuaLookupService,
     private noctuaGraphService: NoctuaGraphService,
     public sparqlService: SparqlService) {
 
-    this.searchFormData = this.noctuaFormConfigService.createReviewSearchFormData();
+    this.searchFormData = this.noctuaFormConfigService.createSearchFormData();
     this._unsubscribeAll = new Subject();
   }
 

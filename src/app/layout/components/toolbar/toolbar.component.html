@@ -11,18 +11,10 @@
         Noctua
       </a>
       <a class="noc-sub-logo" target="_blank">
-        Search
+        Annotation Review
       </a>
     </div>
   </div>
-  <button mat-flat-button [matMenuTriggerFor]="createMenu" color="primary" class="noc-rounded-button noc-sm mr-8">
-    <mat-icon class=""> add </mat-icon> Create New
-  </button>
-  <mat-menu #createMenu="matMenu">
-    <a *ngFor="let workbench of createNewMenu" href="{{workbench.url}}" target="_blank" mat-menu-item>
-      {{workbench.label}}
-    </a>
-  </mat-menu>
   <!--   <div *ngIf="cam" class="noc-title mr-12" fxLayout="row" fxLayoutAlign="start center">
     <div class="h-100-p mr-12" *ngIf="cam.title; else noCamTitle" fxLayout="row" fxLayoutAlign="start center">
       <div class="noc-section-label noc-cam-title">
