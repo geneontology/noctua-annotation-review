@@ -109,12 +109,6 @@ export class NoctuaReviewComponent implements OnInit, OnDestroy {
       .subscribe((response: any) => {
         this.noctuaSearchService.contributors = response;
         this.noctuaSearchService.onContributorsChanged.next(response);
-        this.noctuaSearchService.searchCriteria.goterms.push(
-          {
-            "id": "GO:0042632",
-            "label": "cholesterol homeostasis"
-          }
-        )
         this.noctuaSearchService.updateSearch();
       });
 
