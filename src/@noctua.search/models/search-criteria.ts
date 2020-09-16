@@ -16,6 +16,7 @@ export class SearchCriteria {
     exactdates: any[] = [];
     startdates: any[] = [];
     enddates: any[] = [];
+    expand = true;
     filtersCount = 0;
 
     constructor(searchCriteria?: SearchCriteria) {
@@ -33,6 +34,7 @@ export class SearchCriteria {
             this.exactdates = searchCriteria.exactdates || [];
             this.startdates = searchCriteria.startdates || [];
             this.enddates = searchCriteria.enddates || [];
+            this.expand = searchCriteria.expand;
         }
     }
 
@@ -107,7 +109,10 @@ export class SearchCriteria {
             query.push(`state=${state.name}`);
         });
 
-        query.push('expand');
+        if (self.expand) {
+            query.push('expand');
+        }
+
         return query;
     }
 

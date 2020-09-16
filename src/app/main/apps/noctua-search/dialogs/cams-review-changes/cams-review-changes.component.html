@@ -2,7 +2,7 @@
   <mat-toolbar class="mat-primary m-0">
     <mat-toolbar-row fxFlex fxLayout="row" fxLayoutAlign="start center">
       <span class="title dialog-title">
-        Review Changes </span>
+        Review Changes </span> (Under Construction)
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="noc-dialog-body  noc-form-section">
@@ -22,9 +22,8 @@
         <div *ngFor="let modelSummary of summary">
           <div *ngFor="let term of modelSummary.changes?.terms">
             <div *ngFor="let termHistory of term.termHistory">
-              {{termHistory.label}}
+              {{term.label}} -> {{termHistory.label}}
             </div>
-            {{term.label}}
           </div>
         </div>
       </div>
