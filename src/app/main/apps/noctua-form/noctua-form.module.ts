@@ -10,7 +10,6 @@ import { AnnotonEntityFormComponent } from './cam/annoton/annoton-entity-form/an
 import { EntityFormComponent } from './cam/annoton/annoton-form/entity-form/entity-form.component';
 import { CamTableComponent } from './cam/cam-table/cam-table.component';
 import { CamFormComponent } from './cam/cam-form/cam-form.component';
-import { CamRowEditDialogComponent } from './dialogs/cam-row-edit/cam-row-edit.component';
 import { AddEvidenceDialogComponent } from './dialogs/add-evidence/add-evidence.component';
 import { AnnotonErrorsDialogComponent } from './dialogs/annoton-errors/annoton-errors.component';
 import { BeforeSaveDialogComponent } from './dialogs/before-save/before-save.component';
@@ -35,6 +34,27 @@ import { CamPreviewComponent } from './cam/cam-preview/cam-preview.component';
 import { CamGraphComponent } from './cam/cam-preview/cam-graph/cam-graph.component';
 import { NoctuaEditorModule } from '@noctua.editor/noctua-editor.module';
 import { PreviewAnnotonDialogComponent } from './dialogs/preview-annoton/preview-annoton.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatRippleModule } from '@angular/material/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { SearchEvidenceDialogComponent } from './dialogs/search-evidence/search-evidence.component';
+import { SelectEvidenceComponent } from './components/select-evidence/select-evidence.component';
+import { MatTreeModule } from '@angular/material/tree';
 
 const routes = [
   {
@@ -52,13 +72,33 @@ const routes = [
     ContextMenuModule.forRoot(),
     NoctuaConfirmDialogModule,
     NoctuaEditorModule,
+
+    //Material
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatTooltipModule,
+    MatTreeModule,
   ],
   exports: [
     AnnotonFormComponent,
     AnnotonEntityFormComponent,
     EntityFormComponent,
     CamTableComponent,
-    CamRowEditDialogComponent,
     AddEvidenceDialogComponent,
     AnnotonErrorsDialogComponent,
     BeforeSaveDialogComponent,
@@ -66,6 +106,7 @@ const routes = [
     LinkToExistingDialogComponent,
     SelectEvidenceDialogComponent,
     SearchDatabaseDialogComponent,
+    SearchEvidenceDialogComponent,
     PreviewAnnotonDialogComponent,
     CamDiagramComponent,
     CamFormComponent,
@@ -89,7 +130,6 @@ const routes = [
     AnnotonEntityFormComponent,
     EntityFormComponent,
     CamTableComponent,
-    CamRowEditDialogComponent,
     AddEvidenceDialogComponent,
     AnnotonErrorsDialogComponent,
     BeforeSaveDialogComponent,
@@ -98,6 +138,7 @@ const routes = [
     LinkToExistingDialogComponent,
     SelectEvidenceDialogComponent,
     SearchDatabaseDialogComponent,
+    SearchEvidenceDialogComponent,
     CamDiagramComponent,
     CamFormComponent,
     NodeComponent,
@@ -110,9 +151,9 @@ const routes = [
     GraphPreviewComponent,
     CamPreviewComponent,
     CamGraphComponent,
+    SelectEvidenceComponent,
   ],
   entryComponents: [
-    CamRowEditDialogComponent,
     AddEvidenceDialogComponent,
     AnnotonErrorsDialogComponent,
     BeforeSaveDialogComponent,
@@ -120,6 +161,7 @@ const routes = [
     LinkToExistingDialogComponent,
     SelectEvidenceDialogComponent,
     SearchDatabaseDialogComponent,
+    SearchEvidenceDialogComponent,
     PreviewAnnotonDialogComponent
     //  NodeComponent,
     // NodesContainerComponent

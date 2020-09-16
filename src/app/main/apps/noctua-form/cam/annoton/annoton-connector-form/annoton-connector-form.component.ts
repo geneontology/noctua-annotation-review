@@ -3,13 +3,13 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatDrawer } from '@angular/material';
+import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription, Subject } from 'rxjs';
 
-import * as _ from 'lodash';
+
 declare const require: any;
 
-import { NoctuaFormService } from '../../../services/noctua-form.service';
+
 import { CamTableService } from './../../cam-table/services/cam-table.service';
 
 import {
@@ -25,7 +25,9 @@ import {
   NoctuaFormConfigService,
   CamService,
   noctuaFormConfig,
-  Entity
+  Entity,
+  NoctuaUserService,
+  NoctuaFormMenuService
 } from 'noctua-form-base';
 import { NoctuaFormDialogService } from '../../../services/dialog.service';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
@@ -55,14 +57,16 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any>;
 
-  constructor(private camService: CamService,
+  constructor(
+    private camService: CamService,
     private confirmDialogService: NoctuaConfirmDialogService,
     public noctuaAnnotonConnectorService: NoctuaAnnotonConnectorService,
+    public noctuaUserService: NoctuaUserService,
     public camTableService: CamTableService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    public noctuaFormService: NoctuaFormService,
+    public noctuaFormMenuService: NoctuaFormMenuService,
   ) {
     this._unsubscribeAll = new Subject();
   }
@@ -200,11 +204,11 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
   }
 
   termDisplayFn(term): string | undefined {
-    return term ? term.label : undefined;
+    return term && term.id ? `${term.label} (${term.id})` : undefined;
   }
 
   evidenceDisplayFn(evidence): string | undefined {
-    return evidence ? evidence.label : undefined;
+    return evidence && evidence.id ? `${evidence.label} (${evidence.id})` : undefined;
   }
 
   ngOnDestroy(): void {

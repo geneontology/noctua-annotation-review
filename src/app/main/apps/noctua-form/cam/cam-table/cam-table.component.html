@@ -1,5 +1,5 @@
 <div class="w-100-p p-0 cam-table" noctuaPerfectScrollbar>
-  <div class="noc-summary-bar" fxLayout="row" fxLayoutAlign="start center">
+  <div *ngIf="!options.reviewMode" class="noc-summary-bar" fxLayout="row" fxLayoutAlign="start center">
     <span class='noc-title'>
       ACTIVITIES
     </span>
@@ -16,24 +16,25 @@
       </button>
     </mat-menu>
   </div>
-  <ng-container [ngSwitch]="cam?.displayType.name">
-    <noc-annoton-entity-table *ngSwitchCase="camDisplayTypeOptions.entity.name" [cam]="cam" class="noc-cam-table-body"
-      fxLayout="row" fxLayoutAlign="start center">
-    </noc-annoton-entity-table>
-    <noc-triple-table *ngSwitchCase="camDisplayTypeOptions.triple.name" [cam]="cam" class="noc-cam-table-body"
-      fxLayout="row" fxLayoutAlign="start center">
-    </noc-triple-table>
-    <ng-container *ngSwitchDefault>
+  <ng-container>
+    <ng-container>
+      <div *ngIf="cam?.loading.status" class="noc-loading-container" fxLayout="column" fxLayoutAlign="center center">
+        <mat-progress-spinner class="example-margin" [color]="loadingSpinner.color" [mode]="loadingSpinner.mode">
+        </mat-progress-spinner>
+        <h3>
+          {{cam?.loading.message}}
+        </h3>
+      </div>
       <div *ngFor="let annoton of cam.annotons" class="w-100-p"
         [ngClass]="{'noc-annoton-selected': annoton.id=== camService.annoton?.id}">
         <div class="noc-annoton-table-heading" fxLayout="row" fxLayoutAlign="start center">
-          <div fxFlex="50px" (click)="$event.stopPropagation()">
+          <div fxFlex="40px" (click)="$event.stopPropagation()">
             <button mat-icon-button (click)="toggleExpand(annoton)" color="primary" class="">
               <mat-icon *ngIf="!annoton.expanded" class="">
-                keyboard_arrow_down
+                keyboard_arrow_right
               </mat-icon>
               <mat-icon *ngIf="annoton.expanded" class="">
-                keyboard_arrow_up
+                keyboard_arrow_down
               </mat-icon>
             </button>
           </div>
@@ -47,7 +48,7 @@
             <span>{{annotonTypeOptions[annoton.annotonType]?.label}}</span>
           </mat-chip>
           <span fxFlex=""></span>
-          <div class="" fxFlex="200px" fxLayout="row" fxLayoutAlign="end center">
+          <div *ngIf="!options.reviewMode" class="" fxFlex="200px" fxLayout="row" fxLayoutAlign="end center">
             <button *ngIf="annoton.annotonType !==AnnotonType.ccOnly" mat-stroked-button
               (click)="openAnnotonConnector(annoton)" color="primary" class="noc-rounded-button noc-sm mr-8"
               matTooltip="connect activity causal relation" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
@@ -69,8 +70,9 @@
             </mat-menu>
           </div>
         </div>
-        <noc-annoton-table [cam]="cam" [annoton]="annoton" *ngIf="annoton.expanded" class="noc-cam-table-body"
-          [@annotonExpand]="annoton.expanded ? 'expanded' : 'collapsed'" fxLayout="row" fxLayoutAlign="start center">
+        <noc-annoton-table [options]="options" [cam]="cam" [annoton]="annoton" *ngIf="annoton.expanded"
+          class="noc-cam-table-body" [@annotonExpand]="annoton.expanded ? 'expanded' : 'collapsed'" fxLayout="row"
+          fxLayoutAlign="start center">
         </noc-annoton-table>
       </div>
     </ng-container>

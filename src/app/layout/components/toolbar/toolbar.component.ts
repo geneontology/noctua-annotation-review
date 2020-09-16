@@ -1,19 +1,22 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router, ActivatedRoute } from '@angular/router';
+
 import {
     Cam,
     Contributor,
     CamService,
     NoctuaUserService,
+    NoctuaFormConfigService,
     NoctuaGraphService,
     NoctuaAnnotonFormService,
     AnnotonType,
+    NoctuaFormMenuService,
 } from 'noctua-form-base';
 
-import { NoctuaFormService } from 'app/main/apps/noctua-form/services/noctua-form.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { environment } from 'environments/environment';
+import { NoctuaCommonMenuService } from '@noctua.common/services/noctua-common-menu.service';
 
 @Component({
     selector: 'noctua-toolbar',
@@ -24,39 +27,32 @@ import { environment } from 'environments/environment';
 export class NoctuaToolbarComponent implements OnInit, OnDestroy {
     AnnotonType = AnnotonType;
 
-    public user: Contributor;
     public cam: Cam;
     userStatusOptions: any[];
     showLoadingBar: boolean;
     horizontalNav: boolean;
     noNav: boolean;
     navigation: any;
+    noctuaFormUrl = '';
     loginUrl = '';
-
-    createNewMenu = [{
-        label: 'Noctua Form',
-        url: environment.workbenchUrl + 'noctua-form?',
-    }, {
-        label: 'Graph Editor',
-        url: environment.noctuaUrl + '/editor/graph/'
-    }, {
-        label: 'Macromolecular Complex Creator',
-        url: environment.workbenchUrl + 'mmcc?'
-    }];
+    logoutUrl = '';
+    noctuaUrl = '';
 
     private _unsubscribeAll: Subject<any>;
 
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private camService: CamService,
-        private noctuaGraphService: NoctuaGraphService,
+        private noctuaCommonMenuService: NoctuaCommonMenuService,
         public noctuaUserService: NoctuaUserService,
+        public noctuaConfigService: NoctuaFormConfigService,
         public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-        public noctuaFormService: NoctuaFormService,
+        public noctuaFormMenuService: NoctuaFormMenuService,
     ) {
+        const self = this;
         this._unsubscribeAll = new Subject();
-        this.loginUrl = 'http://barista-dev.berkeleybop.org/login?return=' + window.location.origin;
-        this.getUserInfo();
+
         this.router.events.pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
                 (event) => {
@@ -67,7 +63,6 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
                         this.showLoadingBar = false;
                     }
                 });
-
     }
 
     ngOnInit(): void {
@@ -82,39 +77,25 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
             });
     }
 
-    createModel() {
-        this.noctuaGraphService.createModel(this.cam);
-    }
 
-    getUserInfo() {
-        const self = this;
-
-        self.noctuaUserService.onUserChanged.pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((response) => {
-                if (response) {
-                    self.user = new Contributor()
-                    self.user.name = response.nickname;
-                    self.user.groups = response.groups;
-                }
-            });
+    openApps() {
+        this.noctuaCommonMenuService.openLeftSidenav();
     }
 
     openCamForm() {
         this.camService.initializeForm(this.cam);
-        this.noctuaFormService.openLeftDrawer(this.noctuaFormService.panel.camForm);
+        this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.camForm);
     }
 
     openAnnotonForm(annotonType: AnnotonType) {
         this.noctuaAnnotonFormService.setAnnotonType(annotonType);
-        this.noctuaFormService.openLeftDrawer(this.noctuaFormService.panel.annotonForm);
-    }
-
-    search(value): void {
-        console.log(value);
+        this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.annotonForm);
     }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
     }
+
+
 }

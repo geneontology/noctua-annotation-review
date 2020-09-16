@@ -1,29 +1,70 @@
 import { Cam, Contributor, Group, Organism } from 'noctua-form-base';
 import { each } from 'lodash';
+import { CamPage } from './cam-page';
 
 export class SearchCriteria {
+    camPage: CamPage = new CamPage();
     titles: any[] = [];
+    ids: any[] = [];
     gps: any[] = [];
-    goterms: any[] = [];
+    terms: any[] = [];
     pmids: any[] = [];
     contributors: Contributor[] = [];
     groups: Group[] = [];
     organisms: Organism[] = [];
     states: any[] = [];
+    exactdates: any[] = [];
+    startdates: any[] = [];
+    enddates: any[] = [];
+    filtersCount = 0;
 
-    constructor() {
+    constructor(searchCriteria?: SearchCriteria) {
+        if (searchCriteria) {
+            this.camPage = searchCriteria.camPage || new CamPage();
+            this.titles = searchCriteria.titles || [];
+            this.contributors = searchCriteria.contributors || [];
+            this.groups = searchCriteria.groups || [];
+            this.pmids = searchCriteria.pmids || [];
+            this.terms = searchCriteria.terms || [];
+            this.ids = searchCriteria.ids || [];
+            this.gps = searchCriteria.gps || [];
+            this.organisms = searchCriteria.organisms || [];
+            this.states = searchCriteria.states || [];
+            this.exactdates = searchCriteria.exactdates || [];
+            this.startdates = searchCriteria.startdates || [];
+            this.enddates = searchCriteria.enddates || [];
+        }
     }
 
-    query() {
+    updateFiltersCount() {
         const self = this;
-        let query = ['offset=0&limit=50'];
+
+        self.filtersCount = self.titles.length +
+            self.ids.length +
+            self.gps.length +
+            self.terms.length +
+            self.pmids.length +
+            self.contributors.length +
+            self.groups.length +
+            self.organisms.length +
+            self.states.length +
+            self.exactdates.length +
+            self.startdates.length +
+            self.enddates.length;
+    }
+
+    private query() {
+        const self = this;
+        const query = ['offset=' + (self.camPage.pageNumber * self.camPage.size).toString()];
+
+        query.push('limit=' + self.camPage.size.toString());
 
         each(self.titles, (title) => {
-            query.push(`title=${title}`);
+            query.push(`title=*${title}*`);
         });
 
-        each(self.goterms, (goterm) => {
-            query.push(`goterm=${goterm.id}`);
+        each(self.terms, (term) => {
+            query.push(`term=${term.id}`);
         });
 
         each(self.groups, (group: Group) => {
@@ -34,12 +75,28 @@ export class SearchCriteria {
             query.push(`contributor=${contributor.orcid}`);
         });
 
+        each(self.ids, (id) => {
+            query.push(`id=${id}`);
+        });
+
         each(self.gps, (gp) => {
             query.push(`gp=${gp.id}`);
         });
 
         each(self.pmids, (pmid) => {
             query.push(`pmid=${pmid}`);
+        });
+
+        each(self.exactdates, (date) => {
+            query.push(`exactdate=${date}`);
+        });
+
+        each(self.startdates, (date) => {
+            query.push(`date=${date}`);
+        });
+
+        each(self.enddates, (date) => {
+            query.push(`dateend=${date}`);
         });
 
         each(self.organisms, (organism: Organism) => {
@@ -50,19 +107,22 @@ export class SearchCriteria {
             query.push(`state=${state.name}`);
         });
 
+        query.push('expand');
         return query;
     }
 
-    queryEncoded() {
+    private queryEncoded() {
         const self = this;
-        const query = ['offset=0&limit=50'];
+        const query = ['offset=' + (self.camPage.pageNumber * self.camPage.size).toString()];
+
+        query.push('limit=' + self.camPage.size.toString());
 
         each(self.titles, (title) => {
             query.push(`title=${encodeURIComponent(title)}`);
         });
 
-        each(self.goterms, (goterm) => {
-            query.push(`goterm=${encodeURIComponent(goterm.id)}`);
+        each(self.terms, (term) => {
+            query.push(`term=${encodeURIComponent(term.id)}`);
         });
 
         each(self.groups, (group: Group) => {
@@ -73,12 +133,20 @@ export class SearchCriteria {
             query.push(`contributor=${encodeURIComponent(contributor.orcid)}`);
         });
 
+        each(self.ids, (id) => {
+            query.push(`id=${encodeURIComponent(id)}`);
+        });
+
         each(self.gps, (gp) => {
             query.push(`gp=${encodeURIComponent(gp.id)}`);
         });
 
         each(self.pmids, (pmid) => {
             query.push(`pmid=${encodeURIComponent(pmid)}`);
+        });
+
+        each(self.exactdates, (date) => {
+            query.push(`date=${encodeURIComponent(date)}`);
         });
 
         each(self.organisms, (organism: Organism) => {
@@ -96,7 +164,21 @@ export class SearchCriteria {
         return this.query().join('&');
     }
 
-    buildEncoded() {
+    clearSearch() {
+        this.titles = [];
+        this.contributors = [];
+        this.groups = [];
+        this.pmids = [];
+        this.terms = [];
+        this.gps = [];
+        this.organisms = [];
+        this.states = [];
+        this.exactdates = [];
+        this.startdates = [];
+        this.enddates = [];
+    }
+
+    private buildEncoded() {
         return this.queryEncoded().join('&');
     }
 }

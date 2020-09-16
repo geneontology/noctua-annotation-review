@@ -5,7 +5,8 @@ import {
   NoctuaFormConfigService,
   NoctuaUserService
 } from 'noctua-form-base';
-import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
+import { NoctuaSearchService } from './../../services/noctua-search.service';
+import { NoctuaSearchMenuService } from '../../services/search-menu.service';
 
 @Component({
   selector: 'noc-search-groups',
@@ -24,11 +25,12 @@ export class SearchGroupsComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<any>;
 
   constructor(public noctuaUserService: NoctuaUserService,
+    public noctuaSearchMenuService: NoctuaSearchMenuService,
     private noctuaSearchService: NoctuaSearchService,
     private formBuilder: FormBuilder,
     public noctuaFormConfigService: NoctuaFormConfigService) {
     // this.groups = this.noctuaSearchService.groups;
-    this.searchFormData = this.noctuaFormConfigService.createSearchFormData();
+
     this.unsubscribeAll = new Subject();
     this.groupsForm = this.formBuilder.group({
       groups: []
@@ -52,7 +54,7 @@ export class SearchGroupsComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.noctuaSearchService.closeLeftDrawer();
+    this.noctuaSearchMenuService.closeLeftDrawer();
   }
 
   createSearchForm() {
