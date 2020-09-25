@@ -27,6 +27,16 @@ $accent: map-get($theme, accent);
     }
   }
 
+  .noc-group-side-heading {
+    @include deep-width(25px);
+    @include deep-height(100%);
+    background-color: #DDD;
+    font-size: 8px;
+    font-weight: bold;
+    text-align: center;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
 
 
   .mat-tab-group,
@@ -57,36 +67,48 @@ $accent: map-get($theme, accent);
     //    border-bottom: 1px solid rgba(0, 0, 0, .12);
     //  overflow: auto;
 
+    tr.mat-footer-row,
+    tr.mat-row {
+      height: auto;
+    }
 
+    .noc-column-flex {
+      min-width: 150px !important;
+    }
 
 
     .mat-cell {
-      padding: 0 10px;
+      padding: 0 30px 0 10px;
       font-size: 12px !important;
       color: #000;
+      border-right: #AAA solid 1px;
+      position: relative;
+      overflow-wrap: break-word;
+
+      .noc-edit-button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
     }
+
+
 
     .mat-header-cell {
       padding: 0 10px;
       font-size: 10px !important;
       //color: #0F0; // map-get($primary, default);
       font-weight: bold;
+      color: map-get($primary, default);
+      text-transform: uppercase;
+      font-weight: bold;
     }
 
-    .mat-header-cell,
     .mat-header-row {
-      display: none;
-      @include deep-height(0);
-      /*
-      //padding: 0;
-      min-height: 40px;
-      position: sticky;
-      position: -webkit-sticky;
-      top: 0;
-      z-index: 1000;
-      //  background-color: $noc-primary-color-light;
-      // font-size: 3px !important;
-      */
+
+      @include deep-height(30px);
+      border-bottom: $noc-primary-color-light solid 1px;
+
     }
 
     .noc-paginator {
@@ -105,6 +127,18 @@ $accent: map-get($theme, accent);
       min-width: 0;
       display: flex;
       align-items: center;
+
+      &.noc-highlight-match {
+        background-color: #fffcd8;
+      }
+
+      &.noc-highlight-modified {
+        background-color: #ffbf00;
+      }
+
+      &.noc-highlight-match-current {
+        border: #ac6219 solid 5px;
+      }
     }
 
     .mat-column-id {

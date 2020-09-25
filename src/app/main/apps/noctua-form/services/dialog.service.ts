@@ -2,8 +2,8 @@ import { environment } from '../../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
-import { CamRowEditDialogComponent } from './../dialogs/cam-row-edit/cam-row-edit.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AnnotonErrorsDialogComponent } from './../dialogs/annoton-errors/annoton-errors.component';
 import { BeforeSaveDialogComponent } from './../dialogs/before-save/before-save.component';
@@ -13,16 +13,18 @@ import { SelectEvidenceDialogComponent } from './../dialogs/select-evidence/sele
 import { SearchDatabaseDialogComponent } from './../dialogs/search-database/search-database.component';
 
 import {
-    Cam,
-    Annoton,
-    AnnotonNode,
-    Evidence
+    Evidence, AnnotonNode
 } from 'noctua-form-base';
 
 import 'rxjs/add/operator/map';
+import { NoctuaConfirmDialogComponent } from '@noctua/components/confirm-dialog/confirm-dialog.component';
+import { PreviewAnnotonDialogComponent } from '../dialogs/preview-annoton/preview-annoton.component';
+import { SearchEvidenceDialogComponent } from '../dialogs/search-evidence/search-evidence.component';
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class NoctuaFormDialogService {
 
     dialogRef: any;
@@ -39,18 +41,22 @@ export class NoctuaFormDialogService {
         });
     }
 
-    openCamRowEdit(cam): void {
-        this.dialogRef = this._matDialog.open(CamRowEditDialogComponent, {
-            panelClass: 'cam-row-edit-dialog',
+    openConfirmDialog(searchCriteria, success): void {
+        this.dialogRef = this._matDialog.open(NoctuaConfirmDialogComponent, {
+            panelClass: 'noc-search-database-dialog',
             data: {
-                cam: cam
-            }
+                searchCriteria: searchCriteria
+            },
+            width: '600px',
         });
         this.dialogRef.afterClosed()
             .subscribe(response => {
-
+                if (response) {
+                    success(response);
+                }
             });
     }
+
 
     openAnnotonErrorsDialog(errors: any[]): void {
         this.dialogRef = this._matDialog.open(AnnotonErrorsDialogComponent, {
@@ -90,18 +96,18 @@ export class NoctuaFormDialogService {
 
             });
     }
-    openLinkToExistingDialogComponent(cam): void {
+
+    openLinkToExistingDialogComponent(data, success): void {
         this.dialogRef = this._matDialog.open(LinkToExistingDialogComponent, {
-            panelClass: 'link-to-existing-dialog',
-            data: {
-                cam: cam
-            }
+            panelClass: 'noc-link-to-existing-dialog',
+            data
         });
         this.dialogRef.afterClosed()
-            .subscribe(response => {
-
+            .subscribe((response) => {
+                success(response);
             });
     }
+
     openSelectEvidenceDialog(evidence: Evidence[], success): void {
         this.dialogRef = this._matDialog.open(SelectEvidenceDialogComponent, {
             panelClass: 'noc-select-evidence-dialog',
@@ -131,5 +137,28 @@ export class NoctuaFormDialogService {
                     success(response);
                 }
             });
+    }
+
+    openSearchEvidenceDialog(searchCriteria, success): void {
+        this.dialogRef = this._matDialog.open(SearchEvidenceDialogComponent, {
+            panelClass: 'noc-search-evidence-dialog',
+            data: {
+                searchCriteria: searchCriteria
+            },
+            width: '600px',
+        });
+        this.dialogRef.afterClosed()
+            .subscribe(response => {
+                if (response) {
+                    success(response);
+                }
+            });
+    }
+
+    openPreviewAnnotonDialog(): void {
+        this.dialogRef = this._matDialog.open(PreviewAnnotonDialogComponent, {
+            panelClass: 'noc-preview-annoton-dialog',
+            width: '600px',
+        });
     }
 }

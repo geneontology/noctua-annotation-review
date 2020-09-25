@@ -1,42 +1,28 @@
-import { Component, Inject, Input, OnInit, ElementRef, OnDestroy, ViewEncapsulation, ViewChild, NgZone } from '@angular/core';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, Subscription, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, take, distinctUntilChanged, map } from 'rxjs/operators';
+import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
+import { MatDrawer } from '@angular/material/sidenav';
+import { Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
-import * as _ from 'lodash';
-declare const require: any;
-const each = require('lodash/forEach');
-
-import { noctuaAnimations } from './../../../../../../../@noctua/animations';
 
 
-import { NoctuaFormService } from '../../../services/noctua-form.service';
 
-import { NoctuaSearchService } from './../../../../../../../@noctua.search/services/noctua-search.service';
-import { CamDiagramService } from './../../cam-diagram/services/cam-diagram.service';
+
+
 import { CamTableService } from './../../cam-table/services/cam-table.service';
-
-import { SparqlService } from './../../../../../../../@noctua.sparql/services/sparql/sparql.service';
-
 import {
-  NoctuaGraphService,
   NoctuaFormConfigService,
   NoctuaAnnotonFormService,
-  NoctuaLookupService,
   NoctuaAnnotonEntityService,
-  CamService
+  CamService,
+  NoctuaFormMenuService
 } from 'noctua-form-base';
 
 import { Cam } from 'noctua-form-base';
 import { Annoton } from 'noctua-form-base';
 import { AnnotonNode } from 'noctua-form-base';
-import { Evidence } from 'noctua-form-base';
 import { NoctuaFormDialogService } from '../../../services/dialog.service';
 
 
@@ -58,57 +44,49 @@ export class AnnotonEntityFormComponent implements OnInit, OnDestroy {
   evidenceFormArray: FormArray;
   termNode: AnnotonNode;
 
-  private unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any>;
 
-  constructor(private route: ActivatedRoute,
-    private ngZone: NgZone,
+  constructor(
     private camService: CamService,
     private formBuilder: FormBuilder,
     private noctuaAnnotonEntityService: NoctuaAnnotonEntityService,
-    private noctuaSearchService: NoctuaSearchService,
-    private camDiagramService: CamDiagramService,
     public camTableService: CamTableService,
-    private noctuaGraphService: NoctuaGraphService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    private noctuaLookupService: NoctuaLookupService,
-    public noctuaFormService: NoctuaFormService,
-    private sparqlService: SparqlService
+    public noctuaFormMenuService: NoctuaFormMenuService,
   ) {
-    this.unsubscribeAll = new Subject();
-    // this.annoton = self.noctuaAnnotonFormService.annoton;
+    this._unsubscribeAll = new Subject();
   }
 
   ngOnInit(): void {
-    this.annotonEntityFormSub = this.noctuaAnnotonEntityService.annotonEntityFormGroup$
+    this.annotonEntityFormSub = this.noctuaAnnotonEntityService.entityFormGroup$
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(annotonEntityFormGroup => {
         if (!annotonEntityFormGroup) return;
         this.annotonEntityFormGroup = annotonEntityFormGroup;
         this.annoton = this.noctuaAnnotonEntityService.annoton;
-        this.termNode = this.noctuaAnnotonEntityService.termNode;
+        this.termNode = this.noctuaAnnotonEntityService.entity;
 
-        console.log(this.termNode)
       });
 
     this.camService.onCamChanged.subscribe((cam) => {
       if (!cam) return;
 
       this.cam = cam
-      this.cam.onGraphChanged.subscribe((annotons) => {
+      this.cam.onGraphChanged.subscribe(() => {
         //  let data = this.summaryGridService.getGrid(annotons);
-        //  this.sparqlService.addCamChildren(cam, data);
         //  this.dataSource = new CamsDataSource(this.sparqlService, this.paginator, this.sort);
       });
     });
   }
 
-  termDisplayFn(evidence): string | undefined {
-    return evidence ? evidence.label : undefined;
+  termDisplayFn(term): string | undefined {
+    return term && term.id ? `${term.label} (${term.id})` : undefined;
   }
 
   evidenceDisplayFn(evidence): string | undefined {
-    return evidence ? evidence.label : undefined;
+    return evidence && evidence.id ? `${evidence.label} (${evidence.id})` : undefined;
   }
 
   checkErrors() {
@@ -122,23 +100,23 @@ export class AnnotonEntityFormComponent implements OnInit, OnDestroy {
     const self = this;
     self.noctuaAnnotonEntityService.annotonEntityFormToAnnoton();
 
-    this.noctuaGraphService.edit(this.camService.cam, self.noctuaAnnotonEntityService.termNode).then((data) => {
-      //  localStorage.setItem('barista_token', value);  
-      self.noctuaFormDialogService.openSuccessfulSaveToast('Activity successfully edited.', 'OK');
-    });
+    //this.noctuaGraphService.edit(this.camService.cam, self.noctuaAnnotonEntityService.termNode).then((data) => {
+    //  localStorage.setItem('baristaToken', value);  
+    //    self.noctuaFormDialogService.openSuccessfulSaveToast('Activity successfully edited.', 'OK');
+    //  });
   }
 
   /*   openSummary() {
       let destCam = this.camForm.value;
-      this.cam.destNode.setTerm(destCam.term)
+      this.cam.destNode.term=new Entity(destCam.term)
   
       let evidenceArray: Evidence[] = destCam.evidenceFormArray.map((evidence) => {
         let result = new Evidence()
   
-        result.individualId = evidence.individualId;
+        result.uuid = evidence.uuid;
         result.setEvidence(evidence.evidence);
-        result.setReference(evidence.reference);
-        result.setWith(evidence.with);
+        result.reference=evidence.reference;
+        result.with=evidence.with;
   
         return result;
       });
@@ -150,11 +128,11 @@ export class AnnotonEntityFormComponent implements OnInit, OnDestroy {
 
   }
 
-  openSelectEvidenceDialog(evidence: Evidence) {
+  openSelectEvidenceDialog() {
 
   }
 
-  addNDEvidence(evidence: Evidence) {
+  addNDEvidence() {
 
   }
   addEvidence() {
@@ -188,7 +166,7 @@ export class AnnotonEntityFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }

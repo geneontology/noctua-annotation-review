@@ -1,0 +1,41 @@
+<div fxLayout="column" fxLayoutAlign="start stretch" class="noc-drawer w-100-p h-100-p">
+  <div class="noc-drawer-header" fxLayout="row" fxLayoutAlign="start center">
+    <span class="noc-drawer-header-title">
+      Annotation Review</span>
+    <span fxFlex></span>
+    <button mat-stroked-button (click)="close()" class="noc-rounded-button noc-sm" color="primary"
+      aria-label="Close dialog">
+      <mat-icon>close</mat-icon> CLOSE
+    </button>
+  </div>
+  <div class="noc-drawer-body" noctuaPerfectScrollbar>
+    <div *ngIf="!noctuaUserService.user" class="noc-draw-body-disabled" fxLayoutAlign="center center">
+      Log in to Continue
+    </div>
+    <div class="w-100-p">
+      <noc-review-form></noc-review-form>
+    </div>
+    <div *ngFor="let item of artBasket?.cams" (click)="selectItem(item)" class="noc-group-row" fxLayout="row"
+      fxLayoutAlign="start center">
+      <div class="w-100-p h-100-p" fxLayout="column" fxLayoutAlign="start start">
+        <div class="noc-history-item">
+          <small>Title</small>: {{item.title}}
+        </div>
+        <div class="noc-history-item">
+          <small>Id</small>:{{item.id}}
+        </div>
+        <div class="noc-history-item">
+          <small>Added On</small>: {{item.dateAdded | date: 'long'}}
+        </div>
+      </div>
+      <span fxFlex></span>
+      <mat-icon class="s-24">
+        chevron_right
+      </mat-icon>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="start center" class="noc-drawer-footer noc-submit-row">
+    <span fxFlex=""></span>
+    <button (click)="clear()" type="button" mat-raised-button>Clear Search</button>
+  </div>
+</div>

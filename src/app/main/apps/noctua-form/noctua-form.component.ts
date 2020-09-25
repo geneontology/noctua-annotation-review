@@ -1,21 +1,26 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDrawer } from '@angular/material';
+import { MatDrawer } from '@angular/material/sidenav';
 import { Subject } from 'rxjs';
 
 import { noctuaAnimations } from './../../../../@noctua/animations';
 
 import {
   Cam,
+  AnnotonType,
   Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
-  NoctuaGraphService,
+  NoctuaFormMenuService,
   NoctuaAnnotonFormService,
-  CamService
+  CamService,
+  noctuaFormConfig
 } from 'noctua-form-base';
 
-import { NoctuaFormService } from './services/noctua-form.service';
+import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
+import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-noctua-form',
@@ -25,84 +30,84 @@ import { NoctuaFormService } from './services/noctua-form.service';
   animations: noctuaAnimations
 })
 export class NoctuaFormComponent implements OnInit, OnDestroy {
+  AnnotonType = AnnotonType;
 
-  @ViewChild('leftDrawer')
+  @ViewChild('leftDrawer', { static: true })
   leftDrawer: MatDrawer;
 
-  @ViewChild('rightDrawer')
+  @ViewChild('rightDrawer', { static: true })
   rightDrawer: MatDrawer;
 
   public cam: Cam;
-  public user: Contributor;
   searchResults = [];
-  modelId: string = '';
-  baristaToken: string = '';
+  modelId = '';
 
-  private unsubscribeAll: Subject<any>;
+  noctuaFormConfig = noctuaFormConfig;
 
-  constructor(private route: ActivatedRoute,
+  private _unsubscribeAll: Subject<any>;
+
+  constructor(
+    private route: ActivatedRoute,
     private camService: CamService,
+    private noctuaDataService: NoctuaDataService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    public noctuaFormService: NoctuaFormService,
-    private noctuaGraphService: NoctuaGraphService, ) {
+    public noctuaFormMenuService: NoctuaFormMenuService) {
 
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
 
+    this.noctuaDataService.loadContributors();
     this.route
       .queryParams
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(params => {
         this.modelId = params['model_id'] || null;
-        this.baristaToken = params['barista_token'] || null;
-        this.noctuaUserService.baristaToken = this.baristaToken;
-        this.getUserInfo();
+        const baristaToken = params['barista_token'] || null;
+        this.noctuaUserService.getUser(baristaToken);
+      });
+
+    this.noctuaUserService.onUserChanged.pipe(
+      distinctUntilChanged(this.noctuaUserService.distinctUser),
+      takeUntil(this._unsubscribeAll))
+      .subscribe((user: Contributor) => {
+        this.noctuaFormConfigService.setupUrls();
+        this.noctuaFormConfigService.setUniversalUrls();
         this.loadCam(this.modelId);
       });
   }
 
-  getUserInfo() {
+  ngOnInit(): void {
     const self = this;
 
-    this.noctuaUserService.getUser().subscribe((response) => {
-      if (response && response.nickname) {
-        this.user = new Contributor()
-        this.user.name = response.nickname;
-        this.user.groups = response.groups;
-        // user.manager.use_groups([self.userInfo.selectedGroup.id]);
-        this.noctuaUserService.user = this.user;
-        this.noctuaUserService.onUserChanged.next(this.user);
-      }
-    });
-  }
-
-  ngOnInit(): void {
-    this.noctuaFormService.setLeftDrawer(this.leftDrawer);
-    this.noctuaFormService.setRightDrawer(this.rightDrawer);
+    self.noctuaFormMenuService.setLeftDrawer(self.leftDrawer);
+    self.noctuaFormMenuService.setRightDrawer(self.rightDrawer);
   }
 
   loadCam(modelId) {
-    this.cam = this.camService.getCam(modelId);
-  }
+    const self = this;
 
-
-  addAnnoton() {
-    this.openAnnotonForm(location);
+    self.noctuaDataService.onContributorsChanged.pipe(
+      takeUntil(this._unsubscribeAll))
+      .subscribe((contributors: Contributor[]) => {
+        self.noctuaUserService.contributors = contributors;
+        this.cam = this.camService.getCam(modelId);
+      });
   }
 
   openCamForm() {
-    //  this.noctuaFormService.initializeForm();
-    this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.camForm)
+    this.camService.initializeForm(this.cam);
+    this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.camForm);
   }
 
-  openAnnotonForm(location?) {
-    this.noctuaAnnotonFormService.initializeForm();
-    this.noctuaFormService.openRightDrawer(this.noctuaFormService.panel.annotonForm)
+  openAnnotonForm(annotonType: AnnotonType) {
+    this.noctuaAnnotonFormService.setAnnotonType(annotonType);
+    this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.annotonForm);
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }
 

@@ -1,79 +1,82 @@
 import { environment } from './../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
-import { map, finalize, filter, reduce, catchError, retry, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, finalize, tap } from 'rxjs/operators';
+
 import {
-  Graph,
-  Optional,
   optional,
-  Prefix,
   prefix,
-  Triple,
   Query,
   triple,
-} from "sparql-query-builder/dist";
+} from 'sparql-query-builder/dist';
 
 import {
   NoctuaQuery
-} from "noctua-sparql-query-builder/dist";
+} from 'noctua-sparql-query-builder/dist';
 
 import { CurieService } from './../../../@noctua.curie/services/curie.service';
 import {
-  NoctuaGraphService,
-  AnnotonNode,
   NoctuaFormConfigService,
   Cam,
-  CamRow,
   Contributor,
   Group,
   NoctuaUserService,
-  Organism
-} from 'noctua-form-base'
-
-import * as _ from 'lodash';
-import { v4 as uuid } from 'uuid';
-import { SearchCriteria } from '@noctua.search/models/search-criteria';
+  Organism,
+  Entity,
+  Article,
+  noctuaFormConfig
+} from 'noctua-form-base';
+import { SparqlMinervaService } from './sparql-minerva.service';
+import { each, find } from 'lodash';
 declare const require: any;
-const each = require('lodash/forEach');
+
+const amigo = require('amigo2');
 
 @Injectable({
   providedIn: 'root'
 })
 export class SparqlService {
+  minervaDefinitionName = environment.globalMinervaDefinitionName;
   separator = '@@';
   baseUrl = environment.spaqrlApiUrl;
+  wikidataSparqlUrl = environment.wikidataSparqlUrl;
   curieUtil: any;
   cams: any[] = [];
   loading: boolean = false;
-  onCamsChanged: BehaviorSubject<any>;
-  onCamChanged: BehaviorSubject<any>;
+  //onCamsChanged: BehaviorSubject<any>;
+  //onCamChanged: BehaviorSubject<any>;
   onContributorFilterChanged: BehaviorSubject<any>;
+  linker = new amigo.linker();
 
-  searchSummary: any = {}
+  searchSummary: any = {};
 
   constructor(public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaUserService: NoctuaUserService,
     private httpClient: HttpClient,
-    private noctuaGraphService: NoctuaGraphService,
+    private sparqlMinervaService: SparqlMinervaService,
     private curieService: CurieService) {
-    this.onCamsChanged = new BehaviorSubject({});
-    this.onCamChanged = new BehaviorSubject({});
+    // this.onCamsChanged = new BehaviorSubject({});
+    //  this.onCamChanged = new BehaviorSubject({});
     this.curieUtil = this.curieService.getCurieUtil();
   }
 
-  getCams(searchCriteria): Observable<any> {
+  getPubmedInfo(pmid: string) {
     const self = this;
 
-    self.loading = true;
-    self.searchSummary = {}
+    const query = this.buildPubmedInfoQuery(pmid);
+    const url = `${this.wikidataSparqlUrl}?query=${encodeURIComponent(query)}&formart=json`
+
+
+    // self.loading = true;
+
     return this.httpClient
-      .get(this.baseUrl + this.buildCamsQuery(searchCriteria))
+      .get(url)
       .pipe(
         map(res => res['results']),
         map(res => res['bindings']),
         tap(val => console.dir(val)),
-        map(res => this.addCam(res)),
+        map(res => this.addArticles(res, pmid)),
         tap(val => console.dir(val)),
         finalize(() => {
           self.loading = false;
@@ -81,10 +84,33 @@ export class SparqlService {
       );
   }
 
+  addArticles(res, pmid: string) {
+    const self = this;
+    const result: Array<Article> = [];
+
+    res.forEach((response) => {
+      const article = new Article();
+      article.title = response.title.value;
+      article.author = response.author.value;
+      article.link = self.linker.url(`${noctuaFormConfig.evidenceDB.options.pmid.name}:${pmid}`);
+      if (response.date) {
+        article.date = response.date.value
+      }
+
+      result.push(article);
+    });
+
+    return result;
+  }
 
   getAllContributors(): Observable<any> {
+    const query = this.buildAllContributorsQuery();
+    const url = `${this.baseUrl}?query=${encodeURIComponent(query)}`
+
+    this.sparqlMinervaService.foo(query);
+
     return this.httpClient
-      .get(this.baseUrl + this.buildAllContributorsQuery())
+      .get(url)
       .pipe(
         map(res => res['results']),
         map(res => res['bindings']),
@@ -95,8 +121,12 @@ export class SparqlService {
   }
 
   getAllOrganisms(): Observable<any> {
+    const query = this.buildOrganismsQuery();
+    const url = `${this.baseUrl}?query=${encodeURIComponent(query)}`
+
+    this.sparqlMinervaService.foo(query);
     return this.httpClient
-      .get(this.baseUrl + this.buildOrganismsQuery())
+      .get(url)
       .pipe(
         map(res => res['results']),
         map(res => res['bindings']),
@@ -107,8 +137,12 @@ export class SparqlService {
   }
 
   getAllGroups(): Observable<any> {
+    const query = this.buildAllGroupsQuery();
+    const url = `${this.baseUrl}?query=${encodeURIComponent(query)}`
+
+    this.sparqlMinervaService.foo(query);
     return this.httpClient
-      .get(this.baseUrl + this.buildAllGroupsQuery())
+      .get(url)
       .pipe(
         map(res => res['results']),
         map(res => res['bindings']),
@@ -118,15 +152,46 @@ export class SparqlService {
       );
   }
 
+  getModelMeta(modelId): Observable<any> {
+    const query = this.buildModelMetaQuery(modelId);
+    const url = `${this.baseUrl}?query=${encodeURIComponent(query)}`
+
+    // this.sparqlMinervaService.foo(query);
+    return this.httpClient
+      .get(url)
+      .pipe(
+        map(res => res['results']),
+        map(res => res['bindings']),
+        tap(val => console.dir(val)),
+        map(res => this.addCam(res)),
+        tap(val => console.dir(val))
+      );
+  }
+
+  getModelTerms(modelId: string): Observable<any> {
+    const query = this.buildModelTermsQuery(modelId);
+    const url = `${this.baseUrl}?query=${encodeURIComponent(query)}`
+
+    // this.sparqlMinervaService.foo(query);
+    return this.httpClient
+      .get(url)
+      .pipe(
+        map(res => res['results']),
+        map(res => res['bindings']),
+        tap(val => console.dir(val)),
+        map(res => this.addCamTerms(res)),
+        tap(val => console.dir(val))
+      );
+  }
+
   addCam(res) {
     const self = this;
-    let result: Array<Cam> = [];
+    const result: Array<Cam> = [];
 
     res.forEach((response) => {
-      let modelId = self.curieUtil.getCurie(response.model.value)//this.noctuaFormConfigService.getModelId(response.model.value);
-      let cam = new Cam();
+      const modelId = self.curieUtil.getCurie(response.model.value)//this.noctuaFormConfigService.getModelId(response.model.value);
+      const cam = new Cam();
 
-      cam.id = uuid();
       cam.graph = null;
       cam.id = modelId;
       cam.state = self.noctuaFormConfigService.findModelState(response.modelState.value);
@@ -136,18 +201,22 @@ export class SparqlService {
       });
 
       if (response.date) {
-        cam.date = response.date.value
+        cam.date = response.date.value;
       }
 
-      if (response.groups) {
+      if (response.groups && response.groups.value !== null) {
         cam.groups = <Group[]>response.groups.value.split(self.separator).map(function (url) {
-          return { url: url };
+          const group = find(self.noctuaUserService.groups, (inGroup: Group) => {
+            return inGroup.url === url;
+          });
+
+          return group ? group : { url: url };
         });
       }
 
-      if (response.contributors) {
+      if (response.contributors && response.contributors.value !== "") {
         cam.contributors = <Contributor[]>response.contributors.value.split(self.separator).map((orcid) => {
-          let contributor = _.find(self.noctuaUserService.contributors, (contributor) => {
+          const contributor = find(self.noctuaUserService.contributors, (contributor: Contributor) => {
             return contributor.orcid === orcid
           })
 
@@ -155,26 +224,40 @@ export class SparqlService {
         });
       }
 
-      if (response.entities) {
-        cam.filter.individualIds.push(...response.entities.value.split(self.separator).map((iri) => {
+      if (response.entities && response.entities.value !== "") {
+        cam.filter.uuids.push(...response.entities.value.split(self.separator).map((iri) => {
           return self.curieUtil.getCurie(iri);
         }));
-
-      } else {
-        cam.resetFilter();
       }
 
+      cam.configureDisplayType();
       result.push(cam);
     });
 
     return result;
   }
 
+  addCamTerms(res) {
+    const self = this;
+    const result: Array<Entity> = [];
+
+    res.forEach((response) => {
+      const term = new Entity(
+        self.curieUtil.getCurie(response.id.value),
+        response.label.value
+      );
+
+      result.push(term);
+    });
+
+    return result;
+  }
+
   addContributor(res) {
-    let result: Array<Contributor> = [];
+    const result: Array<Contributor> = [];
 
     res.forEach((erg) => {
-      let contributor = new Contributor();
+      const contributor = new Contributor();
 
       contributor.orcid = erg.orcid.value;
       contributor.name = erg.name.value;
@@ -188,7 +271,7 @@ export class SparqlService {
   }
 
   addGroup(res) {
-    let result: Array<Group> = [];
+    const result: Array<Group> = [];
 
     res.forEach((erg) => {
       result.push({
@@ -205,10 +288,10 @@ export class SparqlService {
   }
 
   addOrganism(res) {
-    let result: Array<Organism> = [];
+    const result: Array<Organism> = [];
 
     res.forEach((erg) => {
-      let organism = new Organism()
+      const organism = new Organism()
 
       organism.taxonIri = erg.taxonIri.value;
       organism.taxonName = erg.taxonName.value;
@@ -219,116 +302,22 @@ export class SparqlService {
   }
 
   addGroupContributors(groups, contributors) {
-    const self = this;
 
     each(groups, (group) => {
       each(group.contributors, (contributor) => {
-        let srcContributor = _.find(contributors, { orcid: contributor.orcid })
+        const srcContributor = find(contributors, { orcid: contributor.orcid })
         contributor.name = srcContributor['name'];
         contributor.cams = srcContributor['cams'];
       });
-    })
+    });
   }
 
-  addBasicCamChildren(srcCam, annotons) {
-    const self = this;
+  // BUILDER
 
-    srcCam.camRow = [];
 
-    _.each(annotons, function (annoton) {
-      let cam = self.annotonToCam(srcCam, annoton);
-
-      cam.model = srcCam.model;
-      cam.graph = srcCam.graph;
-      srcCam.camRow.push(cam);
-    });
-
-    this.onCamsChanged.next(srcCam.camRow);
-  }
-
-  addCamChildren(srcCam, annotons) {
-    const self = this;
-
-    srcCam.camRow = [];
-
-    _.each(annotons, function (annoton) {
-      let cam = self.annotonToCam(srcCam, annoton);
-
-      cam.model = srcCam.model;
-      cam.graph = srcCam.graph;
-      srcCam.camRow.push(cam);
-    });
-
-    this.onCamsChanged.next(srcCam.camRow);
-  }
-
-  annotonToCam(cam, annoton) {
-
-    let destNode = new AnnotonNode()
-    destNode.deepCopyValues(annoton.node);
-
-    let result: CamRow = {
-      // id: uuid(),
-      treeLevel: annoton.treeLevel,
-      // model: cam.model,
-      annotatedEntity: {
-        id: '',
-        label: annoton.gp
-      },
-      relationship: annoton.relationship,
-      aspect: annoton.aspect,
-      term: annoton.term,
-      relationshipExt: annoton.relationshipExt,
-      extension: annoton.extension,
-      evidence: annoton.evidence,
-      reference: annoton.reference,
-      with: annoton.with,
-      assignedBy: annoton.assignedBy,
-      srcNode: annoton.node,
-      destNode: destNode
-    }
-
-    return result;
-  }
-
-  buildCamsQuery(searchCriteria: SearchCriteria) {
-    let query = new NoctuaQuery();
-
-    each(searchCriteria.goterms, (goterm) => {
-      query.goterm(goterm.id)
-    });
-
-    each(searchCriteria.groups, (group: Group) => {
-      query.group(this.getXSD(group.url));
-    });
-
-    each(searchCriteria.contributors, (contributor: Contributor) => {
-      query.contributor(this.getXSD(contributor.orcid));
-    });
-
-    each(searchCriteria.gps, (gp) => {
-      query.gp(this.curieUtil.getIri(gp.id));
-    });
-
-    each(searchCriteria.pmids, (pmid) => {
-      query.pmid(pmid);
-    });
-
-    each(searchCriteria.organisms, (organism: Organism) => {
-      query.taxon(organism.taxonIri);
-    });
-
-    each(searchCriteria.states, (state: any) => {
-      query.state(this.getXSD(state.name));
-    });
-
-    query.limit(50);
-
-    return '?query=' + encodeURIComponent(query.build());
-  }
 
   buildAllContributorsQuery() {
-    let query = new Query();
+    const query = new Query();
 
     query.prefix(
       prefix('rdfs', '<http://www.w3.org/2000/01/rdf-schema#>'),
@@ -342,7 +331,7 @@ export class SparqlService {
         '(COUNT(distinct ?cam) AS ?cams)'
       )
       .where(
-        triple('?cam', 'metago:graphType', 'metago:noctuaCam'),
+        triple('?cam', '<http://model.geneontology.org/graphType>', '<http://model.geneontology.org/noctuaCam>'),
         triple('?cam', 'dc:contributor', '?orcid'),
         'BIND( IRI(?orcid) AS ?orcidIRI)',
         optional(
@@ -353,13 +342,12 @@ export class SparqlService {
         'BIND(IF(bound(?name), ?name, ?orcid) as ?name)')
       .groupBy('?orcid ?name')
       .orderBy('?name', 'ASC');
-    return '?query=' + encodeURIComponent(query.build());
+    return query.build();
   }
 
   buildOrganismsQuery() {
-
-    let query = new Query();
-    let graphQuery = new Query();
+    const query = new Query();
+    const graphQuery = new Query();
     graphQuery.graph('?model',
       '?model metago:graphType metago:noctuaCam',
       triple('?s', 'enabled_by:', '?entity'),
@@ -388,32 +376,178 @@ export class SparqlService {
       .groupBy('?taxonIri ?taxonName')
       .orderBy('?taxonName', 'ASC')
 
-    return '?query=' + encodeURIComponent(query.build());
+    return query.build();
   }
 
   buildAllGroupsQuery() {
-    let query = `
-        PREFIX metago: <http://model.geneontology.org/>
-        PREFIX dc: <http://purl.org/dc/elements/1.1/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-        PREFIX has_affiliation: <http://purl.obolibrary.org/obo/ERO_0000066> 
-		    PREFIX hint: <http://www.bigdata.com/queryHints#>
-    
-        SELECT  distinct ?name ?url         (GROUP_CONCAT(distinct ?orcidIRI;separator="@@") AS ?orcids) 
-                                            (COUNT(distinct ?orcidIRI) AS ?contributors)
-                                            (COUNT(distinct ?cam) AS ?cams)
-        WHERE    
-        {
-          ?cam metago:graphType metago:noctuaCam .
-          ?cam dc:contributor ?orcid .
-          BIND( IRI(?orcid) AS ?orcidIRI ).  
-          ?orcidIRI has_affiliation: ?url .
-          ?url rdfs:label ?name .     
-          hint:Prior hint:runLast true .
-        }
-        GROUP BY ?url ?name`
+    const query = `
+    PREFIX metago: <http://model.geneontology.org/>
+    PREFIX dc: <http://purl.org/dc/elements/1.1/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+    PREFIX has_affiliation: <http://purl.obolibrary.org/obo/ERO_0000066> 
+    PREFIX hint: <http://www.bigdata.com/queryHints#>
 
-    return '?query=' + encodeURIComponent(query);
+    SELECT  distinct ?name ?url         (GROUP_CONCAT(distinct ?orcidIRI;separator="@@") AS ?orcids) 
+                                        (COUNT(distinct ?orcidIRI) AS ?contributors)
+                                        (COUNT(distinct ?cam) AS ?cams)
+    WHERE    
+    {
+      ?cam metago:graphType metago:noctuaCam .
+      ?cam dc:contributor ?orcid .
+      BIND( IRI(?orcid) AS ?orcidIRI ).  
+      ?orcidIRI has_affiliation: ?url .
+      ?url rdfs:label ?name .     
+      hint:Prior hint:runLast true .
+    }
+    GROUP BY ?url ?name`
+
+    return query;
+  }
+
+  buildPubmedInfoQuery(pmid: string) {
+    const query = new Query();
+
+    query.prefix(
+      prefix('wd', '<http://www.wikidata.org/entity/>'),
+      prefix('wdt', '<http://www.wikidata.org/prop/direct/>'))
+      .select('?rtcl ?title ?author ?journal ?date')
+      .where(
+        triple('?rtcl', 'wdt:P698', `"${pmid}"`),
+        optional(triple('?rtcl', 'wdt:P1476', '?title')),
+        optional(triple('?rtcl', 'wdt:P2093', '?author')),
+        optional(triple('?rtcl', 'wdt:P1433', '?journal')),
+        optional(triple('?rtcl', 'wdt:P577', '?date'))
+      );
+
+    return query.build();
+  }
+
+  buildModelMetaQuery(modelId) {
+    const query = new Query();
+
+    const graphQuery = new Query();
+    graphQuery.graph('?model',
+      '?model dc:date ?date; dc:title ?modelTitle; modelState: ?modelState; providedBy: ?providedBy; dc:contributor ?orcid',
+    );
+
+    query.prefix(
+      prefix('rdf', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>'),
+      prefix('rdfs', '<http://www.w3.org/2000/01/rdf-schema#>'),
+      prefix('dc', '<http://purl.org/dc/elements/1.1/>'),
+      prefix('metago', '<http://model.geneontology.org/>'),
+      prefix('gomodel', '<http://model.geneontology.org/>'),
+      prefix('owl', '<http://www.w3.org/2002/07/owl#>'),
+      prefix('GO', '<http://purl.obolibrary.org/obo/GO_>'),
+      prefix('BP', '<http://purl.obolibrary.org/obo/GO_0008150>'),
+      prefix('MF', '<http://purl.obolibrary.org/obo/GO_0003674>'),
+      prefix('CC', '<http://purl.obolibrary.org/obo/GO_0005575>'),
+      prefix('modelState', '<http://geneontology.org/lego/modelstate>'),
+      prefix('providedBy', '<http://purl.org/pav/providedBy>'),
+      prefix('vcard', '<http://www.w3.org/2006/vcard/ns#>'),
+      prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
+      prefix('enabled_by', '<http://purl.obolibrary.org/obo/RO_0002333>'),
+      prefix('evidence', '<http://geneontology.org/lego/evidence>'),
+      prefix('in_taxon', '<http://purl.obolibrary.org/obo/RO_0002162>'),
+      prefix('obo', '<http://www.geneontology.org/formats/oboInOwl#>'))
+      .select(
+        'distinct ?model ?modelTitle ?modelState ?date',
+        '(GROUP_CONCAT(distinct ?entity;separator="@@") as ?entities)',
+        '(GROUP_CONCAT(distinct ?orcid;separator="@@") as ?contributors)',
+        '(GROUP_CONCAT(distinct ?providedBy;separator="@@") as ?groups)'
+      ).where(
+        `VALUES ?model { ${modelId} }`,
+        graphQuery
+      ).groupBy('?model ?modelTitle ?modelState ?date')
+
+    return query.build();
+  }
+
+  buildModelTermsQuery(modelId) {
+    ` 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX metago: <http://model.geneontology.org/>
+PREFIX gomodel: <http://model.geneontology.org/>
+PREFIX definition: <http://purl.obolibrary.org/obo/IAO_0000115>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX GO: <http://purl.obolibrary.org/obo/GO_>
+PREFIX BP: <http://purl.obolibrary.org/obo/GO_0008150>
+PREFIX MF: <http://purl.obolibrary.org/obo/GO_0003674>
+PREFIX CC: <http://purl.obolibrary.org/obo/GO_0005575>
+PREFIX modelState: <http://geneontology.org/lego/modelstate>
+PREFIX providedBy: <http://purl.org/pav/providedBy>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX has_affiliation: <http://purl.obolibrary.org/obo/ERO_0000066>
+PREFIX enabled_by: <http://purl.obolibrary.org/obo/RO_0002333>
+PREFIX evidence: <http://geneontology.org/lego/evidence>
+PREFIX in_taxon: <http://purl.obolibrary.org/obo/RO_0002162>
+PREFIX obo: <http://www.geneontology.org/formats/oboInOwl#>
+SELECT distinct ?model ?modelTitle ?modelState ?date ?gocam ?goclasses ?goids ?gonames ?definitions
+	(GROUP_CONCAT(distinct ?entity;separator="@@") as ?entities)
+	(GROUP_CONCAT(distinct ?orcid;separator="@@") as ?contributors)
+	(GROUP_CONCAT(distinct ?providedBy;separator="@@") as ?groups)
+
+
+
+WHERE{
+  VALUES ?model { gomodel:5b91dbd100001639} .
+GRAPH ?model {
+?model dc:date ?date; dc:title ?modelTitle; modelState: ?modelState; providedBy: ?providedBy; dc:contributor ?orcid.
+  ?entity rdf:type owl:NamedIndividual .
+    			?entity rdf:type ?goids
+}
+       VALUES ?goclasses { BP: MF: CC:  } . 
+  			?goids rdfs:subClassOf+ ?goclasses .
+    		?goids rdfs:label ?gonames .
+  		    ?goids definition: ?definitions .
+
+}
+
+GROUP BY ?model ?modelTitle ?modelState ?date ?gocam ?goclasses ?goids ?gonames ?definitions`
+
+
+
+    const query = new Query();
+
+    const graphQuery = new Query();
+    graphQuery.graph('?model',
+      triple('?entity', 'rdf:type', 'owl:NamedIndividual'),
+      triple('?entity', 'rdf:type', '?id')
+    );
+
+    query.prefix(
+      prefix('rdf', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>'),
+      prefix('rdfs', '<http://www.w3.org/2000/01/rdf-schema#>'),
+      prefix('dc', '<http://purl.org/dc/elements/1.1/ >'),
+      prefix('metago', '<http://model.geneontology.org/>'),
+      prefix('gomodel', '<http://model.geneontology.org/>'),
+      prefix('definition', '<http://purl.obolibrary.org/obo/IAO_0000115>'),
+      prefix('owl', '<http://www.w3.org/2002/07/owl#>'),
+      prefix('GO', '<http://purl.obolibrary.org/obo/GO_>'),
+      prefix('BP', '<http://purl.obolibrary.org/obo/GO_0008150>'),
+      prefix('MF', '<http://purl.obolibrary.org/obo/GO_0003674>'),
+      prefix('CC', '<http://purl.obolibrary.org/obo/GO_0005575>'),
+      prefix('modelState', '<http://geneontology.org/lego/modelstate>'),
+      prefix('providedBy', '<http://purl.org/pav/providedBy>'),
+      prefix('vcard', '<http://www.w3.org/2006/vcard/ns#>'),
+      prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
+      prefix('enabled_by', '<http://purl.obolibrary.org/obo/RO_0002333>'),
+      prefix('evidence', '<http://geneontology.org/lego/evidence>'),
+      prefix('in_taxon', '<http://purl.obolibrary.org/obo/RO_0002162>'),
+      prefix('obo', '<http://www.geneontology.org/formats/oboInOwl#>'))
+      .select(
+        'distinct ?goclasses ?id ?label ?definition',
+      ).where(
+        `VALUES ?model { ${modelId} }`,
+        graphQuery,
+        'VALUES ?goclasses { BP: MF: CC:  }',
+        triple('?id', 'rdfs:subClassOf+', '?goclasses'),
+        triple('?id', 'rdfs:label', '?label'),
+        triple('?id', 'definition:', ' ?definition')
+      ).groupBy('?goclasses ?id ?label ?definition')
+
+    return query.build();
   }
 
   getXSD(s) {

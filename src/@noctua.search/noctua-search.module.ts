@@ -4,27 +4,48 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NoctuaSharedModule } from '@noctua/shared.module';
-import { NoctuaSearchBarComponent } from './components/search-bar/search-bar.component';
-import { NoctuaAdvancedSearchComponent } from './components/search-bar/advanced-search/advanced-search.component';
+import { SearchOrganismsComponent } from './components/search-organisms/search-organisms.component';
+import { SearchGroupsComponent } from './components/search-groups/search-groups.component';
+import { SearchContributorsComponent } from './components/search-contributors/search-contributors.component';
+import { SearchFormComponent } from './components/search-form/search-form.component';
+import { SearchFilterComponent } from './components/search-filter/search-filter.component';
+import { SearchRelationComponent } from './components/search-relation/search-relation.component';
+import { SearchHistoryComponent } from './components/search-history/search-history.component';
+import { NoctuaEditorModule } from '@noctua.editor';
+import { ArtBasketComponent } from './components/art-basket/art-basket.component';
+import { ReviewFormComponent } from './components/review-form/review-form.component';
 
 @NgModule({
     declarations: [
-        NoctuaSearchBarComponent,
-        NoctuaAdvancedSearchComponent
+        SearchFilterComponent,
+        SearchFormComponent,
+        SearchContributorsComponent,
+        SearchGroupsComponent,
+        SearchOrganismsComponent,
+        SearchRelationComponent,
+        SearchHistoryComponent,
+        ArtBasketComponent,
+        ReviewFormComponent
     ],
     imports: [
         CommonModule,
         RouterModule,
         FormsModule,
         ReactiveFormsModule,
-        NoctuaSharedModule
+        NoctuaSharedModule,
+        NoctuaEditorModule
     ],
     exports: [
-        NoctuaSearchBarComponent
-    ],
-    entryComponents: [
-        NoctuaAdvancedSearchComponent
+        SearchFilterComponent,
+        SearchFormComponent,
+        SearchContributorsComponent,
+        SearchGroupsComponent,
+        SearchOrganismsComponent,
+        SearchRelationComponent,
+        SearchHistoryComponent,
+        ArtBasketComponent,
+        ReviewFormComponent
     ]
 })
-export class NoctuaSearchBarModule {
+export class NoctuaSearchBaseModule {
 }
