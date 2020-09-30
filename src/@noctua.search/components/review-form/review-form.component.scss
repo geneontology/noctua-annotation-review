@@ -20,15 +20,8 @@
 
   .noc-search-form {
     //padding: 12px;
-    margin-bottom: 12px;
-    @include deep-height(200px);
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 1000;
+    @include deep-height(100%);
     background-color: #FFF;
-    border-bottom: #BBB solid 1px;
-    @include mat-elevation(3);
 
     .noc-review-input {
       @include deep-width(240px);

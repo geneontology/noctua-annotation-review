@@ -1,19 +1,19 @@
 <div fxLayout="column" fxLayoutAlign="start stretch" class="noc-drawer h-100-p">
-  <div class="noc-drawer-header" fxLayout="row" fxLayoutAlign="start center">
-    <span class="noc-drawer-header-title">
-      Annotation Review</span>
-    <span fxFlex></span>
-    <button mat-stroked-button (click)="close()" class="noc-rounded-button noc-sm" color="primary"
-      aria-label="Close dialog">
-      <mat-icon>close</mat-icon> CLOSE
-    </button>
+  <div class="noc-drawer-header" fxLayout="column" fxLayoutAlign="start stretch">
+    <div class="noc-header w-100-p" fxLayout="row" fxLayoutAlign="start center">
+      <span class="noc-drawer-header-title">
+        Annotation Review</span>
+      <span fxFlex></span>
+      <button mat-stroked-button (click)="close()" class="noc-rounded-button noc-sm" color="primary"
+        aria-label="Close dialog">
+        <mat-icon>close</mat-icon> CLOSE
+      </button>
+    </div>
+    <noc-review-form class="pt-4 px-12"></noc-review-form>
   </div>
   <div class="noc-drawer-body" noctuaPerfectScrollbar>
     <div *ngIf="!noctuaUserService.user" class="noc-draw-body-disabled" fxLayoutAlign="center center">
       Log in to Continue
-    </div>
-    <div class="w-100-p">
-      <noc-review-form></noc-review-form>
     </div>
     <div *ngFor="let cam of cams" id="{{'noc-basket-'+cam.displayId}}" (click)="selectItem(cam)" class="noc-group-row"
       [ngClass]="{'noc-selected': cam.id===camsService.selectedCamUuid}" fxLayout="row" fxLayoutAlign="start center">
@@ -64,13 +64,14 @@
         </div>
       </div>
       <span fxFlex></span>
-      <mat-icon class="s-24">
+      <button class="noc-remove-button" mat-icon-button (click)="remove(cam)" color="warn">X</button>
+      <!--  <mat-icon class="s-24">
         chevron_right
-      </mat-icon>
+      </mat-icon> -->
     </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="start center" class="noc-drawer-footer noc-submit-row">
     <span fxFlex=""></span>
-    <button (click)="clear()" type="button" mat-raised-button>Clear Search</button>
+    <button (click)="clear()" type="button" mat-raised-button>Clear Basket</button>
   </div>
 </div>

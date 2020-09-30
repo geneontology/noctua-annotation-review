@@ -9,35 +9,45 @@ $accent: map-get($theme, accent);
   background-color: white;
   @include mat-elevation(4);
 
+
+
   .noc-drawer {
-    @include deep-width(400px);
-  }
+    @include deep-width(450px);
 
-  .noc-header {
-    @include deep-height(30px);
-    background-color: #EEE;
-    border-bottom: #CCC solid 1px;
+    .noc-drawer-header {
+      padding: 0;
+      @include deep-height(240px);
+      background-color: #FFF;
+      @include mat-elevation(2);
+      z-index: 1000;
 
-    mat-icon-button {
-      @include deep-height(30px);
-      @include deep-width(30px);
-      line-height: 30px;
+      .noc-header {
+        padding: 0 12px;
+        @include deep-height(40px);
+        border-bottom: #BBB solid 1px;
+        @include mat-elevation(2);
+        background-color: #FFF;
+      }
+
+      .noc-drawer-header-title {
+        font-size: 14px;
+        font-weight: bold;
+      }
     }
 
-    .noc-title {
-      font-size: 10px;
-      padding: 0 14px;
+    .noc-drawer-body {
+      padding: 12px 8 100px 0;
+      min-height: calc(100% - 290px);
     }
   }
 
   .noc-group-row {
-    margin-bottom: 12px;
-    padding: 10px 10px;
+    padding: 12px 10px;
     min-height: 40px;
     max-height: 300px;
-    border: #CCC solid 1px;
+    border-bottom: #CCC solid 1px;
     font-size: 12px;
-    @include mat-elevation(2);
+    @include mat-elevation(1);
 
     .noc-name {
       font-size: 14px;
@@ -74,12 +84,17 @@ $accent: map-get($theme, accent);
       cursor: pointer;
     }
 
+    .noc-remove-button {
+      height: 30px;
+      width: 30px;
+    }
+
     &:hover {
       background-color: #F2F2F2;
     }
 
     &.noc-selected {
-      background-color: #7ae060;
+      background-color: $noc-highlight-color;
     }
   }
 

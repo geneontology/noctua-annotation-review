@@ -2,6 +2,7 @@
 @import "mixins/breakpoints";
 $noc-primary-color: #039be5;
 $noc-secondary-color: #995014;
+$noc-highlight-color: #e1f5fe;
 
 .ps__rail-x {
   top: 3px;
@@ -111,6 +112,23 @@ mat-chip {
 
   @include media-breakpoint('lt-lg') {
     @include deep-width(90%);
+  }
+}
+
+.noc-display-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: #BBB solid 1px;
+  font-size: 14px;
+
+  &.noc-sm {
+    width: 25px;
+    height: 25px;
+    font-size: 10px;
   }
 }
 

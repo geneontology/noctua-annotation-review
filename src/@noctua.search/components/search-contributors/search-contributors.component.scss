@@ -74,6 +74,7 @@
     padding: 0 10px;
     @include deep-height(50px);
     border-top: #CCC solid 1px;
+    @include mat-elevation(1);
     font-size: 12px;
 
 

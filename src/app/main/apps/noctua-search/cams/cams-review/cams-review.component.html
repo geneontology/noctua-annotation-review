@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign="start stretch" class="noc-cams noc-drawer h-100-p">
+<div fxLayout="column" fxLayoutAlign="start stretch" class="noc-cams noc-drawer">
   <div class="noc-drawer-header" fxLayout="row" fxLayoutAlign="start center">
     <span class="noc-drawer-header-title">
       Annotation Review Tool</span>
@@ -27,10 +27,13 @@
         </div>
         <div *ngIf="!cam?.loading.status" class="noc-cam-heading" fxFlex="1 1 auto" fxLayout="row"
           fxLayoutAlign="start center" [@animateStagger]="{value:'50'}">
-          <button mat-icon-button (click)="cam.toggleExpand()" class="">
+          <button mat-icon-button (click)="cam.toggleExpand()" class="noc-toggle-expand-button">
             <fa-icon *ngIf="!cam.expanded" [icon]="['fas', 'caret-right']"></fa-icon>
             <fa-icon *ngIf="cam.expanded" [icon]="['fas', 'caret-down']"></fa-icon>
           </button>
+          <div class="noc-display-number mr-8">
+            {{cam.displayNumber}}
+          </div>
           <div *ngIf="cam?.title" class="noc-title" fxLayout="row" fxLayoutAlign="start center">
             <div class="text-truncate pr-8">
               <strong>Title: </strong>{{cam?.title }}
@@ -114,7 +117,7 @@
             </a>
           </div>
         </div>
-        <noc-cam-table class="" [cam]="cam" *ngIf="cam.expanded" [options]="tableOptions"></noc-cam-table>
+        <noc-cam-table class="noc-cam-table" [cam]="cam" *ngIf="cam.expanded" [options]="tableOptions"></noc-cam-table>
       </div>
     </div>
   </div>

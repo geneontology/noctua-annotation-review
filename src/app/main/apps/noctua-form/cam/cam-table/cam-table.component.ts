@@ -18,6 +18,7 @@ import {
 } from 'noctua-form-base';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 import { trigger, state, transition, style, animate } from '@angular/animations';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'noc-cam-table',
@@ -70,7 +71,15 @@ export class CamTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.cam)
+    this.cam.onGraphChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((annotons: Annoton[]) => {
+        if (!annotons) {
+          return;
+        }
+
+        this.cam.updateAnnotonDisplayNumber();
+      });
   }
 
   addAnnoton() {

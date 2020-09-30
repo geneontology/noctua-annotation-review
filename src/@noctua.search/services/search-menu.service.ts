@@ -94,28 +94,18 @@ export class NoctuaSearchMenuService {
         });
     }
 
-    scrollTo(a: string) {
+    scrollTo(q: string) {
 
         setTimeout(() => {
             if (this.resultsViewScrollbar) {
                 this.resultsViewScrollbar.update();
 
                 setTimeout(() => {
-                    this.resultsViewScrollbar.scrollToElement(a, 0, 1000);
+                    this.resultsViewScrollbar.scrollToElement(q, -100, 1000);
                 });
             }
         });
     }
 
-    private _prepareChatForReplies(): void {
-        setTimeout(() => {
-            if (this.resultsViewScrollbar) {
-                this.resultsViewScrollbar.update();
 
-                setTimeout(() => {
-                    this.resultsViewScrollbar.scrollToBottom(0);
-                });
-            }
-        });
-    }
 }

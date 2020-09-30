@@ -7,7 +7,6 @@
 
   .noc-drawer-header {
     border-bottom: #DDD solid 1px;
-    ;
   }
 
   .noc-cams {
@@ -37,21 +36,26 @@
 
     .noc-cam-container {
       @include mat-elevation(2);
-      margin-bottom: 12px;
 
       &.noc-selected {
-        border-left: rgba(#93d170, 0.4) solid 5px;
+        border-left: $noc-highlight-color solid 5px;
       }
     }
 
     .noc-cam-heading {
-      margin-bottom: 4px;
+      margin-bottom: 0px;
       padding: 0 10px 0 0;
-      @include deep-height(40px);
+      @include deep-height(35px);
       width: 100%;
       //min-height: 35px;
       background-color: #FFFFFF;
       font-size: 12px;
+
+      .noc-toggle-expand-button {
+        width: 30px;
+        height: 30px;
+        line-height: 12px;
+      }
 
       .noc-cam-title {
         max-width: 400px !important;
@@ -86,23 +90,25 @@
         border-radius: 0 !important;
       }
 
-      &::before {
-        border-top: 1px solid #000;
-        top: 9px;
-        width: 8px;
-        height: 0;
-      }
 
-      &::after {
-        border-left: 1px solid #000;
-        height: 100%;
-        width: 0px;
-        top: 2px;
-      }
     }
 
-    noc-cam-table {
-      padding-left: 40px;
+    .noc-cam-table {
+      position: relative;
+      padding-left: 60px;
+
+
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 45px;
+        bottom: 0;
+        width: 2px;
+        color: white;
+        background-color: #BBB;
+        content: "";
+      }
+
     }
   }
 

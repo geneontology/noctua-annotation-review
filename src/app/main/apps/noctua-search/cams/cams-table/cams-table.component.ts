@@ -21,6 +21,7 @@ import { ReviewMode } from '@noctua.search/models/review-mode';
 import { NoctuaReviewSearchService } from '@noctua.search/services/noctua-review-search.service';
 import { NoctuaUtils } from '@noctua/utils/noctua-utils';
 import { LeftPanel, MiddlePanel, RightPanel } from '@noctua.search/models/menu-panels';
+import { each, find } from 'lodash';
 
 
 export function CustomPaginator() {
@@ -127,6 +128,16 @@ export class CamsTableComponent implements OnInit, OnDestroy {
           return;
         }
         this.cams = cams;
+        this.preCheck();
+      });
+
+    this.camsService.onCamsChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(cams => {
+        if (!cams) {
+          return;
+        }
+        this.preCheck();
       });
 
     this.noctuaSearchService.onCamsPageChanged
@@ -173,7 +184,17 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   }
 
   preCheck() {
-    this.cams.forEach(row => this.selection.select(row));
+    const self = this;
+    this.selection.clear();
+
+    each(self.cams, (cam) => {
+      const found = find(self.camsService.cams, { id: cam.id });
+
+      if (found) {
+        self.selection.select(cam);
+      }
+    });
+
   }
 
   /** The label for the checkbox on the passed row */
