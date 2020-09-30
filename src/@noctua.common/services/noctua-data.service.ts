@@ -22,7 +22,7 @@ export class NoctuaDataService {
   constructor(
     private httpClient: HttpClient,
     private sparqlService: SparqlService) {
-    this.onContributorsChanged = new BehaviorSubject([]);
+    this.onContributorsChanged = new BehaviorSubject(null);
     this.onGroupsChanged = new BehaviorSubject([]);
     this.onOrganismsChanged = new BehaviorSubject([]);
 

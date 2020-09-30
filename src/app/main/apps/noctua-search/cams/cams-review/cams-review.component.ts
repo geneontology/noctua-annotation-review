@@ -80,7 +80,7 @@ export class CamsReviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private camService: CamService,
-    private camsService: CamsService,
+    public camsService: CamsService,
     private confirmDialogService: NoctuaConfirmDialogService,
     public noctuaReviewSearchService: NoctuaReviewSearchService,
     public noctuaUserService: NoctuaUserService,

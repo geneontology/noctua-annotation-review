@@ -1,9 +1,11 @@
 @import "src/@noctua/scss/noctua";
 @import "src/@noctua.common/scss/noctua.common";
 
+$primary: map-get($theme, primary);
+$accent: map-get($theme, accent);
+
 :host {
-  width: 100%; // display: block;
-  @include deep-width(300px);
+  width: 100%;
   background-color: white;
   @include mat-elevation(4);
 
@@ -41,14 +43,15 @@
       font-size: 14px;
     }
 
-    .noc-history-item {
-      @include deep-height(20px);
+    .noc-item {
       @include deep-width(100%);
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       font-size: 12px;
+
+      .noc-title {
+        font-weight: bold;
+        margin-right: 8px;
+        color: #999;
+      }
     }
 
     .noc-cams-number {
@@ -59,8 +62,24 @@
       border-radius: 25%;
     }
 
+    .noc-edit-button {
+      background-color: #ffffff;
+      color: map-get($primary, default);
+      border: rgba(map-get($primary, default), 0.5) solid 1px;
+      @include mat-elevation(1)
+    }
+
+    .noc-more-details-button {
+      padding: 8px 0;
+      cursor: pointer;
+    }
+
     &:hover {
       background-color: #F2F2F2;
+    }
+
+    &.noc-selected {
+      background-color: #7ae060;
     }
   }
 

@@ -1,4 +1,4 @@
-Add a search API to Minerva - drive front page and [Annotation Review Tool](http://noctua-dev.berkeleybop.org/workbench/noctua-art-plus/)  which might be the same thing.  
+Add a search API to Minerva - drive front page and [Annotation Review Tool](http://noctua-dev.berkeleybop.org/workbench/noctua-annotation-review/)  which might be the same thing.  
 
 ## Endpoint
 

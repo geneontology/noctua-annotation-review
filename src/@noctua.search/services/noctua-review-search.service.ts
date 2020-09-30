@@ -19,6 +19,8 @@ import { CamPage } from './../models/cam-page';
 import { SearchHistory } from './../models/search-history';
 import { NoctuaUtils } from '@noctua/utils/noctua-utils';
 import { ArtBasket } from '@noctua.search/models/art-basket';
+import { NoctuaSearchMenuService } from './search-menu.service';
+import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
 
 declare const require: any;
 
@@ -45,7 +47,6 @@ export class NoctuaReviewSearchService {
     onCamsPageChanged: BehaviorSubject<any>;
     onCamChanged: BehaviorSubject<any>;
     searchSummary: any = {};
-
     matchedEntities: Entity[] = [];
     matchedCountCursor = 0;
     matchedCount = 0;
@@ -58,9 +59,12 @@ export class NoctuaReviewSearchService {
     };
 
     constructor(
+        private noctuaDataService: NoctuaDataService,
+        public noctuaSearchMenuService: NoctuaSearchMenuService,
         private httpClient: HttpClient,
         private camsService: CamsService,
         private curieService: CurieService) {
+        const self = this;
         this.onArtBasketChanged = new BehaviorSubject(null);
         this.onResetReview = new Subject();
         this.onCamsPageChanged = new BehaviorSubject(null);
@@ -95,11 +99,25 @@ export class NoctuaReviewSearchService {
                     return;
                 }
                 const ids = cams.map((cam: Cam) => {
-                    return cam.modelId;
+                    return cam.id;
                 });
 
                 this.searchCriteria['ids'] = ids;
 
+            });
+
+        const artBasket = localStorage.getItem('artBasket');
+
+        self.noctuaDataService.onContributorsChanged
+            .subscribe((contributors) => {
+                if (!contributors) {
+                    return;
+                }
+                if (artBasket) {
+                    this.artBasket = new ArtBasket(JSON.parse(artBasket));
+                    self.camsService.addCamsToReview(this.artBasket.cams);
+                    this.onArtBasketChanged.next(this.artBasket);
+                }
             });
     }
 
@@ -126,13 +144,16 @@ export class NoctuaReviewSearchService {
         if (this.matchedCount === 0) {
             return;
         }
+
         // so it circulates
         this.matchedCountCursor = (this.matchedCountCursor + 1) % this.matchedCount;
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
         this.camsService.expandMatch(this.currentMatchedEnity.uuid);
-        this.scroll(NoctuaUtils.cleanID(this.currentMatchedEnity.uuid));
-        this.camsService.currentHighlightedUuid = this.currentMatchedEnity.uuid;
-        this.camsService.currentHighlightedModel = this.currentMatchedEnity.modelId;
+        //  this.scroll(NoctuaUtils.cleanID(this.currentMatchedEnity.uuid));
+        this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
+        this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
+
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId)
 
         return this.currentMatchedEnity;
     }
@@ -147,8 +168,8 @@ export class NoctuaReviewSearchService {
         }
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
         this.scroll(NoctuaUtils.cleanID(this.currentMatchedEnity.uuid));
-        this.camsService.currentHighlightedUuid = this.currentMatchedEnity.uuid;
-        this.camsService.currentHighlightedModel = this.currentMatchedEnity.modelId;
+        this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
+        this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
         return this.currentMatchedEnity;
     }
 
@@ -169,8 +190,8 @@ export class NoctuaReviewSearchService {
         this.matchedCountCursor = 0;
         this.matchedCount = 0;
         this.currentMatchedEnity = undefined;
-        this.camsService.currentHighlightedUuid = undefined;
-        this.camsService.currentHighlightedModel = undefined;
+        this.camsService.selectedNodeUuid = undefined;
+        this.camsService.selectedCamUuid = undefined;
         this.searchCriteria = new SearchCriteria();
     }
 
@@ -221,16 +242,19 @@ export class NoctuaReviewSearchService {
 
     addToArtBasket(id: string, title: string) {
         this.artBasket.addCamToBasket(id, title);
+        localStorage.setItem('artBasket', JSON.stringify(this.artBasket));
         this.onArtBasketChanged.next(this.artBasket);
     }
 
     removeFromArtBasket(id) {
         this.artBasket.removeCamFromBasket(id);
+        localStorage.setItem('artBasket', JSON.stringify(this.artBasket));
         this.onArtBasketChanged.next(this.artBasket);
     }
 
     clearBasket() {
         this.artBasket.clearBasket();
+        localStorage.setItem('artBasket', JSON.stringify(this.artBasket));
         this.onArtBasketChanged.next(this.artBasket);
     }
 
@@ -285,7 +309,7 @@ export class NoctuaReviewSearchService {
 
             const modelId = response.id;
             const cam: Cam = find(self.camsService.cams, (inCam: Cam) => {
-                return inCam.modelId === modelId;
+                return inCam.id === modelId;
             });
 
             if (cam) {
@@ -298,7 +322,7 @@ export class NoctuaReviewSearchService {
                                 '',
                                 null,
                                 self.curieUtil.getCurie(v1),
-                                cam.modelId
+                                cam.id
                             );
                         }));
                 });

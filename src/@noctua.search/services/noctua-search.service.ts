@@ -21,6 +21,7 @@ import { CurieService } from '@noctua.curie/services/curie.service';
 import { CamPage } from './../models/cam-page';
 import { SearchHistory } from './../models/search-history';
 import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
+import { NoctuaSearchMenuService } from './search-menu.service';
 
 declare const require: any;
 
@@ -75,6 +76,7 @@ export class NoctuaSearchService {
         private noctuaDataService: NoctuaDataService,
         public noctuaFormConfigService: NoctuaFormConfigService,
         public noctuaUserService: NoctuaUserService,
+        private noctuaSearchMenuService: NoctuaSearchMenuService,
         private curieService: CurieService) {
         this.onCamsChanged = new BehaviorSubject([]);
         this.onCamsReviewChanged = new BehaviorSubject([]);
@@ -104,11 +106,9 @@ export class NoctuaSearchService {
                 this.onCamsPageChanged.next(this.camPage);
             });
 
-            const element = document.querySelector('#noc-results');
+            this.noctuaSearchMenuService.resetResults();
 
-            if (element) {
-                element.scrollTop = 0;
-            }
+
         });
     }
 
@@ -122,6 +122,9 @@ export class NoctuaSearchService {
 
         self.noctuaDataService.onContributorsChanged
             .subscribe(contributors => {
+                if (!contributors) {
+                    return;
+                }
                 this.noctuaUserService.contributors = contributors;
                 /*   this.searchCriteria.terms = [{
                       id: 'GO:0006869',
@@ -330,7 +333,7 @@ export class NoctuaSearchService {
                 modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)
             });
 
-            cam.groups = <Group[]>response.groups.map(function (url) {
+            cam.groups = <Group[]>response.groups.map((url) => {
                 const group = find(self.noctuaUserService.groups, (inGroup: Group) => {
                     return inGroup.url === url;
                 });

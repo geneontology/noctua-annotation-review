@@ -1,13 +1,17 @@
-import { find, remove } from "lodash";
+import { NoctuaUtils } from '@noctua/utils/noctua-utils';
+import { each, find, remove } from 'lodash';
 
 
 export class ArtBasketItem {
+
+    displayId: string;
 
     constructor(
         public id: string,
         public title: string,
         public dateAdded: Date,
     ) {
+        this.displayId = NoctuaUtils.cleanID(id);
     }
 }
 
@@ -16,7 +20,24 @@ export class ArtBasket {
 
     cams: ArtBasketItem[] = [];
 
-    constructor() {
+    constructor(artBasket?) {
+        if (artBasket) {
+            this.addCamsToBasket(artBasket.cams);
+        }
+    }
+
+    addCamsToBasket(cams: any[]) {
+        const self = this;
+
+        each(cams, (inCam) => {
+            const found = find(this.cams, { id: inCam.id });
+            if (!found) {
+                const cam = new ArtBasketItem(inCam.id, inCam.title, inCam.dateAdded);
+                self.cams.push(cam);
+            }
+        });
+
+        self.sortCams();
     }
 
     addCamToBasket(id: string, title: string): ArtBasketItem {
@@ -47,6 +68,8 @@ export class ArtBasket {
     sortCams() {
         this.cams.sort(this._compareDateReviewAdded);
     }
+
+
 
     private _compareDateReviewAdded(a: ArtBasketItem, b: ArtBasketItem): number {
         if (a.dateAdded > b.dateAdded) {

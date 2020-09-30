@@ -2,11 +2,47 @@
 @import "src/@noctua.common/scss/noctua.common";
 $primary: map-get($theme, primary);
 $accent: map-get($theme, accent);
+$warn: map-get($theme, warn);
 
 :host {
   padding: 0px;
   width: 100%;
   background-color: #FFF;
+
+  .noc-sidemenu {
+    padding: 0;
+    @include deep-height(100%);
+    @include deep-width(60px);
+    // @include mat-elevation(2);
+    border-right: #999 solid 1px;
+
+    button {
+      @include deep-width(60px);
+      @include deep-height(60px);
+
+      font-size: 20px;
+      color: rgba(map-get($primary, default), 0.5);
+
+      &.noc-active {
+        font-size: 28px;
+        color: map-get($primary, default)
+      }
+
+      .noc-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        color: #FFF;
+        background-color: map-get($warn, default);
+        font-size: 10px;
+        text-align: center;
+        line-height: 20px;
+      }
+    }
+  }
 
   .noc-welcome {
     padding: 10px;
@@ -100,17 +136,39 @@ $accent: map-get($theme, accent);
     padding: 8px;
 
     button {
+      padding: 0 8px;
       color: map-get($accent, default);
       width: 250px;
       font-weight: 500;
       @include mat-elevation(4);
+
+      &.noc-review-mode-button {
+        width: 270px;
+
+        .noc-title {
+          width: 200px;
+        }
+
+        .noc-slide-toggle-container {
+          pointer-events: none;
+          border-left: #000 solid 1px;
+          width: 50px;
+        }
+      }
     }
   }
 
   .noc-art-info {
     padding: 0;
+    margin-bottom: 5px;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 1001;
+    padding: 0;
     @include deep-height(100px);
-    //background-color: rgb(60, 156, 36);
+    background-color: #FFFFFF;
+    @include mat-elevation(2);
     //color: #FFF;
 
     .noc-art-tabs {
@@ -227,25 +285,6 @@ $accent: map-get($theme, accent);
     min-height: 500px;
   }
 
-  .noc-sidemenu {
-    padding: 0;
-    @include deep-height(100%);
-    @include deep-width(60px);
-    // @include mat-elevation(2);
-    border-right: #999 solid 1px;
 
-    button {
-      @include deep-width(60px);
-      @include deep-height(60px);
-
-      font-size: 20px;
-      color: rgba(map-get($primary, default), 0.5);
-
-      &.noc-active {
-        font-size: 28px;
-        color: map-get($primary, default)
-      }
-    }
-  }
 
 }

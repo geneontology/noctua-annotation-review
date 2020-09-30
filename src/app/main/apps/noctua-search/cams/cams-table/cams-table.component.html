@@ -101,10 +101,9 @@
     <ng-container matColumnDef="expand">
       <th mat-header-cell *matHeaderCellDef fxFlex="40px" fxLayout="row" fxLayoutAlign="start center"></th>
       <td mat-cell *matCellDef="let cam" fxFlex="40px" fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button (click)="openDetails(cam)" color="primary" class="">
-          <mat-icon class="">
-            keyboard_arrow_right
-          </mat-icon>
+        <button mat-icon-button (click)="toggleCamExpand(cam)" color="primary" class="">
+          <fa-icon *ngIf="!cam.expanded" [icon]="['fas', 'caret-right']"></fa-icon>
+          <fa-icon *ngIf="cam.expanded" [icon]="['fas', 'caret-down']"></fa-icon>
         </button>
       </td>
     </ng-container>

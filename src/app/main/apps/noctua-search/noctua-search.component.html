@@ -33,10 +33,12 @@
       [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
       <fa-icon [icon]="['fas', 'history']"></fa-icon>
     </button>
-    <button *ngIf="noctuaSearchMenuService.reviewMode !== ReviewMode.off" mat-icon-button color=""
-      class="noc-rounded-button" (click)="toggleLeftDrawer(LeftPanel.artBasket)"
+    <button mat-icon-button color="" class="noc-rounded-button" (click)="openBasketPanel()"
       [ngClass]="{'noc-active': noctuaSearchMenuService.selectedLeftPanel === LeftPanel.artBasket}"
       matTooltip="Art Basket" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <div class="noc-badge">
+        {{artBasket?.cams.length}}89
+      </div>
       <fa-icon [icon]="['fas', 'shopping-basket']"></fa-icon>
     </button>
   </div>
@@ -54,82 +56,89 @@
         <noc-art-basket *ngSwitchCase="LeftPanel.artBasket"></noc-art-basket>
       </div>
     </mat-drawer>
-    <mat-drawer-content id="noc-results" class="noc-section-body w-100-p h-100-p">
-      <div class="header accent p-8 w-100-p" fxLayout="column" fxLayoutAlign="center center">
-        <h1 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
-          WELCOME TO NOCTUA
-        </h1>
-        <h3 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
-          Noctua is a web-based, collaborative Gene Ontology (GO) annotation tool developed by the GO Consortium.
-          It can be used to create standard GO annotations as well as more expressive models of biological processes,
-          known as GO-CAMs (Gene Ontology Causal Activity Models)
-        </h3>
-        <h4 *ngIf="!noctuaUserService.user">
-          You must Login to create or edit models. Models may be viewed without login.
-        </h4>
-        <div *ngIf="noctuaUserService.user" class="noc-create h-100-p" fxLayout="row" fxLayoutAlign="start center">
-          <button mat-raised-button (click)="createModel('noctua-form')" color=""
-            class="noc-rounded-button mr-4 noc-half-button noc-r">
-            CREATE MODEL IN FORM
-          </button>
-          <button mat-raised-button (click)="createModel('graph-editor')" color=""
-            class="noc-rounded-button mr-4 noc-half-button noc-m">
-            CREATE MODEL IN GRAPH EDITOR
-          </button>
-          <button mat-raised-button (click)="toggleReviewMode()" color=""
-            class="noc-rounded-button noc-half-button noc-l">
-            ANNOTATION REVIEW
-          </button>
-        </div>
-      </div>
-      <div *ngIf="noctuaSearchMenuService.reviewMode !== ReviewMode.off" class="noc-art-info" fxLayout="row"
-        fxLayoutAlign="center center">
-        <div class="noc-art-tabs" fxLayout="row" fxLayoutAlign="center center">
-          <div class="noc-line noc-visited" fxFlex>
+    <mat-drawer-content id="noc-results" class="w-100-p" noctuaPerfectScrollbar>
+      <div class="noc-section-body w-100-p">
+        <div class="header accent p-8 w-100-p" fxLayout="column" fxLayoutAlign="center center">
+          <h1 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+            WELCOME TO NOCTUA
+          </h1>
+          <h3 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+            Noctua is a web-based, collaborative Gene Ontology (GO) annotation tool developed by the GO Consortium.
+            It can be used to create standard GO annotations as well as more expressive models of biological processes,
+            known as GO-CAMs (Gene Ontology Causal Activity Models)
+          </h3>
+          <h4 *ngIf="!noctuaUserService.user">
+            You must Login to create or edit models. Models may be viewed without login.
+          </h4>
+          <div *ngIf="noctuaUserService.user" class="noc-create h-100-p" fxLayout="row" fxLayoutAlign="start center">
+            <button mat-raised-button (click)="createModel('noctua-form')" color=""
+              class="noc-rounded-button mr-4 noc-half-button noc-r">
+              CREATE MODEL IN FORM
+            </button>
+            <button mat-raised-button (click)="createModel('graph-editor')" color=""
+              class="noc-rounded-button mr-4 noc-half-button noc-m">
+              CREATE MODEL IN GRAPH EDITOR
+            </button>
+            <button mat-raised-button (click)="toggleReviewMode()" color=""
+              class="noc-rounded-button noc-half-button noc-l noc-review-mode-button" fxLayout="row"
+              fxLayoutAlign="start center">
+              <div class="noc-title">
+                ANNOTATION REVIEW MODE
+              </div>
+              <span fxFlex=""></span>
+              <div class="noc-slide-toggle-container" fxLayout="row" fxLayoutAlign="end center">
+                <mat-slide-toggle class="" [color]="color"
+                  [checked]="noctuaSearchMenuService.reviewMode !== ReviewMode.off" [disabled]="disabled">
+                </mat-slide-toggle>
+              </div>
+            </button>
           </div>
-          <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.cams)" class="" color="" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.cams,
+        </div>
+        <div *ngIf="noctuaSearchMenuService.reviewMode !== ReviewMode.off" class="noc-art-info" fxLayout="row"
+          fxLayoutAlign="center center">
+          <div class="noc-art-tabs" fxLayout="row" fxLayoutAlign="center center">
+            <div class="noc-line noc-visited" fxFlex>
+            </div>
+            <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.cams)" class="" color="" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.cams,
             'noc-visited': noctuaSearchMenuService.reviewLevel>0}" matTooltip="Refresh Search"
-            [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
-            <div class="noc-title">Search Results</div><br>
-            <div class="noc-description">Select Models to review</div>
-          </button>
-          <div class="noc-line" fxFlex [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>0}">
-          </div>
-          <!--   <fa-icon class="noc-icon-separator" [icon]="['fas', 'chevron-right']"></fa-icon>
-         -->
-          <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.camsReview)"
-            matBadge="{{artBasket?.cams.length}}" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.camsReview,
-            'noc-visited': noctuaSearchMenuService.reviewLevel>1}" matBadgePosition="after" matBadgeColor="accent"
-            class="" color="" matTooltip="Refresh Search" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
-            <div class="noc-title">Review Basket</div> <br>
-            <div class="noc-description">View Selected Models</div>
-          </button>
-          <!--   <fa-icon class="noc-icon-separator" [icon]="['fas', 'chevron-right']"></fa-icon>
-         -->
-          <div class="noc-line" fxFlex [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>1}">
-          </div>
-          <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.camsReview)" class="" color="" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.reviewChanges,
+              [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+              <div class="noc-title">Search Results</div><br>
+              <div class="noc-description">Select Models to review</div>
+            </button>
+            <div class="noc-line" fxFlex="80px" [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>0}">
+            </div>
+            <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.camsReview)" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.camsReview,
+            'noc-visited': noctuaSearchMenuService.reviewLevel>1}" matBadge="{{artBasket?.cams.length}}"
+              matBadgePosition="after" matBadgeColor="warn" class="" color="" matTooltip="Refresh Search"
+              [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+              <div class="noc-title">Review Basket</div> <br>
+              <div class="noc-description">View Selected Models</div>
+            </button>
+            <div class="noc-line" fxFlex="80px" [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>1}">
+            </div>
+            <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.camsReview)" class="" color="" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.reviewChanges,
             'noc-visited': noctuaSearchMenuService.reviewLevel>2}" matTooltip="Refresh Search"
-            [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
-            <div class="noc-title">Checkout</div> <br>
-            <div class="noc-description">Review Changes</div>
-          </button>
-          <div class="noc-line" fxFlex [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>2}">
+              [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+              <div class="noc-title">Checkout</div> <br>
+              <div class="noc-description">Review Changes</div>
+            </button>
+            <div class="noc-line" fxFlex [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>2}">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="h-100-p w-100-p">
-        <noc-cams-table [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.cams"
-          [isReviewMode]="isReviewMode">
-        </noc-cams-table>
-        <noc-cams-review [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.camsReview">
-        </noc-cams-review>
-      </div>
-      <div class="w-100-p">
-        <app-footer></app-footer>
+        <div class="h-100-p w-100-p">
+          <noc-cams-table [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.cams"
+            [isReviewMode]="isReviewMode">
+          </noc-cams-table>
+          <noc-cams-review [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.camsReview">
+          </noc-cams-review>
+        </div>
+        <div class="w-100-p">
+          <app-footer></app-footer>
+        </div>
       </div>
     </mat-drawer-content>
-    <mat-drawer #rightDrawer class="noc-right-drawer" noctuaPerfectScrollbar mode="over" position="end">
+    <mat-drawer #rightDrawer class="noc-right-drawer" mode="over" position="end">
 
     </mat-drawer>
   </mat-drawer-container>

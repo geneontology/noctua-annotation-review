@@ -4,118 +4,14 @@
       Annotation Review Tool</span>
     <span fxFlex></span>
   </div>
-  <div id="noc-review-results" class="noc-drawer-body w-100-p" noctuaPerfectScrollbar>
+  <div id="noc-review-results" class="noc-drawer-body w-100-p">
     <div *ngIf="!noctuaUserService.user" class="noc-draw-body-disabled" fxLayoutAlign="center center">
       Log in to Continue
     </div>
-    <!--   <div class="noc-search-form noc-form-section" fxLayout="column" fxLayoutAlign="start stretch">
-      <form *ngIf="searchForm" class="noc-section-body pt-8" fxLayout="column" fxLayoutAlign="start stretch"
-        name="searchForm" [formGroup]="searchForm" class="w-100-p h-100-p">
-        <div class="noc-annoton-group-row mb-8" fxLayout="row" fxLayoutAlign="start center">
-          <mat-form-field appearance="outline" fxFlex="150px" class="noc-sm">
-            <mat-label>Category</mat-label>
-            <mat-select placeholder="" formControlName="category" [compareWith]="compareCategory">
-              <mat-option *ngFor="let category of categories.options" [value]="category">
-                {{category.label}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.term" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Find What <strong>(Ontology Term)</strong></mat-label>
-            <input type="text" matInput formControlName="findWhat" [matAutocomplete]="termFindAuto" rows="2" />
-            <mat-autocomplete #termFindAuto="matAutocomplete" (optionSelected)="findSelected($event.option.value)"
-              [displayWith]="termDisplayFn" class="noc-term-autocomplete">
-              <mat-option class="noc-term-autocomplete" *ngFor="let item of termNode?.termLookup.results"
-                [value]="item">
-                <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-                  <div class="noc-term-label">
-                    {{ item.label }}
-                  </div>
-                  <span fxFlex></span>
-                  <div class="noc-term-id">
-                    {{ item.id }}
-                  </div>
-                </div>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.gp" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Find What <strong>(Gene Product)</strong></mat-label>
-            <input type="text" matInput formControlName="findWhat" [matAutocomplete]="gpAuto" rows="2" />
-          </mat-form-field>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.reference" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Find What <strong>(Reference)</strong></mat-label>
-            <input type="text" matInput formControlName="findWhat" />
-          </mat-form-field>
-          <div class="noc-review-actions" fxLayout="row" fxLayoutAlign="start center">
-            <div *ngIf="noctuaReviewSearchService.matchedCount===0" class="noc-matched-count">
-              No Results
-            </div>
-            <div *ngIf="noctuaReviewSearchService.matchedCount>0" class="noc-matched-count">
-              {{noctuaReviewSearchService.matchedCountCursor +1}} of {{noctuaReviewSearchService.matchedCount}}
-            </div>
-            <span fxFlex></span>
-            <div [ngClass]="{'noc-disabled':noctuaReviewSearchService.matchedCount===0}">
-              <button mat-icon-button (click)="findPrevious()" class="" color="primary">
-                <fa-icon [icon]="['fas', 'arrow-up']"></fa-icon>
-              </button>
-              <button mat-icon-button (click)="findNext()" class="" color="primary">
-                <fa-icon [icon]="['fas', 'arrow-down']"></fa-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div [ngClass]="{'noc-disabled':!displayReplaceForm.replaceSection}" class="noc-annoton-group-row"
-          fxLayout="row" fxLayoutAlign="start center">
-          <div fxFlex="150px" class="noc-sm">
-          </div>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.term" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Replace With <strong>(Ontology Term)</strong></mat-label>
-            <input type="text" matInput formControlName="replaceWith" [matAutocomplete]="termReplaceAuto" />
-            <mat-autocomplete #termReplaceAuto="matAutocomplete" [displayWith]="termDisplayFn"
-              class="noc-term-autocomplete">
-              <mat-option class="noc-term-autocomplete" *ngFor="let item of termReplaceNode?.termLookup.results"
-                [value]="item">
-                <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-                  <div class="noc-term-label">
-                    {{ item.label }}
-                  </div>
-                  <span fxFlex></span>
-                  <div class="noc-term-id">
-                    {{ item.id }}
-                  </div>
-                </div>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.gp" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Replace With <strong>(Gene Product)</strong></mat-label>
-            <input type="text" matInput formControlName="replaceWith" [matAutocomplete]="gpAuto" />
-          </mat-form-field>
-          <mat-form-field *ngIf="selectedCategoryName === ArtReplaceCategory.reference" appearance="outline" fxFlex
-            class="noc-sm mr-12">
-            <mat-label>Replace With <strong>(Reference)</strong></mat-label>
-            <input type="text" matInput formControlName="replaceWith" />
-          </mat-form-field>
-          <div [ngClass]="{'noc-disabled':!displayReplaceForm.replaceActions}" class="noc-review-actions" fxLayout="row"
-            fxLayoutAlign="space-between center">
-            <button (click)="replace()" mat-raised-button color="warn" class="noc-sm noc-review-btn" fxFlex="48">
-              Replace
-            </button>
-            <button (click)="replaceAll()" mat-raised-button color="warn" class="noc-sm noc-review-btn" fxFlex="48">
-              Replace All
-            </button>
-          </div>
-        </div>
-      </form>
-    </div> -->
     <div class="noc-cams-results">
-      <div class="noc-cam-container" *ngFor="let cam of cams" fxLayout="column" fxLayoutAlign="start stretch">
+      <div class="noc-cam-container" *ngFor="let cam of cams" id="{{'noc-review-cams-'+cam.displayId}}"
+        [ngClass]=" {'noc-selected': cam.id===camsService.selectedCamUuid}" fxLayout="column"
+        fxLayoutAlign="start stretch">
         <div *ngIf="cam?.loading.status" class="noc-cam-heading noc-loading-container" fxLayout="column"
           fxLayoutAlign="center center">
           <mat-progress-spinner class="example-margin" [color]="loadingSpinner.color" [mode]="loadingSpinner.mode">
@@ -132,8 +28,8 @@
         <div *ngIf="!cam?.loading.status" class="noc-cam-heading" fxFlex="1 1 auto" fxLayout="row"
           fxLayoutAlign="start center" [@animateStagger]="{value:'50'}">
           <button mat-icon-button (click)="cam.toggleExpand()" class="">
-            <fa-icon *ngIf="!cam.expanded" [icon]="['fas', 'chevron-right']"></fa-icon>
-            <fa-icon *ngIf="cam.expanded" [icon]="['fas', 'chevron-down']"></fa-icon>
+            <fa-icon *ngIf="!cam.expanded" [icon]="['fas', 'caret-right']"></fa-icon>
+            <fa-icon *ngIf="cam.expanded" [icon]="['fas', 'caret-down']"></fa-icon>
           </button>
           <div *ngIf="cam?.title" class="noc-title" fxLayout="row" fxLayoutAlign="start center">
             <div class="text-truncate pr-8">
@@ -162,7 +58,63 @@
             </button>
           </mat-menu>
         </div>
-        <noc-cam-table [cam]="cam" *ngIf="cam.expanded" [options]="tableOptions"></noc-cam-table>
+        <div *ngIf="false" class="noc-cam-heading">
+          <div fxFlex="110px" class="noc-model-state pr-12" fxLayout="row" fxLayoutAlign="start center">
+            <mat-chip *ngIf="cam.state" class="noc-table-chip noc-state-chip" [ngClass]="{'noc-development': cam.state.name === 'development',
+              'noc-production': cam.state.name === 'production',
+              'noc-review': cam.state.name === 'review'}" fxLayout="row" fxLayoutAlign="start center"
+              (click)="noctuaSearchService.filter(noctuaSearchService.filterType.states, cam.state)"
+              matTooltip="Add state to Filters" [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
+              <div class="noc-icon">
+                <fa-icon [icon]="['fas', 'tasks']"></fa-icon>
+              </div>
+              <div fxFlex="" class="noc-chip-label">
+                {{cam.state.label}}
+              </div>
+            </mat-chip>
+          </div>
+          <div class="noc-date" fxFlex="100px" fxLayout="row" fxLayoutAlign="start center">
+            <mat-chip class="noc-table-chip noc-date-chip" fxLayout="row" fxLayoutAlign="start center"
+              (click)="noctuaSearchService.filter(noctuaSearchService.filterType.exactdates, cam.date)"
+              matTooltip="Add date to exact date filter" [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
+              <div class="noc-icon">
+                <fa-icon [icon]="['fas', 'calendar-day']"></fa-icon>
+              </div>
+              <div fxFlex="" class="noc-chip-label">
+                {{cam.date}}
+              </div>
+            </mat-chip>
+          </div>
+          <div fxFlex="" fxLayout="row" fxLayoutAlign="start center">
+            <mat-chip-list>
+              <mat-chip class="noc-table-chip noc-user-chip" fxLayout="row" fxLayoutAlign="start center"
+                *ngFor="let contributor of cam.contributors"
+                (click)="noctuaSearchService.filter(noctuaSearchService.filterType.contributors, contributor)"
+                matTooltip="Add {{contributor.name}} to Filters" [matTooltipPosition]="'below'"
+                [matTooltipShowDelay]="1000" [style.borderColor]="contributor.color">
+                <div class="noc-icon noc-icon-initials" [style.backgroundColor]="contributor.color">
+                  {{contributor.initials}}
+                </div>
+                <div fxFlex="" class="noc-chip-label">
+                  {{contributor.name ? contributor.name :contributor.orcid}}
+                </div>
+              </mat-chip>
+            </mat-chip-list>
+          </div>
+          <div fxFlex="100px" fxLayout="row" fxLayoutAlign="start center">
+            <a mat-icon-button [href]='cam?.model?.modelInfo?.noctuaFormUrl' target="_blank"
+              class="noc-edit-button noc-rounded-button noc-sm  mr-4 noc-half-button noc-r" matTooltip="Noctua Form"
+              [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+              <fa-icon [icon]="['fas', 'list-alt']"></fa-icon>
+            </a>
+            <a mat-icon-button [href]='cam?.model?.modelInfo?.graphEditorUrl' target="_blank"
+              class="noc-edit-button noc-rounded-button noc-sm noc-half-button noc-l" matTooltip="Graph Editor"
+              [matTooltipPosition]="'after'" [matTooltipShowDelay]="1000">
+              <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
+            </a>
+          </div>
+        </div>
+        <noc-cam-table class="" [cam]="cam" *ngIf="cam.expanded" [options]="tableOptions"></noc-cam-table>
       </div>
     </div>
   </div>

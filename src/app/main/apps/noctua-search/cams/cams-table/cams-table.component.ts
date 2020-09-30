@@ -72,7 +72,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   displayedColumns = [];
 
-
   searchCriteria: any = {};
   searchFormData: any = [];
   searchForm: FormGroup;
@@ -161,7 +160,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     this.isAllSelected() ?
       this.selection.clear() :
       this.cams.forEach(row => this.selection.select(row));
-
   }
 
   toggleSelection(cam: Cam) {
@@ -172,6 +170,10 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       this.camsService.removeCamFromReview(cam);
       this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
     }
+  }
+
+  preCheck() {
+    this.cams.forEach(row => this.selection.select(row));
   }
 
   /** The label for the checkbox on the passed row */
@@ -196,7 +198,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       'noc-development': stateLabel === 'development',
       'noc-production': stateLabel === 'production',
       'noc-review': stateLabel === 'review'
-    }
+    };
   }
 
   setPage($event) {
@@ -216,7 +218,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   toggleCamExpand(cam: Cam) {
     if (!cam.expanded) {
-      this.camService.loadCam(cam);
+      this.openDetails(cam);
     } else {
       cam.expanded = false;
     }

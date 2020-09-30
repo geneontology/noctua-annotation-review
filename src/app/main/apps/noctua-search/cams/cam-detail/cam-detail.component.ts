@@ -106,6 +106,9 @@ export class CamDetailComponent implements OnInit, OnDestroy {
     self.noctuaDataService.onContributorsChanged.pipe(
       takeUntil(this._unsubscribeAll))
       .subscribe((contributors: Contributor[]) => {
+        if (!contributors) {
+          return;
+        }
         self.noctuaUserService.contributors = contributors;
         //   this.cam = this.camService.getCam(modelId);
       });

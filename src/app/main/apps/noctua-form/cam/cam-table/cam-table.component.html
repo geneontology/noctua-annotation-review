@@ -30,12 +30,8 @@
         <div class="noc-annoton-table-heading" fxLayout="row" fxLayoutAlign="start center">
           <div fxFlex="40px" (click)="$event.stopPropagation()">
             <button mat-icon-button (click)="toggleExpand(annoton)" color="primary" class="">
-              <mat-icon *ngIf="!annoton.expanded" class="">
-                keyboard_arrow_right
-              </mat-icon>
-              <mat-icon *ngIf="annoton.expanded" class="">
-                keyboard_arrow_down
-              </mat-icon>
+              <fa-icon *ngIf="!annoton.expanded" [icon]="['fas', 'caret-right']"></fa-icon>
+              <fa-icon *ngIf="annoton.expanded" [icon]="['fas', 'caret-down']"></fa-icon>
             </button>
           </div>
           <div class="noc-title mr-12">

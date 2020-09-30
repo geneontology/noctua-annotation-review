@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { NoctuaFormConfigService, NoctuaUserService } from 'noctua-form-base';
+import { Cam, CamsService, NoctuaFormConfigService, NoctuaUserService } from 'noctua-form-base';
 import { NoctuaSearchService } from './../..//services/noctua-search.service';
 import { NoctuaSearchMenuService } from '../../services/search-menu.service';
 import { takeUntil } from 'rxjs/operators';
@@ -14,10 +14,13 @@ import { NoctuaReviewSearchService } from './../../services/noctua-review-search
 })
 export class ArtBasketComponent implements OnInit, OnDestroy {
   artBasket: ArtBasket = new ArtBasket();
+  cams: Cam[] = [];
 
   private _unsubscribeAll: Subject<any>;
 
-  constructor(public noctuaUserService: NoctuaUserService,
+  constructor(
+    public camsService: CamsService,
+    public noctuaUserService: NoctuaUserService,
     public noctuaReviewSearchService: NoctuaReviewSearchService,
     public noctuaSearchMenuService: NoctuaSearchMenuService,
     public noctuaSearchService: NoctuaSearchService,
@@ -33,10 +36,24 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
           this.artBasket = artBasket;
         }
       });
+
+    this.camsService.onCamsChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(cams => {
+        if (!cams) {
+          return;
+        }
+        this.cams = cams;
+
+        console.log(cams);
+      });
+
   }
 
   selectItem(artBasketItem: ArtBasketItem) {
-
+    this.camsService.onSelectedCamChanged.next(artBasketItem.id);
+    const q = '#noc-review-cams-' + artBasketItem.displayId;
+    this.noctuaSearchMenuService.scrollTo(q);
   }
 
   clear() {

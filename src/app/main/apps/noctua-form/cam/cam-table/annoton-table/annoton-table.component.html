@@ -26,9 +26,9 @@
           <th mat-header-cell *matHeaderCellDef class="noc-column-flex" fxFlex="" fxLayout="row"
             fxLayoutAlign="start center">Term</th>
           <td mat-cell class="noc-column-flex" *matCellDef="let entity" fxFlex="" fxLayout="row"
-            fxLayoutAlign="start center" id="{{cleanId(entity.term?.uuid)}}" [ngClass]="{'noc-highlight-match': entity.term?.highlight,
+            fxLayoutAlign="start center" [attr.id]="entity.term?.displayId" [ngClass]="{'noc-highlight-match': entity.term?.highlight,
             'noc-highlight-modified': entity.term?.modified,
-            'noc-highlight-match-current': entity.term?.uuid===camsService.currentHighlightedUuid}">
+            'noc-highlight-match-current': entity.term?.uuid===camsService.selectedNodeUuid}">
             <p class="">
               {{entity.term?.label}} <br>
               <a (click)="$event.stopPropagation()" href="{{entity.term?.url}}" target="_blank">
@@ -50,10 +50,10 @@
         <ng-container matColumnDef="extension">
           <th mat-header-cell *matHeaderCellDef fxFlex="150px" fxLayout="row" fxLayoutAlign="start center">Extension
           </th>
-          <td mat-cell *matCellDef="let entity" id="{{cleanId(entity.extension?.uuid)}}" fxFlex="150px" fxLayout="row"
+          <td mat-cell *matCellDef="let entity" [attr.id]="entity.extension?.displayId" fxFlex="150px" fxLayout="row"
             fxLayoutAlign="start center" [ngClass]="{'noc-highlight-match': entity.extension?.highlight,
             'noc-highlight-modified': entity.extension?.modified,
-            'noc-highlight-match-current': entity.extension?.uuid===camsService.currentHighlightedUuid}">
+            'noc-highlight-match-current': entity.extension?.uuid===camsService.selectedNodeUuid}">
             <p class="">{{entity.extension?.label}} <br>
               <a (click)="$event.stopPropagation()" href="{{entity.extension?.url}}" target="_blank">
                 {{ entity.extension?.id }}
