@@ -149,11 +149,10 @@ export class NoctuaReviewSearchService {
         this.matchedCountCursor = (this.matchedCountCursor + 1) % this.matchedCount;
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
         this.camsService.expandMatch(this.currentMatchedEnity.uuid);
-        //  this.scroll(NoctuaUtils.cleanID(this.currentMatchedEnity.uuid));
         this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
         this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
 
-        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId)
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId);
 
         return this.currentMatchedEnity;
     }
@@ -167,9 +166,11 @@ export class NoctuaReviewSearchService {
             this.matchedCountCursor = this.matchedCount - 1;
         }
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
-        this.scroll(NoctuaUtils.cleanID(this.currentMatchedEnity.uuid));
+        this.camsService.expandMatch(this.currentMatchedEnity.uuid);
         this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
         this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
+
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId);
         return this.currentMatchedEnity;
     }
 
