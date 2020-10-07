@@ -197,12 +197,13 @@ $rotate-graph: 235deg;
     }
   }
 
-  .noc-cams-table {
+  .noc-cams-result {
     background-color: #F7F7F7;
     font-size: 12px;
     width: 100%;
     @include deep-height(100%);
     padding-bottom: 300px;
+
 
     .noc-edit-button {
       background-color: #ffffff;
@@ -211,8 +212,13 @@ $rotate-graph: 235deg;
       @include mat-elevation(1)
     }
 
-    table {
+
+    .noc-cams-table {
       @include deep-width(100%);
+
+      .noc-display-number {
+        background-color: #FFF;
+      }
     }
 
     tr.mat-row {
@@ -239,6 +245,7 @@ $rotate-graph: 235deg;
       z-index: 10;
     }
 
+
     .mat-cell {
       min-width: 0;
       display: flex;
@@ -248,15 +255,49 @@ $rotate-graph: 235deg;
 
       &.noc-checkbox-cell {
         padding-left: 16px;
-        border-right: $noc-primary-color-light solid 1px;
+        //border-right: $noc-primary-color-light solid 1px;
       }
 
-      &.noc-expand-cell {}
+      &.noc-expand-cell {
+        position: relative;
+        padding-left: 8px;
+
+        .noc-toggle-expand-button {
+          width: 30px;
+          height: 30px;
+          line-height: 12px;
+        }
+
+        &::before {
+          position: absolute;
+          top: 0;
+          left: 52px;
+          bottom: 0;
+          width: 2px;
+          color: white;
+          background-color: $noc-tree-line-color;
+          content: "";
+          z-index: 0;
+        }
+      }
     }
 
     .noc-cam-table-container {
       width: 100%;
-      padding-left: 75px;
+      position: relative;
+      padding-left: 70px;
+
+
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 52px;
+        bottom: 0;
+        width: 2px;
+        color: white;
+        background-color: $noc-tree-line-color;
+        content: "";
+      }
     }
 
     .mat-column-id {
@@ -278,6 +319,34 @@ $rotate-graph: 235deg;
         @include deep-height(25px);
         font-size: 10px;
       }
+    }
+
+
+  }
+
+  .noc-cams-result {
+
+    &.noc-review-mode {
+      .noc-summary-filter-bar {
+        top: 101px;
+      }
+
+      .noc-summary-results-bar {
+        top: 131px;
+      }
+
+      .mat-header-row {
+        top: 172px;
+      }
+
+      .noc-cam-table-container {
+        padding-left: 100px;
+
+        &::before {
+          left: 82px;
+        }
+      }
+
     }
   }
 

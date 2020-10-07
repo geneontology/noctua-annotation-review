@@ -101,11 +101,10 @@ export class NoctuaSearchMenuService {
                 this.resultsViewScrollbar.update();
 
                 setTimeout(() => {
-                    this.resultsViewScrollbar.scrollToElement(q, -100, 1000);
+                    this.resultsViewScrollbar.scrollToElement(q, -140, 1000);
                 });
             }
         });
     }
-
 
 }

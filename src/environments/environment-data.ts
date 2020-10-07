@@ -156,12 +156,11 @@ export const globalWorkbenchesUniversal = [
     'menu-name': 'Noctua Annotation Review',
     'page-name': 'Noctua Annotation Review',
     'type': 'universal',
-    'help-link': 'https://github.com/geneontology/noctua-art-plus/issues',
-    'workbench-id': 'noctua-art-plus',
-    'template-injectable': '../noctua-art-plus/workbenches/noctua-art-plus/public/inject.tmpl',
-    'public-directory': '../noctua-art-plus/workbenches/noctua-art-plus/public'
+    'help-link': 'https://github.com/geneontology/noctua-annotation-review/issues',
+    'workbench-id': 'noctua-annotation-review',
+    'template-injectable': '../noctua-annotation-review/workbenches/noctua-annotation-review/public/inject.tmpl',
+    'public-directory': '../noctua-annotation-review/workbenches/noctua-annotation-review/public'
   },
-
   {
     'menu-name': 'Noctua Search',
     'page-name': 'Noctua Search',

@@ -12,8 +12,7 @@ import { NoctuaFormModule } from '../noctua-form';
 import { CamsReviewComponent } from './cams/cams-review/cams-review.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CamDetailComponent } from './cams/cam-detail/cam-detail.component';
-import { CamsReplaceConfirmDialogComponent } from './dialogs/cams-replace-confirm/cams-replace-confirm.component';
-import { CamsReviewChangesDialogComponent } from './dialogs/cams-review-changes/cams-review-changes.component';
+import { CamsReviewChangesComponent } from './cams/cams-review-changes/cams-review-changes.component';
 
 const routes = [
   {
@@ -36,12 +35,11 @@ const routes = [
     NoctuaFormModule,
   ],
   declarations: [
-    CamsReplaceConfirmDialogComponent,
-    CamsReviewChangesDialogComponent,
     NoctuaSearchComponent,
     CamsTableComponent,
     CamsReviewComponent,
     CamDetailComponent,
+    CamsReviewChangesComponent
   ]
 })
 

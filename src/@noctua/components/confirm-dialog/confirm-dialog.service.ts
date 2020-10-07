@@ -15,7 +15,15 @@ export class NoctuaConfirmDialogService {
     dialogRef: any;
 
     constructor(
+        private snackBar: MatSnackBar,
         private _matDialog: MatDialog) {
+    }
+
+    openSuccessfulSaveToast(message: string, action: string) {
+        this.snackBar.open(message, action, {
+            duration: 5000,
+            verticalPosition: 'top'
+        });
     }
 
     openConfirmDialog(title: string, message: string, success, options?): void {

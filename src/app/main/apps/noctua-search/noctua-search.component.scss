@@ -143,16 +143,13 @@ $warn: map-get($theme, warn);
       @include mat-elevation(4);
 
       &.noc-review-mode-button {
-        width: 270px;
-
         .noc-title {
           width: 200px;
         }
 
-        .noc-slide-toggle-container {
-          pointer-events: none;
-          border-left: #000 solid 1px;
-          width: 50px;
+        &.noc-selected {
+          background-color: #cdf8cd;
+          color: #000;
         }
       }
     }
@@ -191,7 +188,7 @@ $warn: map-get($theme, warn);
 
       button {
         @include deep-height(60px);
-        @include deep-width(170px);
+        @include deep-width(180px);
         line-height: 12px !important;
 
         border: #BBB solid 1px;
@@ -284,7 +281,4 @@ $warn: map-get($theme, warn);
   .noc-table-container {
     min-height: 500px;
   }
-
-
-
 }

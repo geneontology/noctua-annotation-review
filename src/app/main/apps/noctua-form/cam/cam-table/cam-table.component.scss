@@ -102,7 +102,7 @@ $accent: map-get($theme, accent);
       width: 25px;
       height: 2px;
       color: white;
-      background-color: #BBB;
+      background-color: $noc-tree-line-color;
       content: "";
     }
   }
@@ -133,7 +133,7 @@ $accent: map-get($theme, accent);
       bottom: 0;
       width: 2px;
       color: white;
-      background-color: #BBB;
+      background-color: $noc-tree-line-color;
       content: "";
     }
   }

@@ -2,7 +2,7 @@ import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
-import { NoctuaGraphService } from 'noctua-form-base';
+import { NoctuaGraphService, NoctuaUserService } from 'noctua-form-base';
 
 
 
@@ -12,7 +12,9 @@ import { NoctuaGraphService } from 'noctua-form-base';
 export class NoctuaCommonMenuService {
   private _leftSidenav: MatSidenav;
 
-  constructor(private _noctuaGraphService: NoctuaGraphService) {
+  constructor(
+    private _noctuaGraphService: NoctuaGraphService,
+    private noctuaUserService: NoctuaUserService) {
 
   }
 
@@ -25,7 +27,7 @@ export class NoctuaCommonMenuService {
       const modelId = resp.data().id;
       let params = new HttpParams();
       params = params.append('model_id', modelId);
-      params = params.append('barista_token', _newModelBbopManager.user_token());
+      params = params.append('barista_token', self.noctuaUserService.baristaToken);
       const paramsString = params.toString();
 
       const graphEditorUrl = environment.noctuaUrl + '/editor/graph/' + modelId + '?' + paramsString;

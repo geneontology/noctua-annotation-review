@@ -13,6 +13,7 @@ import {
     NoctuaFormConfigService,
     NoctuaUserService,
     Entity,
+    CamsService
 } from 'noctua-form-base';
 import { SearchCriteria } from './../models/search-criteria';
 import { saveAs } from 'file-saver';
@@ -50,9 +51,7 @@ export class NoctuaSearchService {
     separator = '@@';
     loading = false;
     onCamsChanged: BehaviorSubject<any>;
-    onCamsReviewChanged: BehaviorSubject<any>;
     onCamsPageChanged: BehaviorSubject<any>;
-    onCamChanged: BehaviorSubject<any>;
     onContributorFilterChanged: BehaviorSubject<any>;
     searchSummary: any = {};
 
@@ -74,21 +73,18 @@ export class NoctuaSearchService {
     constructor(
         private httpClient: HttpClient,
         private noctuaDataService: NoctuaDataService,
+        private camsService: CamsService,
         public noctuaFormConfigService: NoctuaFormConfigService,
         public noctuaUserService: NoctuaUserService,
         private noctuaSearchMenuService: NoctuaSearchMenuService,
         private curieService: CurieService) {
         this.onCamsChanged = new BehaviorSubject([]);
-        this.onCamsReviewChanged = new BehaviorSubject([]);
         this.onCamsPageChanged = new BehaviorSubject(null);
-        this.onCamChanged = new BehaviorSubject([]);
         this.onSearchHistoryChanged = new BehaviorSubject(null);
         this.states = this.noctuaFormConfigService.modelState.options;
         this.searchCriteria = new SearchCriteria();
         this.onSearchCriteriaChanged = new BehaviorSubject(null);
         this.curieUtil = this.curieService.getCurieUtil();
-
-        this._getModelMetadata();
 
         this.onSearchCriteriaChanged.subscribe((searchCriteria: SearchCriteria) => {
             if (!searchCriteria) {
@@ -97,6 +93,7 @@ export class NoctuaSearchService {
 
             this.getCams(searchCriteria).subscribe((response: any) => {
                 this.cams = response;
+                this.camsService.updateDisplayNumber(this.cams);
                 this.onCamsChanged.next(this.cams);
             });
 
@@ -107,50 +104,29 @@ export class NoctuaSearchService {
             });
 
             this.noctuaSearchMenuService.resetResults();
-
-
         });
     }
 
     // Get Users and Groups
-    private _getModelMetadata() {
+    setup() {
         const self = this;
 
-        self.noctuaDataService.loadContributors();
-        self.noctuaDataService.loadGroups();
         self.noctuaDataService.loadOrganisms();
-
-        self.noctuaDataService.onContributorsChanged
-            .subscribe(contributors => {
-                if (!contributors) {
-                    return;
-                }
-                this.noctuaUserService.contributors = contributors;
-                /*   this.searchCriteria.terms = [{
-                      id: 'GO:0006869',
-                      label: 'lipid transport'
-                  }]; */
-
-                const contributor =
-                    {
-                        'name': 'Tremayne Mushayahama',
-                        'orcid': 'http://orcid.org/0000-0002-2874-6934',
-                        'initials': 'TM',
-                        'color': '#e1bee7'
-                    } as Contributor;
-                this.searchCriteria.contributors = [contributor];
-                this.updateSearch();
-            });
-
-        self.noctuaDataService.onGroupsChanged
-            .subscribe(groups => {
-                this.noctuaUserService.groups = groups;
-            });
 
         self.noctuaDataService.onOrganismsChanged
             .subscribe(organisms => {
                 this.organisms = organisms;
             });
+
+        const contributor =
+            {
+                'name': 'Tremayne Mushayahama',
+                'orcid': 'http://orcid.org/0000-0002-2874-6934',
+                'initials': 'TM',
+                'color': '#e1bee7'
+            } as Contributor;
+        this.searchCriteria.contributors = [contributor];
+        this.updateSearch();
     }
 
     search(searchCriteria) {

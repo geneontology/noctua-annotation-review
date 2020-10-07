@@ -84,7 +84,7 @@ $accent: map-get($theme, accent);
           top: 50%;
           transform: translateY(-50%);
           color: white;
-          background-color: #BBB;
+          background-color: $noc-tree-line-color;
           content: "";
         }
       }
@@ -101,6 +101,7 @@ $accent: map-get($theme, accent);
 
 
     .mat-cell {
+      display: inline-block !important;
       padding: 0 30px 0 10px;
       font-size: 12px !important;
       color: #000;

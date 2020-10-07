@@ -2,7 +2,8 @@
 @import "mixins/breakpoints";
 $noc-primary-color: #039be5;
 $noc-secondary-color: #995014;
-$noc-highlight-color: #e1f5fe;
+$noc-highlight-model-color: #e1f5fe;
+$noc-highlight-color: #fffcd8;
 
 .ps__rail-x {
   top: 3px;
@@ -120,14 +121,15 @@ mat-chip {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  @include deep-height(30px);
+  @include deep-width(30px);
   border: #BBB solid 1px;
   font-size: 14px;
+  z-index: 2;
 
   &.noc-sm {
-    width: 25px;
-    height: 25px;
+    @include deep-height(25px);
+    @include deep-width(25px);
     font-size: 10px;
   }
 }

@@ -14,8 +14,6 @@ import { CamPage } from '@noctua.search/models/cam-page';
 import { NoctuaSearchMenuService } from '@noctua.search/services/search-menu.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { NoctuaCommonMenuService } from '@noctua.common/services/noctua-common-menu.service';
-import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
-import { NoctuaSearchDialogService } from '../../services/dialog.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ReviewMode } from '@noctua.search/models/review-mode';
 import { NoctuaReviewSearchService } from '@noctua.search/services/noctua-review-search.service';
@@ -90,17 +88,15 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   constructor(
     private camService: CamService,
     private camsService: CamsService,
-    private noctuaDataService: NoctuaDataService,
     public noctuaReviewSearchService: NoctuaReviewSearchService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaCommonMenuService: NoctuaCommonMenuService,
     public noctuaSearchMenuService: NoctuaSearchMenuService,
     public noctuaUserService: NoctuaUserService,
-    private noctuaSearchDialogService: NoctuaSearchDialogService,
     public noctuaSearchService: NoctuaSearchService) {
     this._unsubscribeAll = new Subject();
 
-    this.selection.sort()
+    this.selection.sort();
   }
 
   initTable(isReviewMode) {

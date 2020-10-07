@@ -57,7 +57,6 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
     this._unsubscribeAll = new Subject();
 
-    this.noctuaDataService.loadContributors();
     this.route
       .queryParams
       .pipe(takeUntil(this._unsubscribeAll))
@@ -87,15 +86,8 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
   loadCam(modelId) {
     const self = this;
 
-    self.noctuaDataService.onContributorsChanged.pipe(
-      takeUntil(this._unsubscribeAll))
-      .subscribe((contributors: Contributor[]) => {
-        if (!contributors) {
-          return;
-        }
-        self.noctuaUserService.contributors = contributors;
-        this.cam = this.camService.getCam(modelId);
-      });
+
+    this.cam = this.camService.getCam(modelId);
   }
 
   openCamForm() {

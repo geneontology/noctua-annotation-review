@@ -14,6 +14,8 @@ import { SearchHistoryComponent } from './components/search-history/search-histo
 import { NoctuaEditorModule } from '@noctua.editor';
 import { ArtBasketComponent } from './components/art-basket/art-basket.component';
 import { ReviewFormComponent } from './components/review-form/review-form.component';
+import { CamsReplaceConfirmDialogComponent } from './components/dialogs/cams-replace-confirm/cams-replace-confirm.component';
+import { CamsReviewChangesDialogComponent } from './components/dialogs/cams-review-changes/cams-review-changes.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,9 @@ import { ReviewFormComponent } from './components/review-form/review-form.compon
         SearchRelationComponent,
         SearchHistoryComponent,
         ArtBasketComponent,
-        ReviewFormComponent
+        ReviewFormComponent,
+        CamsReplaceConfirmDialogComponent,
+        CamsReviewChangesDialogComponent,
     ],
     imports: [
         CommonModule,
@@ -44,7 +48,9 @@ import { ReviewFormComponent } from './components/review-form/review-form.compon
         SearchRelationComponent,
         SearchHistoryComponent,
         ArtBasketComponent,
-        ReviewFormComponent
+        ReviewFormComponent,
+        CamsReplaceConfirmDialogComponent,
+        CamsReviewChangesDialogComponent,
     ]
 })
 export class NoctuaSearchBaseModule {

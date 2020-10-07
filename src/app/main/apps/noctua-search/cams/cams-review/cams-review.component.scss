@@ -18,17 +18,43 @@
     @include deep-height(80px);
   }
 
-  .noc-search-form {
-    padding: 12px;
-    margin-bottom: 12px;
-    @include deep-height(128px);
-    position: sticky;
+  .noc-summary-bar {
     position: -webkit-sticky;
-    top: 0;
-    z-index: 1000;
+    position: sticky;
+    top: 101px;
+    margin-bottom: 4px;
+    padding: 0 10px 0 20px;
+    @include deep-height(30px);
+    //  min-height: 40px; //min-height: 35px;
     background-color: #FFF;
-    border-bottom: #BBB solid 1px;
-    @include mat-elevation(3);
+    font-size: 16px;
+    overflow: hidden;
+    z-index: 10;
+
+    @include mat-elevation(2);
+
+    .noc-header-title {}
+
+    .noc-review-number {
+      color: #555;
+      font-size: 12px;
+    }
+
+    .noc-art-tools {
+      //background-color: ;
+      margin-right: 16px;
+    }
+
+    .noc-pagesize-select {
+      width: 50px;
+    }
+
+    mat-chip {
+      font-size: 14px;
+      font-weight: normal;
+      @include deep-height(30px);
+    }
+
   }
 
   .noc-cams-results {
@@ -38,7 +64,7 @@
       @include mat-elevation(2);
 
       &.noc-selected {
-        border-left: $noc-highlight-color solid 5px;
+        border-left: darken($noc-highlight-model-color, 15%) solid 5px;
       }
     }
 
@@ -105,140 +131,10 @@
         bottom: 0;
         width: 2px;
         color: white;
-        background-color: #BBB;
+        background-color: $noc-tree-line-color;
         content: "";
       }
-
     }
   }
-
-  .noc-review-actions {
-    @include deep-width(250px);
-
-    .noc-review-btn {
-      //height: 45px;
-    }
-
-    .noc-disabled {}
-  }
-
-  .noc-matched-count {
-    display: flex;
-    flex-direction: row;
-    justify-items: center;
-    align-items: center;
-    padding: 0 12px;
-    height: 100%;
-  }
-
-  mat-chip {
-    font-size: 12px;
-    font-weight: normal;
-    @include deep-height(25px);
-    max-width: 200px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    .noc-chip-label {
-      padding: 0 8px 0 4px;
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      .noc-icon-action {
-        font-size: 10px;
-        background-color: transparent;
-
-        &:hover {
-          font-size: 14px;
-          color: #222;
-        }
-      }
-    }
-
-    &.noc-table-chip {
-      padding: 0;
-      @include deep-height(25px);
-      font-size: 10px;
-
-      .noc-icon,
-      .noc-icon-action {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 25px;
-        width: 25px;
-        border-radius: 50%;
-        color: #777;
-        font-size: 14px;
-      }
-
-      .noc-icon-action {
-        font-size: 10px;
-        background-color: transparent;
-
-        &:hover {
-          font-size: 14px;
-          color: #222;
-          background-color: rgba(#000000, 0.2);
-        }
-
-      }
-
-      @include noc-chip-color(#DDD);
-
-      &.noc-user-chip {
-        @include noc-chip-color(#bbc9cc);
-
-        .noc-icon {
-          color: #59939e
-        }
-      }
-
-      &.noc-date-chip {
-        @include noc-chip-color(#aee9f5);
-      }
-
-      &.noc-state-chip {
-        &.noc-development {
-          @include noc-chip-color(#f4c89c);
-          // border: #d59f80 solid 1px;/
-        }
-
-        &.noc-production {
-          @include noc-chip-color(#b6f1cc);
-          // border: #d59f80 solid 1px;/
-        }
-
-        &.noc-review {
-          @include noc-chip-color(#d8f6a3);
-          // border: #d59f80 solid 1px;/
-        }
-      }
-
-    }
-  }
-
-  .noc-form-container {
-    background-color: #EEE;
-    padding: 20px 10px;
-  }
-
-  .noc-toolbar {
-    padding: 0px 20px;
-    height: 40px;
-    width: 100%;
-    background-color: #F2F2F2;
-    border-bottom: #BBB solid 1px;
-
-    .noc-title {
-      line-height: 38px;
-      color: #555;
-      font-size: 14px;
-      font-weight: bold;
-    }
-  }
-
 
 }
