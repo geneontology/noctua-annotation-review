@@ -1,32 +1,20 @@
-import { Component, Inject, Input, OnInit, ElementRef, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort, MatDrawer } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, Subscription, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-
-
-import * as _ from 'lodash';
-declare const require: any;
-const each = require('lodash/forEach');
-
-import { noctuaAnimations } from './../../../../../../@noctua/animations';
-import { NoctuaFormService } from '../../services/noctua-form.service';
-
-import { CamDiagramService } from './../cam-diagram/services/cam-diagram.service';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { MatDrawer } from '@angular/material/sidenav';
+import { Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CamTableService } from './../cam-table/services/cam-table.service';
 
 import {
   Cam,
-  Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaGraphService,
-  NoctuaAnnotonFormService,
-  CamService
+  CamService,
+  Entity,
+  NoctuaFormMenuService
 } from 'noctua-form-base';
-
+import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 
 @Component({
   selector: 'noc-cam-form',
@@ -42,36 +30,55 @@ export class CamFormComponent implements OnInit, OnDestroy {
   camFormGroup: FormGroup;
   camFormSub: Subscription;
 
-  private unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any>;
 
-  constructor(private route: ActivatedRoute,
-    public noctuaUserService: NoctuaUserService,
+  constructor(public noctuaUserService: NoctuaUserService,
+    private sparqlService: SparqlService,
     private camService: CamService,
     public camTableService: CamTableService,
     private noctuaGraphService: NoctuaGraphService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaFormService: NoctuaFormService
+    public noctuaFormMenuService: NoctuaFormMenuService
   ) {
-    this.unsubscribeAll = new Subject();
+    this._unsubscribeAll = new Subject();
     // this.annoton = self.noctuaCamFormService.annoton;
     //  this.camFormPresentation = this.noctuaCamFormService.annotonPresentation;
   }
 
   ngOnInit(): void {
     this.camFormSub = this.camService.camFormGroup$
+      .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(camFormGroup => {
-        if (!camFormGroup) return;
+        if (!camFormGroup) {
+          return;
+        }
         this.camFormGroup = camFormGroup;
-
-        console.log(this.camFormGroup)
       });
 
-    this.camService.onCamChanged.subscribe((cam) => {
-      if (!cam) return;
+    this.camService.onCamChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((cam) => {
+        if (!cam) {
+          return;
+        }
 
-      this.cam = cam
-      this.camService.initializeForm(cam);
-    });
+        this.cam = cam;
+        this.sparqlService.getModelTerms(this.cam.id)
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((terms: Entity[]) => {
+            this.camService.onCamTermsChanged.next(terms);
+          });
+      });
+  }
+
+  loadGoTerms() {
+    this.camService.onCamTermsChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((terms: Entity[]) => {
+        if (!terms) return;
+
+        this.cam.goterms = terms;
+      });
   }
 
   checkErrors() {
@@ -83,17 +90,13 @@ export class CamFormComponent implements OnInit, OnDestroy {
 
   save() {
 
-    const self = this;
-    //  self.camService.ann;
 
-    let value = this.camFormGroup.value;
+    const value = this.camFormGroup.value;
 
-    console.log(value)
-
-    let annotations = {
+    const annotations = {
       title: value.title,
       state: value.state.name
-    }
+    };
 
     this.noctuaGraphService.saveModelGroup(this.cam, value.group.id);
     this.noctuaGraphService.saveCamAnnotations(this.cam, annotations);
@@ -104,11 +107,11 @@ export class CamFormComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.panelDrawer.close()
+    this.panelDrawer.close();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }

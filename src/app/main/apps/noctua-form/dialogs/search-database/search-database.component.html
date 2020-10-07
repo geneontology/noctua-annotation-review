@@ -1,7 +1,7 @@
 <div class="dialog-content-wrapper noc-dialog" fxLayout="column" fxLayoutAlign="start stretch">
   <div class="m-0 noc-dialog-header" fxLayout="row" fxLayoutAlign="start center">
     <span class="noc-dialog-header-title">
-      Search Database</span>
+      Search Annotations</span>
     <span fxFlex></span>
     <button mat-stroked-button (click)="close()" class="noc-rounded-button noc-sm" aria-label="Close dialog">
       <mat-icon>close</mat-icon> Close
@@ -54,25 +54,25 @@
           <ng-container cdkColumnDef="evidence">
             <mat-header-cell *cdkHeaderCellDef fxFlex="40%">Evidence</mat-header-cell>
             <mat-cell *cdkCellDef="let evidence" fxFlex="40%">
-              <p class="">{{evidence.getEvidence()?.label}}</p>
+              <p class="">{{evidence.evidence?.label}}</p>
             </mat-cell>
           </ng-container>
           <ng-container cdkColumnDef="reference">
             <mat-header-cell *cdkHeaderCellDef fxFlex="20%">Reference</mat-header-cell>
             <mat-cell *cdkCellDef="let evidence" fxFlex="20%">
-              <p class="">{{evidence.getReference()}}</p>
+              <p class="">{{evidence.reference}}</p>
             </mat-cell>
           </ng-container>
           <ng-container cdkColumnDef="with">
             <mat-header-cell *cdkHeaderCellDef fxFlex="20%">With</mat-header-cell>
             <mat-cell *cdkCellDef="let evidence" fxFlex="20%">
-              <p class="">{{evidence.getWith()}}</p>
+              <p class="">{{evidence.with}}</p>
             </mat-cell>
           </ng-container>
           <ng-container cdkColumnDef="assignedBy">
             <mat-header-cell *cdkHeaderCellDef fxFlex="">Assigned By</mat-header-cell>
             <mat-cell *cdkCellDef="let evidence" fxFlex="">
-              <p class="">{{evidence.getAssignedBy()}}</p>
+              <p class="">{{evidence.assignedBy?.label}}</p>
             </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -1,37 +1,25 @@
-import { Component, Input, Inject, OnInit, ElementRef, OnDestroy, ViewEncapsulation, ViewChild, NgZone } from '@angular/core';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatSort } from '@angular/material';
-import { DataSource } from '@angular/cdk/collections';
-import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators';
-
-
-import * as _ from 'lodash';
-declare const require: any;
-const each = require('lodash/forEach');
-
-import { noctuaAnimations } from './../../../../../../../../@noctua/animations';
-
-
-import { NoctuaFormService } from '../../../../services/noctua-form.service';
-
-import { NoctuaTranslationLoaderService } from './../../../../../../../../@noctua/services/translation-loader.service';
-
-import { NoctuaSearchService } from './../../../../../../../../@noctua.search/services/noctua-search.service';
+import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { Subject } from 'rxjs';
 import { NoctuaFormDialogService } from './../../../../services/dialog.service';
-
-import { SparqlService } from './../../../../../../../../@noctua.sparql/services/sparql/sparql.service';
-
 import {
   CamService,
   NoctuaFormConfigService,
   NoctuaAnnotonFormService,
-  NoctuaLookupService,
   AnnotonNode,
-  Evidence
+  Evidence,
+  noctuaFormConfig,
+  Entity,
+  ShapeDefinition,
+  AnnotonError,
+  AnnotonNodeType,
+  Annoton
 } from 'noctua-form-base';
+import { InlineReferenceService } from '@noctua.editor/inline-reference/inline-reference.service';
+import { each, find, flatten } from 'lodash';
+import { InlineWithService } from '@noctua.editor/inline-with/inline-with.service';
+import { InlineDetailService } from '@noctua.editor/inline-detail/inline-detail.service';
 
 @Component({
   selector: 'noc-entity-form',
@@ -40,170 +28,324 @@ import {
 })
 
 export class EntityFormComponent implements OnInit, OnDestroy {
-  searchCriteria: any = {};
-  // annotonForm: FormGroup;
-  annotonFormPresentation: any;
-  evidenceFormArray: FormArray;
-  autcompleteResults = {
-    term: [],
-    evidence: []
-  };
-  cams: any[] = [];
-
-  nodeGroup: any = {}
-  entity: AnnotonNode;
-
   @Input('entityFormGroup')
   public entityFormGroup: FormGroup;
 
-  @Input('nodeGroupName')
-  public nodeGroupName: any;
+  @ViewChild('evidenceDBreferenceMenuTrigger', { static: true, read: MatMenuTrigger })
+  evidenceDBreferenceMenuTrigger: MatMenuTrigger;
 
-  @Input('entityName')
-  public entityName: any;
+  evidenceDBForm: FormGroup;
+  evidenceFormArray: FormArray;
+  entity: AnnotonNode;
+  insertMenuItems = [];
+  selectedItemDisplay;
+  friendNodes;
+  friendNodesFlat;
+
+  annotonNodeType = AnnotonNodeType;
 
   private unsubscribeAll: Subject<any>;
 
-  constructor(private route: ActivatedRoute,
-    private ngZone: NgZone,
-    private formBuilder: FormBuilder,
+  constructor(
     private noctuaFormDialogService: NoctuaFormDialogService,
     private camService: CamService,
-    private noctuaSearchService: NoctuaSearchService,
+    private inlineReferenceService: InlineReferenceService,
+    private inlineDetailService: InlineDetailService,
+    private inlineWithService: InlineWithService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-    private noctuaLookupService: NoctuaLookupService,
-    private noctuaFormService: NoctuaFormService,
-    private sparqlService: SparqlService, ) {
+    public noctuaAnnotonFormService: NoctuaAnnotonFormService) {
     this.unsubscribeAll = new Subject();
-
   }
 
   ngOnInit(): void {
+    this.entity = this.noctuaAnnotonFormService.annoton.getNode(this.entityFormGroup.get('id').value);
+    this.friendNodes = this.camService.getNodesByType(this.entity.type);
+    //  this.friendNodesFlat = this.camService.getNodesByTypeFlat(this.entity.type);
+  }
 
-    this.nodeGroup = this.noctuaAnnotonFormService.annoton.presentation['fd'][this.nodeGroupName];
-    this.entity = <AnnotonNode>_.find(this.nodeGroup.nodes, { id: this.entityName });
-    // this.entityFormGroup = this.createEntityGroup();
-
-
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   addEvidence() {
     const self = this;
 
-    let evidenceFormGroup: FormArray = this.entityFormGroup.get('evidenceFormArray') as FormArray;
-
-    evidenceFormGroup.push(this.formBuilder.group({
-      evidence: new FormControl(),
-      reference: new FormControl(),
-      with: new FormControl(),
-    }));
+    self.entity.predicate.addEvidence();
+    self.noctuaAnnotonFormService.initializeForm();
   }
 
-  removeEvidence(index) {
+  useTerm(node: AnnotonNode, annoton: Annoton) {
     const self = this;
 
-    let evidenceFormGroup: FormArray = <FormArray>self.entityFormGroup.get('evidenceFormArray');
+    self.entity.term = node.term;
+    switch (self.entity.type) {
+      case AnnotonNodeType.GoBiologicalProcess:
+      case AnnotonNodeType.GoCellularComponent:
+        self.entity.linkedNode = true;
+        self.entity.uuid = node.uuid;
+        self.noctuaAnnotonFormService.annoton.insertSubgraph(annoton, self.entity, node);
+    }
 
-    evidenceFormGroup.removeAt(index);
+    self.noctuaAnnotonFormService.initializeForm();
+  }
+
+  removeEvidence(index: number) {
+    const self = this;
+
+    self.entity.predicate.removeEvidence(index);
+    self.noctuaAnnotonFormService.initializeForm();
   }
 
   toggleIsComplement(entity: AnnotonNode) {
+    const self = this;
+    const errors = [];
+    let canToggle = true;
 
+    each(entity.nodeGroup.nodes, function (node: AnnotonNode) {
+      if (node.isExtension) {
+        canToggle = false;
+        const meta = {
+          aspect: node.label
+        };
+        const error = new AnnotonError('error',
+          1,
+          `Cannot add 'NOT Qualifier', Remove Extension'${node.label}'`, meta);
+        errors.push(error);
+      }
+    });
+
+    if (canToggle) {
+      entity.toggleIsComplement();
+      self.noctuaAnnotonFormService.initializeForm();
+    } else {
+      self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+    }
   }
 
   openSearchDatabaseDialog(entity: AnnotonNode) {
     const self = this;
-    let gpNode = this.noctuaAnnotonFormService.annotonForm.gp.value;
+    const gpNode = this.noctuaAnnotonFormService.annoton.getGPNode();
 
     if (gpNode) {
-      let data = {
+      const data = {
         readonly: false,
-        gpNode: gpNode,
+        gpNode: gpNode.term,
         aspect: entity.aspect,
         entity: entity,
         params: {
           term: '',
           evidence: ''
         }
-      }
+      };
 
-      let success = function (selected) {
+      const success = function (selected) {
         if (selected.term) {
-          entity.setTerm(selected.term.getTerm());
+          entity.term = new Entity(selected.term.term.id, selected.term.term.label);
 
           if (selected.evidences && selected.evidences.length > 0) {
-            entity.setEvidence(selected.evidences);
+            entity.predicate.setEvidence(selected.evidences);
           }
           self.noctuaAnnotonFormService.initializeForm();
         }
-      }
-      self.noctuaFormDialogService.openSearchDatabaseDialog(data, success)
+      };
+      self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      let errors = [];
-      let meta = {
-        aspect: gpNode ? gpNode.label : 'Gene Product'
-      }
-      // let error = new AnnotonError('error', 1, "Please enter a gene product", meta)
+      // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
       //errors.push(error);
       // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
     }
   }
 
-  openMoreEvidenceDialog() {
+  openSearchEvidenceDialog(entity: AnnotonNode) {
+    const self = this;
+    const gpNode = this.noctuaAnnotonFormService.annoton.getGPNode();
+
+    if (gpNode) {
+      const data = {
+        readonly: false,
+        gpNode: gpNode.term,
+        aspect: entity.aspect,
+        entity: entity,
+        params: {
+          term: '',
+          evidence: ''
+        }
+      };
+
+      const success = function (selected) {
+        if (selected && selected.evidences) {
+          entity.predicate.setEvidence(selected.evidences);
+          self.noctuaAnnotonFormService.initializeForm();
+        }
+      };
+      self.noctuaFormDialogService.openSearchEvidenceDialog(data, success);
+    } else {
+      // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
+      //errors.push(error);
+      // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
+    }
+  }
+
+  linkNode(entity: AnnotonNode) {
+    const self = this;
+    const nodes = this.camService.getNodesByType(entity.type);
+    const data = {
+      entity: entity,
+      nodes: nodes
+    };
+
+    const success = function (selected) {
+      if (selected.annotonNode) {
+        const selectedAnnotonNode = selected.annotonNode as AnnotonNode;
+        entity.uuid = selectedAnnotonNode.uuid;
+        entity.term = selectedAnnotonNode.term;
+
+        entity.linkedNode = true;
+        console.log(1)
+        //  self.noctuaAnnotonFormService.annoton.insertSubgraph(selected.annoton, entity.id);
+        self.noctuaAnnotonFormService.initializeForm();
+      }
+    };
+    self.noctuaFormDialogService.openLinkToExistingDialogComponent(data, success);
 
   }
 
+  unlinkNode(entity: AnnotonNode) {
+    entity.linkedNode = false;
+    entity.uuid = null;
+  }
 
-  addNDEvidence(srcEvidence: Evidence) {
+  openSearchModels() {
+    const self = this;
+    const gpNode = this.noctuaAnnotonFormService.annoton.getGPNode();
+    // const searchCriteria = new SearchCriteria();
+
+    //searchCriteria.goterms.push(this.entity.term);
+
+    // const url = this.noctuaFormConfigService.getUniversalWorkbenchUrl('noctua-search', searchCriteria.buildEncoded());
+
+    // console.log(url);
+
+    // window.open(url, '_blank');
 
   }
 
-  openSelectEvidenceDialog(evidence) {
+  insertEntity(nodeDescription: ShapeDefinition.ShapeDescription) {
+    this.noctuaFormConfigService.insertAnnotonNode(this.noctuaAnnotonFormService.annoton, this.entity, nodeDescription);
+    this.noctuaAnnotonFormService.initializeForm();
+  }
+
+  addRootTerm() {
     const self = this;
 
-    /*
-  
-    let evidences = Util.addUniqueEvidencesFromAnnoton(self.annotonForm.annoton);
-    Util.getUniqueEvidences(self.summaryData.annotons, evidences);
-  
-    let gpNode = self.annotonForm.annotonPresentation.geneProduct;
-  
-    let data = {
-      readonly: false,
-      gpNode: gpNode,
-      aspect: entity.aspect,
-      node: entity,
-      evidences: evidences,
-      params: {
-        term: entity.term.control.value.id,
+    const term = find(noctuaFormConfig.rootNode, (rootNode) => {
+      return rootNode.aspect === self.entity.aspect;
+    });
+
+    if (term) {
+      self.entity.term = new Entity(term.id, term.label);
+      self.noctuaAnnotonFormService.initializeForm();
+
+      const evidence = new Evidence();
+      evidence.setEvidence(new Entity(
+        noctuaFormConfig.evidenceAutoPopulate.nd.evidence.id,
+        noctuaFormConfig.evidenceAutoPopulate.nd.evidence.label));
+      evidence.reference = noctuaFormConfig.evidenceAutoPopulate.nd.reference;
+      self.entity.predicate.setEvidence([evidence]);
+      self.noctuaAnnotonFormService.initializeForm();
+    }
+  }
+
+  clearValues() {
+    const self = this;
+
+    self.entity.clearValues();
+    self.noctuaAnnotonFormService.initializeForm();
+  }
+
+  openSelectEvidenceDialog() {
+    const self = this;
+    const evidences: Evidence[] = this.camService.getUniqueEvidence(self.noctuaAnnotonFormService.annoton);
+    const success = (selected) => {
+      if (selected.evidences && selected.evidences.length > 0) {
+        self.entity.predicate.setEvidence(selected.evidences, ['assignedBy']);
+        self.noctuaAnnotonFormService.initializeForm();
       }
-    }
-  
-    let success = function (selected) {
-      entity.addEvidences(selected.evidences, ['assignedBy']);
-    }
-    */
-
-    let evidences: Evidence[] = this.camService.getUniqueEvidence();
-    let success = (evidences: Evidence[]) => {
-
-      self.entity.setEvidence(evidences, ['assignedBy']);
-    }
+    };
 
     self.noctuaFormDialogService.openSelectEvidenceDialog(evidences, success);
   }
 
+  updateTermList() {
+    const self = this;
+    this.camService.updateTermList(self.noctuaAnnotonFormService.annoton, this.entity);
+  }
+
+  updateEvidenceList() {
+    const self = this;
+    this.camService.updateEvidenceList(self.noctuaAnnotonFormService.annoton, this.entity);
+  }
+
+  updateReferenceList() {
+    const self = this;
+    this.camService.updateReferenceList(self.noctuaAnnotonFormService.annoton, this.entity);
+  }
+
+  updateWithList() {
+    const self = this;
+    this.camService.updateWithList(self.noctuaAnnotonFormService.annoton, this.entity);
+  }
+
+  openAddReference(event, evidence: FormGroup, name: string) {
+    const data = {
+      formControl: evidence.controls[name] as FormControl,
+    };
+    this.inlineReferenceService.open(event.target, { data });
+  }
+
+  openAddWith(event, evidence: FormGroup, name: string) {
+    const data = {
+      formControl: evidence.controls[name] as FormControl,
+    };
+    this.inlineWithService.open(event.target, { data });
+  }
+
+  unselectItemDisplay() {
+    this.selectedItemDisplay = null;
+  }
+
+  openTermDetails(event, item) {
+    event.stopPropagation();
+
+    const data = {
+      termDetail: item,
+      formControl: this.entityFormGroup.controls['term'] as FormControl,
+    };
+    this.inlineDetailService.open(event.target, { data });
+  }
+
   termDisplayFn(term): string | undefined {
-    return term ? term.label : undefined;
+    return term && term.id ? `${term.label} (${term.id})` : undefined;
   }
 
   evidenceDisplayFn(evidence): string | undefined {
-    return evidence ? evidence.label : undefined;
+    return evidence && evidence.id ? `${evidence.label} (${evidence.id})` : undefined;
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+  referenceDisplayFn(evidence: Evidence | string): string | undefined {
+    if (typeof evidence === 'string') {
+      return evidence;
+    }
+
+    return evidence && evidence.reference ? evidence.reference : undefined;
+  }
+
+  withDisplayFn(evidence: Evidence | string): string | undefined {
+    if (typeof evidence === 'string') {
+      return evidence;
+    }
+
+    return evidence && evidence.with ? evidence.with : undefined;
   }
 }

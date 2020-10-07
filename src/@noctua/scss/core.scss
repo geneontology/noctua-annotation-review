@@ -1,4 +1,3 @@
-@import '~@swimlane/ngx-datatable/release/themes/material';
 @import '~perfect-scrollbar/css/perfect-scrollbar';
 @import "noctua";
 @include mat-core();
@@ -10,6 +9,7 @@
 @import "partials/helpers";
 @import "partials/global";
 @import "partials/icons";
+@import "partials/alert";
 @import "partials/colors";
 @import "partials/material";
 @import "partials/angular-material-fix";

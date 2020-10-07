@@ -1,28 +1,23 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, Inject, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 
 import { SelectionModel } from '@angular/cdk/collections';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatMenuTrigger, MatTableDataSource } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
-import * as _ from 'lodash';
+
 import {
   Evidence,
-  NoctuaFormConfigService,
-  NoctuaGraphService,
-  NoctuaLookupService
+  NoctuaFormConfigService
 } from 'noctua-form-base';
 
-import { NoctuaSearchService } from './../../../../../../@noctua.search/services/noctua-search.service';
-import { SparqlService } from './../../../../../../@noctua.sparql/services/sparql/sparql.service';
-
+import { noctuaAnimations } from '@noctua/animations';
 
 @Component({
   selector: 'app-select-evidence',
   templateUrl: './select-evidence.component.html',
-  styleUrls: ['./select-evidence.component.scss']
+  styleUrls: ['./select-evidence.component.scss'],
+  animations: noctuaAnimations
 })
 export class SelectEvidenceDialogComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
@@ -34,13 +29,7 @@ export class SelectEvidenceDialogComponent implements OnInit, OnDestroy {
   constructor(
     private _matDialogRef: MatDialogRef<SelectEvidenceDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private _data: any,
-    private _matDialog: MatDialog,
-    private route: ActivatedRoute,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    private noctuaSearchService: NoctuaSearchService,
-    private noctuaLookupService: NoctuaLookupService,
-    private noctuaGraphService: NoctuaGraphService,
-    private sparqlService: SparqlService,
   ) {
     this._unsubscribeAll = new Subject();
 
@@ -66,7 +55,9 @@ export class SelectEvidenceDialogComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this._matDialogRef.close(this.selection.selected);
+    this._matDialogRef.close({
+      evidences: <Evidence[]>this.selection.selected
+    });
   }
 
   close() {
@@ -74,10 +65,8 @@ export class SelectEvidenceDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
+
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }
 }
-
-
