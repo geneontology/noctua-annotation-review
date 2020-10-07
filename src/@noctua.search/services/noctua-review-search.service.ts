@@ -79,6 +79,7 @@ export class NoctuaReviewSearchService {
                 return;
             }
 
+            self.camsService.resetMatch();
             this.getCams(searchCriteria).subscribe((response: any) => {
                 // this.cams = response;
                 this.matchedCountCursor = 0;

@@ -1,11 +1,10 @@
 import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
-import { NoctuaUserService, Contributor, Group, Organism, compareOrganism, compareGroup, compareContributor } from 'noctua-form-base';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
+import { NoctuaUserService, Contributor, Organism, compareOrganism, compareGroup, compareContributor } from 'noctua-form-base';
 import { map } from 'rxjs/operators';
 import { MatColors } from '@noctua/mat-colors';
-import { find } from 'lodash';
 
 
 @Injectable({
@@ -114,17 +113,6 @@ export class NoctuaDataService {
 
         this.onOrganismsChanged.next(organisms.sort(compareOrganism));
       });
-  }
-
-
-  getGroupName(url: string) {
-    const self = this;
-
-    const group = find(self.noctuaUserService.groups, (inGroup: Group) => {
-      return inGroup.url === url;
-    });
-
-    return group ? group.name : url;
   }
 
   private getInitials(string) {
