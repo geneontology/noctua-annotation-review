@@ -28,6 +28,11 @@ declare const require: any;
 
 const amigo = require('amigo2');
 
+import { saveAs } from 'file-saver';
+import { each, forOwn } from 'lodash';
+import { CurieService } from '@noctua.curie/services/curie.service';
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -54,6 +59,15 @@ export class NoctuaSearchService {
     onCamsPageChanged: BehaviorSubject<any>;
     onContributorFilterChanged: BehaviorSubject<any>;
     searchSummary: any = {};
+
+    baristaApi = environment.globalBaristaLocation;
+    separator = '@@';
+    loading: boolean = false;
+    onCamsChanged: BehaviorSubject<any>;
+    onCamChanged: BehaviorSubject<any>;
+    onContributorFilterChanged: BehaviorSubject<any>;
+
+    searchSummary: any = {}
 
     filterType = {
         ids: 'ids',

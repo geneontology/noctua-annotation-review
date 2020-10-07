@@ -274,7 +274,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
     };
 
-    self.noctuaFormDialogService.openSelectEvidenceDialog(evidences, success);
+    const control: FormControl = evidence.controls[name] as FormControl;
+    control.setValue(DB.name + ':' + accession);
+  }
+
+  cancelEvidenceDb() {
+    this.evidenceDBForm.controls['accession'].setValue('');
   }
 
   updateTermList() {

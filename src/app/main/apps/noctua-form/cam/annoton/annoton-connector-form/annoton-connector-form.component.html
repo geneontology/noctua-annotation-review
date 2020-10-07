@@ -224,6 +224,49 @@
                 </mat-autocomplete>
               </mat-form-field>
             </div>
+            <div class="noc-hint">
+              Does the product of reaction 1 REGULATE or become the SUBSTRATE for activity 2?
+            </div>
+          </div>
+        </div>
+        <div *ngIf="connectorAnnoton?.rule.displaySection.process" class="noc-form-section p-0 w-100-p">
+          <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
+            <div class="noc-section-heading">
+              Choose activity regulating process
+            </div>
+          </div>
+          <div class="noc-section-body p-0" fxLayout="column" fxLayoutAlign="start stretch">
+            <div class="px-8 noc-group-row" fxLayout="column">
+              <mat-form-field appearance="outline" class="noc-sm mb-16">
+                <mat-label>Choose Process</mat-label>
+                <mat-select placeholder="" formControlName="process">
+                  <mat-option *ngFor="let connectorProcess of noctuaFormConfigService.connectorProcess.options"
+                    [value]="connectorProcess">
+                    {{connectorProcess.label}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="noc-sm">
+                <mat-label><strong>(Optional)</strong> Has Input (GP/Chemical)</mat-label>
+                <textarea type="text" matInput formControlName="hasInput" [matAutocomplete]="hasInputAuto"
+                  rows="2"></textarea>
+                <mat-autocomplete #hasInputAuto="matAutocomplete" [displayWith]="termDisplayFn"
+                  class="noc-term-autocomplete">
+                  <mat-option class="noc-term-autocomplete"
+                    *ngFor="let item of connectorAnnoton?.hasInputNode?.termLookup.results" [value]="item">
+                    <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
+                      <div class="noc-term-label">
+                        {{ item.label }}
+                      </div>
+                      <span fxFlex></span>
+                      <div class="noc-term-id">
+                        {{ item.id }}
+                      </div>
+                    </div>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
           </div>
         </div>
         <div class="noc-section-header" fxLayout="row" fxLayoutAlign="start center">
