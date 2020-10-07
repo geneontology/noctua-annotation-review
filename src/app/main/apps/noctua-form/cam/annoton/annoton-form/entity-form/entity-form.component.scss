@@ -117,11 +117,6 @@
     @include deep-width(20px);
   }
 
-  .noc-evidence-db-trigger {
-    @include deep-height(20px);
-    @include deep-width(20px);
-  }
-
   textarea {
     height: 100%;
   }

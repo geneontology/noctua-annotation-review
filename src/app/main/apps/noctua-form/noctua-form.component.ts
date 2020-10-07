@@ -83,7 +83,6 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     self.noctuaFormMenuService.setRightDrawer(self.rightDrawer);
   }
 
-
   loadCam(modelId) {
     const self = this;
 

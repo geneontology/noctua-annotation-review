@@ -81,16 +81,6 @@ export class CamFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadGoTerms() {
-    this.camService.onCamTermsChanged
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((terms: Entity[]) => {
-        if (!terms) return;
-
-        this.cam.goterms = terms;
-      });
-  }
-
   checkErrors() {
     // this.noctuaAnnotonFormService.annoton.enableSubmit();
 

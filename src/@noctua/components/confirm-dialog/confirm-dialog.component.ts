@@ -28,12 +28,4 @@ export class NoctuaConfirmDialogComponent {
     cancel() {
         this.dialogRef.close(false);
     }
-
-    confirm() {
-        this.dialogRef.close(true);
-    }
-
-    cancel() {
-        this.dialogRef.close(false);
-    }
 }

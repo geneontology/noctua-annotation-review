@@ -146,24 +146,6 @@ export class CamTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  sortBy(sortCriteria) {
-    this.cam.sort = sortCriteria;
-  }
-
-  deleteAnnoton(annoton: Annoton) {
-    const self = this;
-
-    const success = () => {
-      this.camService.deleteAnnoton(annoton).then(() => {
-        self.noctuaFormDialogService.openSuccessfulSaveToast('Activity successfully deleted.', 'OK');
-      });
-    };
-
-    this.confirmDialogService.openConfirmDialog('Confirm Delete?',
-      'You are about to delete an activity.',
-      success);
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
