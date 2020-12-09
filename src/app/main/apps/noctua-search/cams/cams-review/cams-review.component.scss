@@ -64,7 +64,16 @@
       @include mat-elevation(2);
 
       &.noc-selected {
-        border-left: darken($noc-highlight-model-color, 15%) solid 5px;
+        border-left: darken($noc-highlight-model-color, 15%) solid 1px;
+
+        .noc-cam-table {
+
+          &::before {
+            left: 43px;
+            width: 5px;
+            background-color: darken($noc-highlight-model-color, 15%);
+          }
+        }
       }
     }
 

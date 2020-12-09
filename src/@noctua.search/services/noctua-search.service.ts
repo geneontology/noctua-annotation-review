@@ -42,7 +42,6 @@ export class NoctuaSearchService {
 
     onSearchCriteriaChanged: BehaviorSubject<any>;
     onSearchHistoryChanged: BehaviorSubject<any>;
-    baseUrl = environment.spaqrlApiUrl;
     curieUtil: any;
     cams: any[] = [];
     camPage: CamPage;
@@ -296,6 +295,7 @@ export class NoctuaSearchService {
             cam.state = self.noctuaFormConfigService.findModelState(response.state);
             cam.title = response.title;
             cam.date = response.date;
+            cam.modifiedP = response['modified-p'];
 
             cam.model = Object.assign({}, {
                 modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)

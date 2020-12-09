@@ -40,8 +40,9 @@ import {
     faCaretDown,
     faCaretRight,
     faAngleDoubleDown,
-    faAngleDoubleUp, faUndo
+    faAngleDoubleUp, faUndo, faSave, faExclamationTriangle, faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight
 } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 import { faGithub, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
@@ -103,18 +104,24 @@ export class AppModule {
         library.addIcons(
             faArrowUp,
             faArrowDown,
+            faAngleDoubleLeft,
+            faAngleDoubleRight,
             faAngleDoubleUp,
             faAngleDoubleDown,
+            faAngleLeft,
+            faAngleRight,
             faCalendarDay,
             faCalendarWeek,
             faCaretDown,
             faCaretRight,
             faChevronDown,
             faChevronRight,
+            faCheckCircle,
             faCopy,
+            faExclamationTriangle,
             faFacebook,
-            faHistory,
             faGithub,
+            faHistory,
             faLevelDownAlt,
             faLevelUpAlt,
             faLink,
@@ -122,14 +129,18 @@ export class AppModule {
             faPaw,
             faPen,
             faPlus,
+            faSave,
             faSearch,
             faShoppingBasket,
             faSitemap,
             faTasks,
+            faTimesCircle,
             faTwitter,
             faUndo,
             faUser,
             faUsers,
+
+
         );
     }
 }

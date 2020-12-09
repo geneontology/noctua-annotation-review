@@ -103,6 +103,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     this.displayedColumns = [
       'expand',
       'title',
+      'saved',
       'state',
       'date',
       'contributor',
@@ -151,6 +152,14 @@ export class CamsTableComponent implements OnInit, OnDestroy {
         if (reset) {
           this.camsService.reset();
           this.selection.clear();
+        }
+      });
+
+    this.noctuaReviewSearchService.onReplaceChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((refresh: boolean) => {
+        if (refresh) {
+          this.refresh();
         }
       });
   }

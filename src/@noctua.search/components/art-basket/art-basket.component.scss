@@ -12,11 +12,11 @@ $accent: map-get($theme, accent);
 
 
   .noc-drawer {
-    @include deep-width(450px);
+    @include deep-width(380px);
 
     .noc-drawer-header {
       padding: 0;
-      @include deep-height(240px);
+      @include deep-height(280px);
       background-color: #FFF;
       @include mat-elevation(2);
       z-index: 1000;
@@ -37,7 +37,7 @@ $accent: map-get($theme, accent);
 
     .noc-drawer-body {
       padding: 24px 8 100px 0;
-      min-height: calc(100% - 290px);
+      min-height: calc(100% - 330px);
     }
   }
 

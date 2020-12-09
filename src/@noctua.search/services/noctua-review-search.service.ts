@@ -43,7 +43,8 @@ export class NoctuaReviewSearchService {
     loading = false;
     // onCamsChanged: BehaviorSubject<any>;
     onArtBasketChanged: BehaviorSubject<any>;
-    onResetReview: Subject<boolean>;
+    onResetReview: BehaviorSubject<boolean>;
+    onReplaceChanged: BehaviorSubject<boolean>;
     onCamsPageChanged: BehaviorSubject<any>;
     onCamChanged: BehaviorSubject<any>;
     searchSummary: any = {};
@@ -66,7 +67,8 @@ export class NoctuaReviewSearchService {
         private curieService: CurieService) {
         const self = this;
         this.onArtBasketChanged = new BehaviorSubject(null);
-        this.onResetReview = new Subject();
+        this.onResetReview = new BehaviorSubject(false);
+        this.onReplaceChanged = new BehaviorSubject(false);
         this.onCamsPageChanged = new BehaviorSubject(null);
         this.onCamChanged = new BehaviorSubject([]);
         this.onSearchHistoryChanged = new BehaviorSubject(null);
@@ -84,7 +86,7 @@ export class NoctuaReviewSearchService {
                 // this.cams = response;
                 this.matchedCountCursor = 0;
                 this.calculateMatched();
-                this.findNext();
+                this.goto(0);
             });
 
             const element = document.querySelector('#noc-review-results');
@@ -104,7 +106,6 @@ export class NoctuaReviewSearchService {
                 });
 
                 this.searchCriteria['ids'] = ids;
-
             });
 
     }
@@ -116,13 +117,6 @@ export class NoctuaReviewSearchService {
             this.artBasket = new ArtBasket(JSON.parse(artBasket));
             this.camsService.addCamsToReview(this.artBasket.cams);
             this.onArtBasketChanged.next(this.artBasket);
-        }
-    }
-
-    scroll(id) {
-        const el = document.getElementById(id);
-        if (el) {
-            el.scrollIntoView();
         }
     }
 
@@ -147,10 +141,8 @@ export class NoctuaReviewSearchService {
         this.matchedCountCursor = (this.matchedCountCursor + 1) % this.matchedCount;
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
         this.camsService.expandMatch(this.currentMatchedEnity.uuid);
-        this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
-        this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
-
-        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId);
+        this.camsService.currentMatch = this.currentMatchedEnity;
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.annotonDisplayId);
 
         return this.currentMatchedEnity;
     }
@@ -160,28 +152,52 @@ export class NoctuaReviewSearchService {
             return;
         }
         this.matchedCountCursor = this.matchedCountCursor - 1;
+
         if (this.matchedCountCursor < 0) {
             this.matchedCountCursor = this.matchedCount - 1;
         }
+
         this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
         this.camsService.expandMatch(this.currentMatchedEnity.uuid);
-        this.camsService.selectedNodeUuid = this.currentMatchedEnity.uuid;
-        this.camsService.selectedCamUuid = this.currentMatchedEnity.modelId;
+        this.camsService.currentMatch = this.currentMatchedEnity;
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.annotonDisplayId);
 
-        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.displayId);
         return this.currentMatchedEnity;
     }
 
-    replaceAll(replaceWith) {
-        this.camsService.replace(this.matchedEntities, replaceWith);
+    goto(step: number | 'first' | 'last') {
+        if (this.matchedCount === 0) {
+            return;
+        }
+
+        if (step === 'first') {
+            step = 0;
+        }
+
+        if (step === 'last') {
+            step = this.matchedEntities.length - 1;
+        }
+
+        this.matchedCountCursor = step;
+        this.currentMatchedEnity = this.matchedEntities[this.matchedCountCursor];
+        this.camsService.expandMatch(this.currentMatchedEnity.uuid);
+        this.camsService.currentMatch = this.currentMatchedEnity;
+
+        this.noctuaSearchMenuService.scrollTo('#' + this.currentMatchedEnity.annotonDisplayId);
+
+        return this.currentMatchedEnity;
     }
 
-    replace(replaceWith) {
-        this.camsService.replace([this.currentMatchedEnity], replaceWith);
+    replaceAll(replaceWith: Entity): Observable<any> {
+        return this.camsService.replace(this.matchedEntities, replaceWith);
     }
 
-    bulkEdit(): Observable<any> {
-        return this.camsService.bulkEdit();
+    replace(replaceWith: Entity): Observable<any> {
+        return this.camsService.replace([this.currentMatchedEnity], replaceWith);
+    }
+
+    bulkEdit(store = false): Observable<any> {
+        return this.camsService.bulkEdit(store);
     }
 
     clear() {
@@ -189,8 +205,7 @@ export class NoctuaReviewSearchService {
         this.matchedCountCursor = 0;
         this.matchedCount = 0;
         this.currentMatchedEnity = undefined;
-        this.camsService.selectedNodeUuid = undefined;
-        this.camsService.selectedCamUuid = undefined;
+        this.camsService.currentMatch = new Entity(null, null);
         this.searchCriteria = new SearchCriteria();
     }
 

@@ -11,6 +11,7 @@ import {
     NoctuaAnnotonFormService,
     AnnotonType,
     NoctuaFormMenuService,
+    LeftPanel,
 } from 'noctua-form-base';
 
 import { Subject } from 'rxjs';
@@ -84,12 +85,12 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
 
     openCamForm() {
         this.camService.initializeForm(this.cam);
-        this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.camForm);
+        this.noctuaFormMenuService.openLeftDrawer(LeftPanel.camForm);
     }
 
     openAnnotonForm(annotonType: AnnotonType) {
         this.noctuaAnnotonFormService.setAnnotonType(annotonType);
-        this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.annotonForm);
+        this.noctuaFormMenuService.openLeftDrawer(LeftPanel.annotonForm);
     }
 
     ngOnDestroy(): void {

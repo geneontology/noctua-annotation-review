@@ -155,13 +155,19 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
   }
 
   replace() {
+    const self = this;
     const value = this.searchForm.value;
     const replaceWith = value.replaceWith;
 
-    this.noctuaReviewSearchService.replace(replaceWith);
+    this.noctuaReviewSearchService.replace(replaceWith).subscribe((cams) => {
+      if (cams) {
+        self.noctuaReviewSearchService.onReplaceChanged.next(true);
+      }
+    });
   }
 
   replaceAll() {
+    const self = this;
     const value = this.searchForm.value;
     const replaceWith = value.replaceWith;
     const groupedEntities = groupBy(
@@ -171,7 +177,11 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
     const occurrences = this.noctuaReviewSearchService.matchedCount;
     const success = (replace) => {
       if (replace) {
-        this.noctuaReviewSearchService.replaceAll(replaceWith);
+        this.noctuaReviewSearchService.replaceAll(replaceWith).subscribe((cams) => {
+          if (cams) {
+            self.noctuaReviewSearchService.onReplaceChanged.next(true);
+          }
+        });
       }
     };
 
@@ -186,6 +196,10 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
 
   findPrevious() {
     this.noctuaReviewSearchService.findPrevious();
+  }
+
+  goto(step: 'first' | 'last') {
+    this.noctuaReviewSearchService.goto(step);
   }
 
   findSelected(value) {

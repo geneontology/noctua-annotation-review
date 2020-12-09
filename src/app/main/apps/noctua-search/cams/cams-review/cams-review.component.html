@@ -10,7 +10,7 @@
   </div>
   <div class="noc-cams-results">
     <div class="noc-cam-container" *ngFor="let cam of cams" id="{{'noc-review-cams-'+cam.displayId}}"
-      [ngClass]=" {'noc-selected': cam.id===camsService.selectedCamUuid}" fxLayout="column"
+      [ngClass]=" {'noc-selected': cam.id===camsService.currentMatch?.modelId}" fxLayout="column"
       fxLayoutAlign="start stretch">
       <div *ngIf="cam?.loading.status" class="noc-cam-heading noc-loading-container" fxLayout="column"
         fxLayoutAlign="center center">

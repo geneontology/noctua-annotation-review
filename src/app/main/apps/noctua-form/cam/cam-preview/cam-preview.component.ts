@@ -63,7 +63,7 @@ export class CamPreviewComponent implements OnInit, OnDestroy {
   openForm(location?) {
     this.noctuaAnnotonFormService.mfLocation = location;
     this.noctuaAnnotonFormService.initializeForm();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
+    // this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
   }
 
   openAnnotonConnector(annoton: Annoton) {
@@ -72,14 +72,14 @@ export class CamPreviewComponent implements OnInit, OnDestroy {
     this.noctuaAnnotonConnectorService.annoton = annoton;
     this.noctuaAnnotonConnectorService.onAnnotonChanged.next(annoton);
     this.noctuaAnnotonConnectorService.getConnections();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.connectorForm);
+    // this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.connectorForm);
   }
 
   openAnnotonForm(annoton: Annoton) {
     this.camService.onCamChanged.next(this.cam);
     this.camService.annoton = annoton;
     this.noctuaAnnotonFormService.initializeForm(annoton);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
+    //  this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
   }
 
   deleteAnnoton(annoton: Annoton) {

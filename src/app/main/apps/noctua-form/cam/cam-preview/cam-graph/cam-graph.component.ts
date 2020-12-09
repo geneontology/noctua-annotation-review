@@ -16,7 +16,8 @@ import {
   Cam,
   Annoton,
   ConnectorAnnoton,
-  NoctuaFormMenuService
+  NoctuaFormMenuService,
+  LeftPanel
 } from 'noctua-form-base';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 
@@ -188,7 +189,7 @@ export class CamGraphComponent implements OnInit, OnDestroy {
   openForm(location?) {
     this.noctuaAnnotonFormService.mfLocation = location;
     this.noctuaAnnotonFormService.initializeForm();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
+    //this.noctuaFormMenuService.openRightDrawer(LeftPanel.annotonForm);
   }
 
   openAnnotonConnectorList(annoton: Annoton) {
@@ -197,19 +198,19 @@ export class CamGraphComponent implements OnInit, OnDestroy {
     this.noctuaAnnotonConnectorService.annoton = annoton;
     this.noctuaAnnotonConnectorService.onAnnotonChanged.next(annoton);
     this.noctuaAnnotonConnectorService.getConnections();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.connectorForm);
+    // this.noctuaFormMenuService.openRightDrawer(LeftPanel.connectorForm);
   }
 
   openAnnotonForm(annoton: Annoton) {
     this.camService.onCamChanged.next(this.cam);
     this.camService.annoton = annoton;
     this.noctuaAnnotonFormService.initializeForm(annoton);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm);
+    //this.noctuaFormMenuService.openRightDrawer(LeftPanel.annotonForm);
   }
 
   openAnnotonConnector(annotonConnector: ConnectorAnnoton) {
     this.noctuaAnnotonConnectorService.initializeForm(annotonConnector.upstreamNode.uuid, annotonConnector.downstreamNode.uuid);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.connectorForm);
+    // this.noctuaFormMenuService.openRightDrawer(LeftPanel.connectorForm);
   }
 
 

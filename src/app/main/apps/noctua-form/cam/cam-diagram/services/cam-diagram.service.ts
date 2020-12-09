@@ -117,14 +117,14 @@ export class CamDiagramService {
     const self = this;
 
     self.noctuaAnnotonFormService.initializeForm();
-    self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.annotonForm)
+    // self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.annotonForm)
   }
 
   openConnectorForm(sourceId, targetId) {
     const self = this;
 
     self.noctuaAnnotonConnectorService.initializeForm(sourceId, targetId);
-    self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.connectorForm);
+    //self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.connectorForm);
   }
 
   getCausalEffect(sourceId, targetId) {

@@ -134,8 +134,15 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
   }
 
   resetAll() {
-    this.camsService.loadCams();
-    this.camsService.reviewChanges();
+    const self = this;
+
+    self.camsService.resetModels().subscribe((cams) => {
+      if (cams) {
+        self.camsService.loadCams();
+        self.noctuaReviewSearchService.onReplaceChanged.next(true);
+      }
+    });
+    self.camsService.reviewChanges();
   }
 
   reviewChanges() {
@@ -155,7 +162,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
         if (element) {
           element.scrollTop = 0;
         }
-        self.noctuaReviewSearchService.bulkEdit().pipe(takeUntil(this._unsubscribeAll))
+        self.noctuaReviewSearchService.bulkEdit(true).pipe(takeUntil(this._unsubscribeAll))
           .subscribe(cams => {
             if (!cams) {
               return;
@@ -173,6 +180,8 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
           });
       }
     };
+
+
 
     const options = {
       cancelLabel: 'Go Back',

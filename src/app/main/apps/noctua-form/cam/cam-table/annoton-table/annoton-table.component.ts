@@ -66,7 +66,8 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<any>;
 
-  constructor(private camService: CamService,
+  constructor(
+    private camService: CamService,
     public camsService: CamsService,
     public noctuaFormMenuService: NoctuaFormMenuService,
     public noctuaUserService: NoctuaUserService,
@@ -148,7 +149,7 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
 
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
+      // const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  "Please enter a gene product", meta)
       //errors.push(error);
       // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
     }
@@ -219,7 +220,7 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
     this.camService.onCamChanged.next(this.cam);
 
     this.noctuaAnnotonEntityService.initializeForm(this.annoton, entity);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonEntityForm);
+    //  this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonEntityForm);
 
   }
 

@@ -118,7 +118,7 @@ export class NodeComponent implements OnInit, AfterViewInit {
 
   openAnnotonForm() {
     this.noctuaAnnotonFormService.initializeForm(this.annoton);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
+    //this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
   }
 
 }

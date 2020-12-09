@@ -46,7 +46,7 @@ export class NodesContainerComponent implements OnChanges, AfterViewInit {
   openForm(location?) {
     this.noctuaAnnotonFormService.mfLocation = location;
     this.noctuaAnnotonFormService.initializeForm();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
+    //this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
   }
 
   ngOnChanges() {

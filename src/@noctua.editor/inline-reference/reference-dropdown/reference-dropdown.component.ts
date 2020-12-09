@@ -9,7 +9,9 @@ import {
   AnnotonError,
   noctuaFormConfig,
   Article,
-  NoctuaLookupService
+  NoctuaLookupService,
+  ErrorLevel,
+  ErrorType
 } from 'noctua-form-base';
 
 import { referenceDropdownData } from './reference-dropdown.tokens';
@@ -58,7 +60,7 @@ export class NoctuaReferenceDropdownComponent implements OnInit, OnDestroy {
     let canSave = true;
 
     if (accession.trim() === '') {
-      const error = new AnnotonError('error', 1, `${db.name} accession is required`);
+      const error = new AnnotonError(ErrorLevel.error, ErrorType.general, `${db.name} accession is required`);
       errors.push(error);
       self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
       canSave = false;
