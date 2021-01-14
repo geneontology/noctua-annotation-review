@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoctuaConfirmDialogComponent } from '@noctua/components/confirm-dialog/confirm-dialog.component';
 import { CamsReplaceConfirmDialogComponent } from './../components/dialogs/cams-replace-confirm/cams-replace-confirm.component';
 import { CamsReviewChangesDialogComponent } from './../components/dialogs/cams-review-changes/cams-review-changes.component';
+import { CamsUnsavedDialogComponent } from '@noctua.search/components/dialogs/cams-unsaved/cams-unsaved.component';
 
 @Injectable({
     providedIn: 'root'
@@ -40,7 +41,6 @@ export class NoctuaSearchDialogService {
             });
     }
 
-
     openCamReplaceConfirmDialog(success): void {
         this.dialogRef = this._matDialog.open(CamsReplaceConfirmDialogComponent, {
             panelClass: 'noc-cams-replace-confirm-dialog',
@@ -59,6 +59,21 @@ export class NoctuaSearchDialogService {
     openCamReviewChangesDialog(success): void {
         this.dialogRef = this._matDialog.open(CamsReviewChangesDialogComponent, {
             panelClass: 'noc-cams-review-changes-dialog',
+            data: {
+                // searchCriteria: searchCriteria
+            },
+        });
+        this.dialogRef.afterClosed()
+            .subscribe(response => {
+                if (response) {
+                    success(response);
+                }
+            });
+    }
+
+    openCamsUnsavedDialog(success): void {
+        this.dialogRef = this._matDialog.open(CamsUnsavedDialogComponent, {
+            panelClass: 'noc-cams-unsaved-dialog',
             data: {
                 // searchCriteria: searchCriteria
             },

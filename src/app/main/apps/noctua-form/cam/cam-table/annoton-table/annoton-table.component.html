@@ -30,6 +30,12 @@
             fxLayoutAlign="start center" [attr.id]="entity.term?.displayId" [ngClass]="{'noc-highlight-match': entity.term?.highlight,
             'noc-highlight-modified': entity.term?.modified,
             'noc-highlight-match-current': entity.term?.uuid===camsService.currentMatch?.uuid}">
+            <p class="noc-old-term" *ngIf="entity.term?.modified && entity.term?.termHistory?.length>0">
+              {{entity.term?.termHistory[0]?.label}}
+              <a (click)="$event.stopPropagation()" href="{{entity.term?.termHistory[0]?.url}}" target="_blank">
+                {{ entity.term?.termHistory[0]?.id }}
+              </a>
+            </p>
             <p class="">
               {{entity.term?.label}} <br>
               <a (click)="$event.stopPropagation()" href="{{entity.term?.url}}" target="_blank">
@@ -55,6 +61,12 @@
             fxLayoutAlign="start center" [ngClass]="{'noc-highlight-match': entity.extension?.highlight,
             'noc-highlight-modified': entity.extension?.modified,
             'noc-highlight-match-current': entity.extension?.uuid===camsService.currentMatch?.uuid}">
+            <p class="noc-old-term" *ngIf="entity.extension?.modified && entity.extension?.termHistory?.length>0">
+              {{entity.extension?.termHistory[0]?.label}}
+              <a (click)="$event.stopPropagation()" href="{{entity.extension?.termHistory[0]?.url}}" target="_blank">
+                {{ entity.extension?.termHistory[0]?.id }}
+              </a>
+            </p>
             <p class="">{{entity.extension?.label}} <br>
               <a (click)="$event.stopPropagation()" href="{{entity.extension?.url}}" target="_blank">
                 {{ entity.extension?.id }}

@@ -148,9 +148,9 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
     this.noctuaReviewSearchService.onResetReview
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((reset: boolean) => {
-        if (reset) {
-          this.camsService.reset();
+      .subscribe((remove: boolean) => {
+        if (remove) {
+          this.camsService.clearCams();
           this.selection.clear();
         }
       });
@@ -200,6 +200,10 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.camsService.bulkStoredModel().subscribe((cams) => {
+      this.camsService.reviewChanges();
+      console.log('stored', cams)
+    });
   }
 
   /** The label for the checkbox on the passed row */

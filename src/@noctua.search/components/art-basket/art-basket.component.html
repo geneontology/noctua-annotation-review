@@ -23,10 +23,15 @@
         </div>
         (<strong class="mr-4">{{cam.modifiedStats?.totalChanges}}</strong> change(s) )
         <span fxFlex></span>
-        <button class="noc-rounded-button noc-xs noc-action-button" mat-stroked-button
+        <button class="noc-rounded-button noc-xs noc-action-button mr-8" mat-stroked-button
           (click)="resetCam(cam); $event.stopPropagation()" color="primary" matTooltip="Undo Model Changes"
           [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
           Undo
+        </button>
+        <button class="noc-rounded-button noc-xs noc-action-button" mat-stroked-button
+          (click)="submitChange(cam); $event.stopPropagation()" color="primary" matTooltip="Save Model Changes"
+          [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
+          Save
         </button>
       </div>
       <div class="noc-item-body w-100-p" fxLayout="row" fxLayoutAlign="start center">
@@ -88,7 +93,7 @@
     <ng-container *ngIf="noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.camsReview">
       <button (click)="clear()" type="button" mat-raised-button>Clear List</button>
       <span fxFlex=""></span>
-      <button (click)='resetAll()' type="button" mat-raised-button color="" class="mr-8">Undo Changes</button>
+      <button (click)='resetCams()' type="button" mat-raised-button color="" class="mr-8">Undo Changes</button>
       <button (click)="reviewChanges()" type="submit" class="" mat-raised-button color="primary">
         Review Changes
       </button>

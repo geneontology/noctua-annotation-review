@@ -67,7 +67,7 @@
         </div>
       </button>
       <mat-menu #userMenu="matMenu" class="">
-        <a mat-button href="{{noctuaConfigService.logoutUrl}}" class="red-500-fg w-100-p">
+        <a mat-button (click)="logout()" class="red-500-fg w-100-p">
           Logout
         </a>
       </mat-menu>

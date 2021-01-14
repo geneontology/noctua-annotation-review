@@ -67,9 +67,7 @@
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
   </div>
-
   <div class="noc-summary-results-bar" fxLayout="row" fxLayoutAlign="start center">
-
     <small>Results:</small>
     <div class="ml-8 mr-16" fxLayout="row" fxLayoutAlign="start center">
       <button mat-stroked-button color="" class="noc-rounded-button mr-4 noc-half-button noc-sm noc-r">
@@ -124,8 +122,8 @@
       <th mat-header-cell *matHeaderCellDef fxFlex="50px" fxLayout="row" fxLayoutAlign="start center">Saved</th>
       <td mat-cell *matCellDef="let cam" fxFlex="50px" class="noc-model-saved pr-12" fxLayout="row"
         fxLayoutAlign="center center">
-        <fa-icon *ngIf="cam.modifiedP" class="red-500-fg" [icon]="['far', 'times-circle']"></fa-icon>
-        <fa-icon *ngIf="!cam.modifiedP" class="green-500-fg" [icon]="['far', 'check-circle']"></fa-icon>
+        <fa-icon *ngIf="cam.modified" class="red-500-fg" [icon]="['far', 'times-circle']"></fa-icon>
+        <fa-icon *ngIf="!cam.modified" class="green-500-fg" [icon]="['far', 'check-circle']"></fa-icon>
       </td>
     </ng-container>
     <ng-container matColumnDef="state">

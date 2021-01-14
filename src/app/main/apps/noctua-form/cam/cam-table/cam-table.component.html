@@ -1,5 +1,5 @@
 <div class="w-100-p p-0 cam-table">
-  <div *ngIf="!options.reviewMode" class="noc-summary-bar" fxLayout="row" fxLayoutAlign="start center">
+  <div class="noc-summary-bar" fxLayout="row" fxLayoutAlign="start center">
     <span class='noc-title mr-12'>
       ACTIVITIES
     </span>
@@ -14,12 +14,12 @@
       </mat-chip>
     </div>
     <span fxFlex></span>
+    <!-- <button mat-button class="" color="primary" (click)="resetModel(cam)">
+      Reset Me
+    </button>
     <button mat-button class="" color="primary" (click)="storedModel(cam)">
       Stored
-    </button>
-    <button mat-button class="" color="primary" (click)="diffModel(cam)">
-      Diff
-    </button>
+    </button> -->
     <button mat-icon-button class="" fxFlex="40px" color="primary" [matMenuTriggerFor]="activityOptionMenu">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -57,8 +57,6 @@
             <div class="text-truncate">
               <strong> {{annoton?.presentation.qualifier}} </strong>
               {{annoton?.presentation.title}}
-
-              {{annoton.id}}, {{camService.annoton?.id}}
             </div>
           </div>
           <mat-chip class="noc-chip-xs" [ngClass]="annoton.annotonType">

@@ -9,6 +9,7 @@ import { NoctuaReviewSearchService } from './../../services/noctua-review-search
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 import { LeftPanel, MiddlePanel } from './../../models/menu-panels';
 import { NoctuaSearchDialogService } from './../../services/dialog.service';
+import { SearchCriteria } from '@noctua.search/models/search-criteria';
 
 @Component({
   selector: 'noc-art-basket',
@@ -64,18 +65,17 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
 
         this.summary = summary;
       });
+  }
 
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 
   selectItem(artBasketItem: ArtBasketItem) {
     this.camsService.onSelectedCamChanged.next(artBasketItem.id);
     const q = '#noc-review-cams-' + artBasketItem.displayId;
     this.noctuaSearchMenuService.scrollTo(q);
-  }
-
-  resetCam(cam: Cam) {
-    this.camService.loadCam(cam);
-    this.camsService.reviewChanges();
   }
 
   remove(cam: Cam) {
@@ -89,7 +89,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
       if (cancel) {
 
         this.noctuaReviewSearchService.clear();
-        this.camsService.reset();
+        this.camsService.clearCams();
         this.noctuaReviewSearchService.clearBasket();
       }
     };
@@ -133,16 +133,28 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
       success, options);
   }
 
-  resetAll() {
+  resetCam(cam: Cam) {
     const self = this;
 
-    self.camsService.resetModels().subscribe((cams) => {
+    self.camsService.resetCam(cam).subscribe((cams) => {
       if (cams) {
         self.camsService.loadCams();
         self.noctuaReviewSearchService.onReplaceChanged.next(true);
+        self.camsService.reviewChanges();
       }
     });
-    self.camsService.reviewChanges();
+  }
+
+  resetCams() {
+    const self = this;
+
+    self.camsService.resetCams().subscribe((cams) => {
+      if (cams) {
+        self.camsService.loadCams();
+        self.noctuaReviewSearchService.onReplaceChanged.next(true);
+        self.camsService.reviewChanges();
+      }
+    });
   }
 
   reviewChanges() {
@@ -152,9 +164,23 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.reviewChanges);
   }
 
+
   submitChanges() {
     const self = this;
 
+    this.storeModels(self.camsService.cams, true)
+  }
+
+  submitChange(cam: Cam) {
+    this.storeModels([cam])
+  }
+
+  close() {
+    this.noctuaSearchMenuService.closeLeftDrawer();
+  }
+
+  private storeModels(cams: Cam[], reset = false) {
+    const self = this;
     const success = (replace) => {
       if (replace) {
         const element = document.querySelector('#noc-review-results');
@@ -162,25 +188,26 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
         if (element) {
           element.scrollTop = 0;
         }
-        self.noctuaReviewSearchService.bulkEdit(true).pipe(takeUntil(this._unsubscribeAll))
+        self.camsService.storeModels(cams).pipe(takeUntil(this._unsubscribeAll))
           .subscribe(cams => {
             if (!cams) {
               return;
             }
 
-            self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.cams);
-            self.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
-            self.noctuaReviewSearchService.clear();
-            self.camsService.reset();
-            self.noctuaReviewSearchService.clearBasket();
-            self.noctuaReviewSearchService.onResetReview.next(true);
+            if (reset) {
+              self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.cams);
+              self.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
+              self.noctuaReviewSearchService.clear();
+              self.camsService.clearCams();
+              self.noctuaReviewSearchService.clearBasket();
+              self.noctuaReviewSearchService.onResetReview.next(true);
+            }
             self.zone.run(() => {
               self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
             });
           });
       }
     };
-
 
 
     const options = {
@@ -197,12 +224,5 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     }
   }
 
-  close() {
-    this.noctuaSearchMenuService.closeLeftDrawer();
-  }
 
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next();
-    this._unsubscribeAll.complete();
-  }
 }

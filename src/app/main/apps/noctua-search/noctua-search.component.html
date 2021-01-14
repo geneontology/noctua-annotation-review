@@ -110,8 +110,8 @@
             </button>
             <div class="noc-line" fxFlex="80px" [ngClass]="{'noc-visited': noctuaSearchMenuService.reviewLevel>1}">
             </div>
-            <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.reviewChanges); reviewChanges()" class=""
-              color="" [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.reviewChanges,
+            <button mat-stroked-button (click)="selectMiddlePanel(MiddlePanel.reviewChanges)" class="" color=""
+              [ngClass]="{'noc-active': noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.reviewChanges,
             'noc-visited': noctuaSearchMenuService.reviewLevel>2}">
               <div class="noc-title">Checkout</div> <br>
               <div class="noc-description">Review and submit changes</div>
@@ -122,7 +122,7 @@
         </div>
         <div class="h-100-p w-100-p">
           <noc-cams-table [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.cams"
-            [isReviewMode]="isReviewMode">
+            [isReviewMode]="noctuaSearchMenuService.isReviewMode">
           </noc-cams-table>
           <noc-cams-review [hidden]="noctuaSearchMenuService.selectedMiddlePanel !== MiddlePanel.camsReview">
           </noc-cams-review>

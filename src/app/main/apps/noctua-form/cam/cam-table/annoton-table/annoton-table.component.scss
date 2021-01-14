@@ -157,11 +157,17 @@ $accent: map-get($theme, accent);
       }
 
       &.noc-highlight-modified {
-        background-color: #ffbf00;
+        background-color: #fdd661;
       }
 
       &.noc-highlight-match-current {
         border: #ac6219 solid 5px;
+      }
+
+      .noc-old-term {
+        color: #777;
+        font-size: 10px;
+        text-decoration: line-through rgba(#ec6868, 0.5);
       }
     }
 

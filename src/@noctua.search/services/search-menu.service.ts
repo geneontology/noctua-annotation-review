@@ -9,6 +9,7 @@ import { ReviewMode } from './../models/review-mode';
 })
 export class NoctuaSearchMenuService {
     reviewMode: ReviewMode = ReviewMode.off;
+    isReviewMode = false;
     reviewLevel = 0;
     selectedLeftPanel: LeftPanel;
     selectedMiddlePanel: MiddlePanel;
