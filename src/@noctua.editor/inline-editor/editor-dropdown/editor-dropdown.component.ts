@@ -149,7 +149,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
       }
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      // const error = new AnnotonError('error', 1, "Please enter a gene product", meta)
+      // const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  "Please enter a gene product", meta)
       //errors.push(error);
       // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
     }

@@ -66,7 +66,6 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     detail: {}
   };
 
-  isReviewMode = false;
 
   cams: any[] = [];
 
@@ -144,14 +143,7 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadCam(modelId) {
-    const self = this;
-
     this.cam = this.camService.getCam(modelId);
-  }
-
-  edit() {
-    // this.loadModel(this.selectCam)
-    // this.openRightDrawer(RightPanel.camForm);
   }
 
   openLeftDrawer(panel) {
@@ -160,6 +152,7 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectMiddlePanel(panel) {
+    const self = this;
     this.noctuaSearchMenuService.selectMiddlePanel(panel);
 
     switch (panel) {
@@ -167,21 +160,16 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
         break;
       case MiddlePanel.camsReview:
+        self.camsService.reviewChanges();
         this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.artBasket);
         break;
       case MiddlePanel.reviewChanges:
+        self.camsService.reviewChanges();
         this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.artBasket);
         break;
     }
-
   }
 
-  reviewChanges() {
-    const self = this;
-
-    self.camsService.reviewChanges();
-    self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.reviewChanges);
-  }
 
   openRightDrawer(panel) {
     this.noctuaSearchMenuService.selectRightPanel(panel);
@@ -200,19 +188,19 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openLeftDrawer(LeftPanel.artBasket);
     this.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.camsReview);
     this.noctuaSearchMenuService.reviewMode = ReviewMode.on;
-    this.isReviewMode = true;
+    this.noctuaSearchMenuService.isReviewMode = true;
   }
 
   toggleReviewMode() {
     if (this.noctuaSearchMenuService.reviewMode === ReviewMode.off) {
       this.noctuaSearchMenuService.reviewMode = ReviewMode.on;
-      this.isReviewMode = true;
+      this.noctuaSearchMenuService.isReviewMode = true;
       // this.noctuaSearchMenuService.closeLeftDrawer();
     } else if (this.noctuaSearchMenuService.reviewMode === ReviewMode.on) {
       this.noctuaSearchMenuService.reviewMode = ReviewMode.off;
       this.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.cams);
       this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
-      this.isReviewMode = false;
+      this.noctuaSearchMenuService.isReviewMode = false;
     }
   }
 

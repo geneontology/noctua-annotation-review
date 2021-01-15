@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 
-import { NoctuaFormConfigService } from 'noctua-form-base';
+import { ErrorLevel, ErrorType, NoctuaFormConfigService } from 'noctua-form-base';
 
 
 
@@ -13,6 +13,8 @@ import { NoctuaFormConfigService } from 'noctua-form-base';
   styleUrls: ['./annoton-errors.component.scss']
 })
 export class AnnotonErrorsDialogComponent implements OnInit, OnDestroy {
+  ErrorType = ErrorType;
+  ErrorLevel = ErrorLevel;
   private _unsubscribeAll: Subject<any>;
   errors
 
@@ -23,6 +25,8 @@ export class AnnotonErrorsDialogComponent implements OnInit, OnDestroy {
     this._unsubscribeAll = new Subject();
 
     this.errors = this._data.errors
+
+    console.log(this.errors)
   }
 
   ngOnInit() {

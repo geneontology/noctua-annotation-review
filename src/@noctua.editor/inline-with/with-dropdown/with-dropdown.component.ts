@@ -10,7 +10,9 @@ import {
   noctuaFormConfig,
   Article,
   NoctuaLookupService,
-  withfrom
+  withfrom,
+  ErrorLevel,
+  ErrorType
 } from 'noctua-form-base';
 
 import { withDropdownData } from './with-dropdown.tokens';
@@ -183,7 +185,7 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
     const withs = this.myForm.value.companies.map((project) => {
       return project.projects.map((item) => {
         if (!item.projectName.includes(':')) {
-          const error = new AnnotonError('error', 1, `${item.projectName} wrong format, Did you forget ':'`);
+          const error = new AnnotonError(ErrorLevel.error, ErrorType.general, `${item.projectName} wrong format, Did you forget ':'`);
           errors.push(error);
           canSave = false;
         }
@@ -194,7 +196,7 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
     console.log(withs);
 
     /*   if (accession.trim() === '') {
-        const error = new AnnotonError('error', 1, `${db.name} accession is required`);
+        const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  `${db.name} accession is required`);
         errors.push(error);
         self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
         canSave = false;

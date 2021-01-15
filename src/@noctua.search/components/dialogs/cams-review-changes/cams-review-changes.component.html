@@ -6,35 +6,59 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="noc-dialog-body  noc-form-section">
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <div fxFlex="200px">
-        Summary
+    <div class="noc-stats-results" fxLayout="column" fxLayoutAlign="start center">
+      <div class="noc-stat-summary">
+        <span class="noc-number">
+          {{summary?.stats.totalChanges }}
+        </span>
+        changes across
+        <span class="noc-number">
+          {{summary?.stats.camsCount }} models
+        </span>
       </div>
-      <div fxFlex>
-        Details
+      <table fxFlex="1 1 auto" mat-table class="noc-summary-table" [dataSource]="stats"
+        [@animateStagger]="{value:'50'}">
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef fxFlex="250px" fxLayout="row" fxLayoutAlign="start center">
+            Category
+          </th>
+          <td mat-cell *matCellDef="let stat" fxFlex="250px" class="noc-title" fxLayout="row"
+            fxLayoutAlign="start center">
+            {{stat.category }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="count">
+          <th mat-header-cell *matHeaderCellDef fxFlex="" fxLayout="row" fxLayoutAlign="start center">Changes</th>
+          <td mat-cell *matCellDef="let stat" fxFlex="" fxLayout="row" fxLayoutAlign="start center">
+            {{stat.count}}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row (click)="$event.stopPropagation()" *matRowDef="let stat; columns: displayedColumns;">
+        </tr>
+      </table>
+      <!--   <div fxLayout="row" fxLayoutAlign="start center">
+        <div fxFlex="200px">
+          Summary
+        </div>
+        <div fxFlex>
+          Details
+        </div>
       </div>
-    </div>
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <div fxFlex="200px">
-        Models
-      </div>
-      <div fxFlex>
-        {{summary?.stats.camss}}
-      </div>
-    </div>
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <div fxFlex="200px">
-        Terms
-      </div>
-      <div fxFlex>
-        <div *ngFor="let modelSummary of summary.details">
-          <div *ngFor="let term of modelSummary.changes?.terms">
-            <div *ngFor="let termHistory of term.termHistory">
-              {{term.label}} -> {{termHistory.label}}
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <div fxFlex="200px">
+          Terms
+        </div>
+        <div fxFlex>
+          <div *ngFor="let modelSummary of summary">
+            <div *ngFor="let term of modelSummary.changes?.terms">
+              <div *ngFor="let termHistory of term.termHistory">
+                {{term.label}} -> {{termHistory.label}}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="m-0 p-16 noc-dialog-footer" fxLayout="row" fxLayoutAlign="space-between center">

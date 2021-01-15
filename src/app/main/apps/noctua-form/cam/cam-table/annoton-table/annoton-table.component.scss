@@ -66,10 +66,12 @@ $accent: map-get($theme, accent);
   }
 
   .annoton-table {
+
     // position: relative;
     //  flex: 1 1 auto;
     //    border-bottom: 1px solid rgba(0, 0, 0, .12);
     //  overflow: auto;
+
 
     tr.mat-footer-row,
     tr.mat-row {
@@ -155,11 +157,17 @@ $accent: map-get($theme, accent);
       }
 
       &.noc-highlight-modified {
-        background-color: #ffbf00;
+        background-color: #fdd661;
       }
 
       &.noc-highlight-match-current {
         border: #ac6219 solid 5px;
+      }
+
+      .noc-old-term {
+        color: #777;
+        font-size: 10px;
+        text-decoration: line-through rgba(#ec6868, 0.5);
       }
     }
 
@@ -175,5 +183,11 @@ $accent: map-get($theme, accent);
       display:flex;
       justify-content:flex-end;
      } */
+
+    &.noc-selected {
+      table {
+        background-color: rgba($noc-highlight-model-color, 0.3);
+      }
+    }
   }
 }

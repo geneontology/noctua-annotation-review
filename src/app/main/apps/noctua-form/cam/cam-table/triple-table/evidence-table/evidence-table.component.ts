@@ -74,7 +74,7 @@ export class EvidenceTableComponent implements OnInit, OnDestroy {
     this.camService.onCamChanged.next(this.cam);
 
     this.noctuaAnnotonEntityService.initializeForm(annoton, entity);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonEntityForm);
+    // this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonEntityForm);
   }
 
   ngOnDestroy(): void {

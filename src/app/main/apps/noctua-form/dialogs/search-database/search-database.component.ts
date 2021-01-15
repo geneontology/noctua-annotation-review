@@ -45,8 +45,8 @@ export class SearchDatabaseDialogComponent implements OnInit, OnDestroy {
     this.initialize();
 
   }
-  ngOnInit() {
-  }
+  ngOnInit() { }
+
   initialize() {
     const self = this;
 

@@ -20,7 +20,61 @@ $accent: map-get($theme, accent);
     &.ccOnly {
       border: #d3b5f5 solid 2px;
     }
+
+    &.noc-error-chip {
+      font-size: 12px;
+      font-weight: normal;
+      @include deep-height(30px);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0;
+
+      .noc-chip-label {
+        padding: 0 12px 0 12px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        .noc-icon-action {
+          font-size: 10px;
+          background-color: transparent;
+
+          &:hover {
+            font-size: 14px;
+            color: #222;
+          }
+        }
+      }
+
+      .noc-icon,
+      .noc-icon-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        color: #777;
+        font-size: 14px;
+      }
+
+      .noc-icon-action {
+        font-size: 10px;
+        background-color: transparent;
+
+        &:hover {
+          font-size: 14px;
+          color: #222;
+          background-color: rgba(#000000, 0.2);
+        }
+
+      }
+
+      @include noc-chip-color(#e28989);
+    }
   }
+
 
   .noc-loading-container {
     background-color: rgba(#555, 0.4);
@@ -95,6 +149,11 @@ $accent: map-get($theme, accent);
       max-width: 200px
     }
 
+    .noc-display-number {
+      background-color: #FFF;
+      z-index: 2;
+    }
+
     &::before {
       position: absolute;
       top: 20px;
@@ -105,20 +164,33 @@ $accent: map-get($theme, accent);
       background-color: $noc-tree-line-color;
       content: "";
     }
+
+    &::after {
+      position: absolute;
+      top: 0;
+      left: 37px;
+      bottom: 0;
+      width: 2px;
+      color: white;
+      background-color: $noc-tree-line-color;
+      content: "";
+      z-index: 1;
+    }
   }
 
-  .noc-annoton-selected {
-    border: rgba(map-get($accent, default), 0.4) solid 1px;
-    border-left: rgba(map-get($accent, default), 0.5) solid 5px;
+  .noc-selected {
     background-color: #FFFFFF;
 
-    .noc-annoton-table-heading {
-      background-color: rgba(map-get($accent, default), 0.05);
+    .noc-cam-table-body {
+
+      &::before {
+        left: 37px;
+        width: 5px;
+        background-color: darken($noc-highlight-model-color, 15%);
+        content: "";
+      }
     }
 
-    .noc-cam-table-body {
-      background-color: rgba(map-get($accent, default), 0.05);
-    }
   }
 
   .noc-cam-table-body {

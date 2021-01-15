@@ -62,7 +62,7 @@ export class TripleTableComponent implements OnInit, OnDestroy {
     this.camService.onCamChanged.next(this.cam);
 
     this.noctuaTripleFormService.initializeForm(triple);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.tripleForm);
+    //this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.tripleForm);
   }
 
   ngOnDestroy(): void {

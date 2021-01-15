@@ -16,26 +16,31 @@
         <div class="noc-number">
           {{i+1}}
         </div>
-        <div flex class="noc-error-row-body">
+        <div fxFlex class="noc-error-row-body">
           <div class="noc-heading">
             <strong>{{error.meta?.aspect}}</strong>: {{error.message}}
           </div>
-          <div *ngIf="error.type===2 || error.type===3" class="pb-10" fxLayout="row">
+          <div *ngIf="error.type===ErrorType.relation" class="pb-10" fxLayout="row">
             <div class="noc-node-card" fxLayout="column" fxLayoutAlign="center center">
-              <div> {{error.meta.subjectNode.label}}</div>
+              <div> {{error.meta?.subjectNode?.label}}</div>
             </div>
-            <div class="noc-edge-card" flex>
+            <div class="noc-edge-card" fxLayout="column" fxLayoutAlign="center stretch" fxFlex>
               <div class="noc-line">
-                {{error.meta.edge.label}}
+                {{error.meta?.edge?.label}}
               </div>
             </div>
             <div class="noc-node-card" fxLayout="column" fxLayoutAlign="center center">
-              <div>{{error.meta.objectNode.label}}</div>
+              <div>{{error.meta?.objectNode?.label}}</div>
             </div>
           </div>
-          <div *ngIf="error.type===4" class="pb-10" fxLayout="row" fxLayoutAlign="center center">
-            <div class="noc-node-card noc-lg" fxLayout="column" fxLayoutAlign="center center">
-              {{error.meta.subjectNode.label}}
+          <div *ngIf="error.type===ErrorType.cardinality" class="pb-10" fxLayout="row" fxLayoutAlign="center center">
+            <div class="noc-node-card" fxLayout="column" fxLayoutAlign="center center">
+              {{error.meta?.subjectNode?.label}}
+            </div>
+            <div class="noc-edge-card" fxFlex fxLayout="column" fxLayoutAlign="center stretch">
+              <div class="noc-line">
+                {{error.meta?.edge?.label}}
+              </div>
             </div>
           </div>
         </div>
@@ -44,6 +49,6 @@
   </div>
   <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="space-between center">
     <span fxFlex></span>
-    <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">Close</button>
+    <button (click)='close()' mat-raised-button color="" class="mr-8">Close</button>
   </div>
 </div>

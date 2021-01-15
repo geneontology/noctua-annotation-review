@@ -16,6 +16,7 @@
 
   .noc-error-row {
     border-bottom: #CCC double 1px;
+    width: 100%;
 
     .noc-number {
       padding: 18px 2px;
@@ -36,8 +37,8 @@
 
     .noc-node-card {
       padding: 5px;
-      @include deep-height(65px);
-      @include deep-width(120px);
+      @include deep-height(100px);
+      @include deep-width(250px);
       border: #AAA double 2px;
       font-size: 10px;
       text-align: center;
@@ -67,7 +68,7 @@
 
   .noc-dialog-body {
     margin: 0;
-    padding: 15px 10px;
+    padding: 0;
     @include deep-width(100%);
   }
 

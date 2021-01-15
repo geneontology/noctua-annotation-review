@@ -16,6 +16,7 @@ import { ArtBasketComponent } from './components/art-basket/art-basket.component
 import { ReviewFormComponent } from './components/review-form/review-form.component';
 import { CamsReplaceConfirmDialogComponent } from './components/dialogs/cams-replace-confirm/cams-replace-confirm.component';
 import { CamsReviewChangesDialogComponent } from './components/dialogs/cams-review-changes/cams-review-changes.component';
+import { CamsUnsavedDialogComponent } from './components/dialogs/cams-unsaved/cams-unsaved.component';
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import { CamsReviewChangesDialogComponent } from './components/dialogs/cams-revi
         ReviewFormComponent,
         CamsReplaceConfirmDialogComponent,
         CamsReviewChangesDialogComponent,
+        CamsUnsavedDialogComponent,
     ],
     imports: [
         CommonModule,
@@ -51,6 +53,7 @@ import { CamsReviewChangesDialogComponent } from './components/dialogs/cams-revi
         ReviewFormComponent,
         CamsReplaceConfirmDialogComponent,
         CamsReviewChangesDialogComponent,
+        CamsUnsavedDialogComponent,
     ]
 })
 export class NoctuaSearchBaseModule {

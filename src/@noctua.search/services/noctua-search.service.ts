@@ -23,6 +23,7 @@ import { CamPage } from './../models/cam-page';
 import { SearchHistory } from './../models/search-history';
 import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
 import { NoctuaSearchMenuService } from './search-menu.service';
+import { MiddlePanel } from '../models/menu-panels';
 
 declare const require: any;
 
@@ -42,7 +43,6 @@ export class NoctuaSearchService {
 
     onSearchCriteriaChanged: BehaviorSubject<any>;
     onSearchHistoryChanged: BehaviorSubject<any>;
-    baseUrl = environment.spaqrlApiUrl;
     curieUtil: any;
     cams: any[] = [];
     camPage: CamPage;
@@ -103,7 +103,9 @@ export class NoctuaSearchService {
                 this.onCamsPageChanged.next(this.camPage);
             });
 
-            this.noctuaSearchMenuService.resetResults();
+            if (this.noctuaSearchMenuService.selectedMiddlePanel === MiddlePanel.cams) {
+                this.noctuaSearchMenuService.resetResults();
+            }
         });
     }
 
@@ -118,6 +120,14 @@ export class NoctuaSearchService {
                 this.organisms = organisms;
             });
 
+        const contributor =
+            {
+                'name': 'Tremayne Mushayahama',
+                'orcid': 'http://orcid.org/0000-0002-2874-6934',
+                'initials': 'TM',
+                'color': '#e1bee7'
+            } as Contributor;
+        this.searchCriteria.contributors = [contributor];
         this.updateSearch();
     }
 
@@ -296,7 +306,8 @@ export class NoctuaSearchService {
             cam.state = self.noctuaFormConfigService.findModelState(response.state);
             cam.title = response.title;
             cam.date = response.date;
-
+            cam.modified = response['modified-p'];
+            console.log('m', cam.modified)
             cam.model = Object.assign({}, {
                 modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)
             });

@@ -14,7 +14,9 @@ import {
   Annoton,
   AnnotonType,
   NoctuaUserService,
-  NoctuaFormMenuService
+  NoctuaFormMenuService,
+  RightPanel,
+  CamsService
 } from 'noctua-form-base';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 import { trigger, state, transition, style, animate } from '@angular/animations';
@@ -55,7 +57,9 @@ export class CamTableComponent implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any>;
 
-  constructor(public camService: CamService,
+  constructor(
+    public camService: CamService,
+    public camsService: CamsService,
     public noctuaFormMenuService: NoctuaFormMenuService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
@@ -89,7 +93,7 @@ export class CamTableComponent implements OnInit, OnDestroy {
   openForm(location?) {
     this.noctuaAnnotonFormService.mfLocation = location;
     this.noctuaAnnotonFormService.initializeForm();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
+    //this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
   }
 
   search() {
@@ -112,14 +116,14 @@ export class CamTableComponent implements OnInit, OnDestroy {
     this.noctuaAnnotonConnectorService.annoton = annoton;
     this.noctuaAnnotonConnectorService.onAnnotonChanged.next(annoton);
     this.noctuaAnnotonConnectorService.getConnections();
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.connectorForm);
+    // this.noctuaFormMenuService.openRightDrawer(RightPanel.connectorForm);
   }
 
   openAnnotonForm(annoton: Annoton) {
     this.camService.onCamChanged.next(this.cam);
     this.camService.annoton = annoton;
     this.noctuaAnnotonFormService.initializeForm(annoton);
-    this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonForm)
+    // this.noctuaFormMenuService.openRightDrawer(RightPanel.annotonForm)
   }
 
   sortBy(sortCriteria) {
@@ -144,6 +148,23 @@ export class CamTableComponent implements OnInit, OnDestroy {
         'You are about to delete an activity.',
         success);
     }
+  }
+
+
+  resetModel(cam: Cam) {
+    this.camService.resetModel(cam);
+  }
+
+  displayErrors() {
+    const errors = this.cam.getViolationDisplayErrors();
+
+    this.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+  }
+
+  displayAnnotonErrors(annoton: Annoton) {
+    const errors = annoton.getViolationDisplayErrors();
+
+    this.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
   }
 
   ngOnDestroy(): void {

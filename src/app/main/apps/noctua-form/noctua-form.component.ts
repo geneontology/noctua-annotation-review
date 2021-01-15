@@ -14,13 +14,14 @@ import {
   NoctuaFormMenuService,
   NoctuaAnnotonFormService,
   CamService,
-  noctuaFormConfig
+  noctuaFormConfig,
+  MiddlePanel,
+  LeftPanel,
+  Annoton
 } from 'noctua-form-base';
 
 import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
-import { SparqlService } from '@noctua.sparql/services/sparql/sparql.service';
 import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
-import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-noctua-form',
@@ -31,6 +32,9 @@ import { environment } from 'environments/environment';
 })
 export class NoctuaFormComponent implements OnInit, OnDestroy {
   AnnotonType = AnnotonType;
+  LeftPanel = LeftPanel;
+  MiddlePanel = MiddlePanel;
+
 
   @ViewChild('leftDrawer', { static: true })
   leftDrawer: MatDrawer;
@@ -81,6 +85,15 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
     self.noctuaFormMenuService.setLeftDrawer(self.leftDrawer);
     self.noctuaFormMenuService.setRightDrawer(self.rightDrawer);
+
+    this.cam.onGraphChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((annotons: Annoton[]) => {
+        if (!annotons) {
+          return;
+        }
+        this.cam.updateAnnotonDisplayNumber();
+      });
   }
 
   loadCam(modelId) {
@@ -92,12 +105,12 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
   openCamForm() {
     this.camService.initializeForm(this.cam);
-    this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.camForm);
+    this.noctuaFormMenuService.openLeftDrawer(LeftPanel.camForm);
   }
 
   openAnnotonForm(annotonType: AnnotonType) {
     this.noctuaAnnotonFormService.setAnnotonType(annotonType);
-    this.noctuaFormMenuService.openLeftDrawer(this.noctuaFormMenuService.panel.annotonForm);
+    this.noctuaFormMenuService.openLeftDrawer(LeftPanel.annotonForm);
   }
 
   ngOnDestroy(): void {
