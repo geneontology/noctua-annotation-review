@@ -10,7 +10,7 @@
       "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -20,18 +20,15 @@
             "customWebpackConfig": {
               "path": "./webpack.extra.js"
             },
-            "outputPath": "workbenches/noctua-annotation-review/public",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/font-awesome/css/font-awesome.min.css",
               "node_modules/jsplumb/dist/js/jsplumb.min.js"
             ],
             "scripts": []
@@ -52,10 +49,10 @@
               "vendorChunk": false,
               "buildOptimizer": true
             },
-            "dev-temp": {
+            "beta-test": {
               "fileReplacements": [{
                 "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.dev-temp.ts"
+                "with": "src/environments/environment.beta-test.ts"
               }],
               "optimization": true,
               "outputHashing": "all",
@@ -81,8 +78,8 @@
             "production": {
               "browserTarget": "noctua:build:production"
             },
-            "dev-temp": {
-              "browserTarget": "noctua:build:dev-temp"
+            "beta-test": {
+              "browserTarget": "noctua:build:beta-test"
             },
             "hmr": {
               "hmr": true,
@@ -111,7 +108,6 @@
             ],
             "scripts": [],
             "assets": [
-              "src/favicon.ico",
               "src/assets"
             ]
           }

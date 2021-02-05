@@ -184,12 +184,12 @@ export class NoctuaReviewSearchService {
         return this.currentMatchedEnity;
     }
 
-    replaceAll(replaceWith: Entity): Observable<any> {
-        return this.camsService.replace(this.matchedEntities, replaceWith);
+    replaceAll(replaceWith: string, category): Observable<any> {
+        return this.camsService.replace(this.matchedEntities, replaceWith, category);
     }
 
-    replace(replaceWith: Entity): Observable<any> {
-        return this.camsService.replace([this.currentMatchedEnity], replaceWith);
+    replace(replaceWith: string, category): Observable<any> {
+        return this.camsService.replace([this.currentMatchedEnity], replaceWith, category);
     }
 
     clear() {
@@ -310,6 +310,10 @@ export class NoctuaReviewSearchService {
     addCam(res) {
         const self = this;
         const result: Array<Cam> = [];
+
+        each(self.camsService.cams, (cam: Cam) => {
+            return cam.clearFilter();
+        });
 
         res.models.forEach((response) => {
 

@@ -1,34 +1,20 @@
-
-import { Component, OnDestroy, OnInit, ViewChild, Input, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MatDrawer } from '@angular/material/sidenav';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-
-
 import {
-  Cam,
-  AnnotonType,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaFormMenuService,
   NoctuaAnnotonFormService,
-  noctuaFormConfig,
   CamsService,
-  AnnotonNode,
-  EntityLookup,
-  NoctuaLookupService,
-  EntityDefinition,
-  Entity
+  CamStats
 } from 'noctua-form-base';
-
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
-import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
-import { NoctuaSearchService } from '@noctua.search/services/noctua-search.service';
+import { takeUntil } from 'rxjs/operators';
 import { noctuaAnimations } from '@noctua/animations';
+import { NoctuaReviewSearchService } from './../../../services/noctua-review-search.service';
+import { ReviewMode } from './../../../models/review-mode';
+import { NoctuaSearchMenuService } from './../../../services/search-menu.service';
+import { MiddlePanel, LeftPanel, RightPanel } from './../../../models/menu-panels';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormGroup, FormControl } from '@angular/forms';
-import { NoctuaReviewSearchService } from '@noctua.search/services/noctua-review-search.service';
-import { groupBy } from 'lodash';
 
 @Component({
   selector: 'noc-cams-review-changes-dialog',
@@ -37,35 +23,52 @@ import { groupBy } from 'lodash';
   animations: noctuaAnimations,
 })
 export class CamsReviewChangesDialogComponent implements OnInit, OnDestroy {
-  groupedEntities;
-  occurrences = 0;
-  models = 0;
 
-  summary
+  ReviewMode = ReviewMode;
+  LeftPanel = LeftPanel;
+  MiddlePanel = MiddlePanel;
+  RightPanel = RightPanel;
+  stats: any[] = [];
+
+  summary;
+
+  public title = 'Review Changes';
+  public message: string;
+  public readonlyDialog = false;
+  public cancelLabel = 'Cancel'
+  public confirmLabel = 'Confirm'
+
+  displayedColumns = [
+    'category',
+    'count'
+  ];
+
   private _unsubscribeAll: Subject<any>;
 
-  constructor
-    (
-      private _matDialogRef: MatDialogRef<CamsReviewChangesDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) private _data: any,
-      private camsService: CamsService,
-      private noctuaLookupService: NoctuaLookupService,
-      private noctuaDataService: NoctuaDataService,
-      public noctuaReviewSearchService: NoctuaReviewSearchService,
-      public noctuaSearchService: NoctuaSearchService,
-      public noctuaUserService: NoctuaUserService,
-      public noctuaFormConfigService: NoctuaFormConfigService,
-      public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-      public noctuaFormMenuService: NoctuaFormMenuService) {
+  constructor(
+    private _matDialogRef: MatDialogRef<CamsReviewChangesDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) private _data: any,
+    public camsService: CamsService,
+    public noctuaReviewSearchService: NoctuaReviewSearchService,
+    public noctuaSearchMenuService: NoctuaSearchMenuService,
+    public noctuaUserService: NoctuaUserService,
+    public noctuaFormConfigService: NoctuaFormConfigService,
+    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaFormMenuService: NoctuaFormMenuService) {
+
     this._unsubscribeAll = new Subject();
+
+    if (_data.options) {
+      this.cancelLabel = _data.options.cancelLabel ? _data.options.cancelLabel : 'Cancel';
+      this.confirmLabel = _data.options.confirmLabel ? _data.options.confirmLabel : 'Confirm';
+    }
+
+    this.summary = this._data.summary
+    this.stats = this.generateStats(this.summary.stats);
+
   }
 
   ngOnInit(): void {
-    const self = this;
-
-    //this.summary = self.camsService.reviewChanges();
-    console.log(this.summary);
-
   }
 
   ngOnDestroy(): void {
@@ -73,40 +76,52 @@ export class CamsReviewChangesDialogComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  generate(stats) {
-    const self = this;
-    const result = [
-      {
-        category: 'CAMs',
-        count: stats.camsCount
-      }, {
-        category: 'Genes',
-        count: stats.gpsCount
-      }, {
-        category: 'Terms',
-        count: stats.termsCount
-      }, {
-        category: 'Evidence',
-        count: stats.evidenceCount
-      }, {
-        category: 'Reference',
-        count: stats.referencesCount
-      }, {
-        category: 'Relations',
-        count: stats.relationsCount
-      }
-    ];
+  generateStats(stats: CamStats): any[] {
+    stats.updateTotal();
+    const result = [{
+      category: 'Genes',
+      count: stats.gpsCount
+    }, {
+      category: 'Terms',
+      count: stats.termsCount
+    }, {
+      category: 'Evidence',
+      count: stats.evidenceCount
+    }, {
+      category: 'Reference',
+      count: stats.referencesCount
+    }, {
+      category: 'With',
+      count: stats.withsCount
+    }, {
+      category: 'Relations',
+      count: stats.relationsCount
+    }];
 
     return result;
   }
 
-  save() {
+  selectMiddlePanel(panel) {
+    this.noctuaSearchMenuService.selectMiddlePanel(panel);
+
+    switch (panel) {
+      case MiddlePanel.cams:
+        this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
+        break;
+      case MiddlePanel.camsReview:
+        this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.artBasket);
+        break;
+      case MiddlePanel.reviewChanges:
+        this.noctuaSearchMenuService.selectLeftPanel(LeftPanel.artBasket);
+        break;
+    }
+  }
+
+  confirm() {
     this._matDialogRef.close(true);
   }
 
-  close() {
+  cancel() {
     this._matDialogRef.close();
   }
 }
-
-

@@ -67,13 +67,13 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<any>;
 
-  constructor
-    (public noctuaUserService: NoctuaUserService,
-      private inlineReferenceService: InlineReferenceService,
-      public noctuaSearchMenuService: NoctuaSearchMenuService,
-      public noctuaFormConfigService: NoctuaFormConfigService,
-      private noctuaLookupService: NoctuaLookupService,
-      public noctuaSearchService: NoctuaSearchService) {
+  constructor(
+    public noctuaUserService: NoctuaUserService,
+    private inlineReferenceService: InlineReferenceService,
+    public noctuaSearchMenuService: NoctuaSearchMenuService,
+    public noctuaFormConfigService: NoctuaFormConfigService,
+    private noctuaLookupService: NoctuaLookupService,
+    public noctuaSearchService: NoctuaSearchService) {
 
     this.gpNode = EntityDefinition.generateBaseTerm([EntityDefinition.GoMolecularEntity]);
     this.termNode = EntityDefinition.generateBaseTerm([

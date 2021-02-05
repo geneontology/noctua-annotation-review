@@ -155,16 +155,16 @@ export class CamTableComponent implements OnInit, OnDestroy {
     this.camService.resetModel(cam);
   }
 
-  displayErrors() {
+  displayCamErrors() {
     const errors = this.cam.getViolationDisplayErrors();
 
-    this.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+    this.noctuaFormDialogService.openCamErrorsDialog(errors);
   }
 
   displayAnnotonErrors(annoton: Annoton) {
     const errors = annoton.getViolationDisplayErrors();
 
-    this.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+    this.noctuaFormDialogService.openCamErrorsDialog(errors);
   }
 
   ngOnDestroy(): void {

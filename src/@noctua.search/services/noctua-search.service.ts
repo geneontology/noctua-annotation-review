@@ -127,7 +127,7 @@ export class NoctuaSearchService {
                 'initials': 'TM',
                 'color': '#e1bee7'
             } as Contributor;
-        this.searchCriteria.contributors = [contributor];
+        //this.searchCriteria.contributors = [contributor];
         this.updateSearch();
     }
 

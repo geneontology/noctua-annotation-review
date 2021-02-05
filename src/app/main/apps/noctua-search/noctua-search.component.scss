@@ -278,6 +278,11 @@ $warn: map-get($theme, warn);
     }
   }
 
+  .noc-middle-panel {
+    min-height: 500px;
+    border-bottom: 200px;
+  }
+
   .noc-table-container {
     min-height: 500px;
   }

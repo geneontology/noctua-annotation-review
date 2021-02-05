@@ -25,6 +25,7 @@ $rotate-graph: 235deg;
     margin-bottom: 4px;
     padding: 0 10px;
     @include deep-height(30px);
+    @include deep-width(100%);
     //  min-height: 40px; //min-height: 35px;
     background-color: #FFF;
     font-size: 16px;
@@ -200,7 +201,8 @@ $rotate-graph: 235deg;
   .noc-cams-result {
     background-color: #F7F7F7;
     font-size: 12px;
-    width: 100%;
+
+    @include deep-width(100%);
     @include deep-height(100%);
     padding-bottom: 300px;
 
