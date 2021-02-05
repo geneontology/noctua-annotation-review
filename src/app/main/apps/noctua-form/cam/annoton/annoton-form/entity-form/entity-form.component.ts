@@ -272,7 +272,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     const evidences: Evidence[] = this.camService.getUniqueEvidence(self.noctuaAnnotonFormService.annoton);
     const success = (selected) => {
       if (selected.evidences && selected.evidences.length > 0) {
-        self.entity.predicate.setEvidence(selected.evidences, ['assignedBy']);
+        self.entity.predicate.setEvidence(selected.evidences);
         self.noctuaAnnotonFormService.initializeForm();
       }
     };

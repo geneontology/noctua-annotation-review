@@ -20,6 +20,7 @@ import 'rxjs/add/operator/map';
 import { NoctuaConfirmDialogComponent } from '@noctua/components/confirm-dialog/confirm-dialog.component';
 import { PreviewAnnotonDialogComponent } from '../dialogs/preview-annoton/preview-annoton.component';
 import { SearchEvidenceDialogComponent } from '../dialogs/search-evidence/search-evidence.component';
+import { CamErrorsDialogComponent } from '../dialogs/cam-errors/cam-errors.component';
 
 
 @Injectable({
@@ -61,6 +62,19 @@ export class NoctuaFormDialogService {
     openAnnotonErrorsDialog(errors: any[]): void {
         this.dialogRef = this._matDialog.open(AnnotonErrorsDialogComponent, {
             panelClass: 'annoton-errors-dialog',
+            data: {
+                errors: errors
+            }
+        });
+        this.dialogRef.afterClosed()
+            .subscribe(response => {
+
+            });
+    }
+
+    openCamErrorsDialog(errors: any[]): void {
+        this.dialogRef = this._matDialog.open(CamErrorsDialogComponent, {
+            panelClass: 'cam-errors-dialog',
             data: {
                 errors: errors
             }

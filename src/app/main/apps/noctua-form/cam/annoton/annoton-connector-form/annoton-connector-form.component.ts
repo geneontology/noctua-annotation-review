@@ -187,7 +187,7 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
 
     const success = (selected) => {
       if (selected.evidences && selected.evidences.length > 0) {
-        self.connectorAnnoton.upstreamNode.predicate.setEvidence(selected.evidences, ['assignedBy']);
+        self.connectorAnnoton.upstreamNode.predicate.setEvidence(selected.evidences);
         this.noctuaAnnotonConnectorService.updateEvidence(self.connectorAnnoton.upstreamNode);
       }
     };

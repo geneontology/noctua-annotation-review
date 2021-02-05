@@ -15,7 +15,8 @@ import {
   noctuaFormConfig,
   NoctuaUserService,
   NoctuaFormMenuService,
-  CamsService
+  CamsService,
+  AnnotonType
 } from 'noctua-form-base';
 
 import {
@@ -38,6 +39,9 @@ import { NoctuaUtils } from '@noctua/utils/noctua-utils';
 })
 export class AnnotonTableComponent implements OnInit, OnDestroy {
   EditorCategory = EditorCategory;
+  AnnotonType = AnnotonType;
+  camDisplayTypeOptions = noctuaFormConfig.camDisplayType.options;
+  annotonTypeOptions = noctuaFormConfig.annotonType.options;
 
   displayedColumns = [
     'relationship',
@@ -49,20 +53,23 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
     'reference',
     'with',
     'assignedBy',
+    'contributor',
     'actions'];
 
   grid: any[] = [];
 
   @Input('cam')
-  public cam: Cam
+  cam: Cam
 
   @Input('annoton')
-  public annoton: Annoton
+  annoton: Annoton
 
   @Input('options')
-  public options: any = {};
+  options: any = {};
 
-  public currentMenuEvent: any = {};
+  gpNode: AnnotonNode;
+  editableTerms = false;
+  currentMenuEvent: any = {};
 
   private unsubscribeAll: Subject<any>;
 
@@ -82,12 +89,36 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    console.log(this.options)
+    if (this.options?.editableTerms) {
+      this.editableTerms = this.options.editableTerms
+    }
     this.loadCam();
+
   }
 
   loadCam() {
     this.grid = this.annoton.grid;
+    this.gpNode = this.annoton.getGPNode();
+
+    console.log(this.gpNode)
   }
+
+  toggleExpand(annoton: Annoton) {
+    annoton.expanded = !annoton.expanded;
+  }
+
+  displayCamErrors() {
+    const errors = this.cam.getViolationDisplayErrors();
+    this.noctuaFormDialogService.openCamErrorsDialog(errors);
+  }
+
+  displayAnnotonErrors(annoton: Annoton) {
+    const errors = annoton.getViolationDisplayErrors();
+    this.noctuaFormDialogService.openCamErrorsDialog(errors);
+  }
+
 
   addEvidence(entity: AnnotonNode) {
     const self = this;
@@ -208,7 +239,7 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
     const evidences: Evidence[] = this.camService.getUniqueEvidence(self.noctuaAnnotonFormService.annoton);
     const success = (selected) => {
       if (selected.evidences && selected.evidences.length > 0) {
-        entity.predicate.setEvidence(selected.evidences, ['assignedBy']);
+        entity.predicate.setEvidence(selected.evidences);
         self.noctuaAnnotonFormService.initializeForm();
       }
     };

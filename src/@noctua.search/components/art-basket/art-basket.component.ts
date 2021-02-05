@@ -72,42 +72,6 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  selectItem(artBasketItem: ArtBasketItem) {
-    this.camsService.onSelectedCamChanged.next(artBasketItem.id);
-    const q = '#noc-review-cams-' + artBasketItem.displayId;
-    this.noctuaSearchMenuService.scrollTo(q);
-  }
-
-  remove(cam: Cam) {
-    this.camsService.removeCamFromReview(cam);
-    this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
-  }
-
-  clear() {
-
-    const success = (cancel) => {
-      if (cancel) {
-
-        this.noctuaReviewSearchService.clear();
-        this.camsService.clearCams();
-        this.noctuaReviewSearchService.clearBasket();
-      }
-    };
-
-    const options = {
-      cancelLabel: 'No',
-      confirmLabel: 'Yes'
-    };
-
-    this.confirmDialogService.openConfirmDialog('Confirm Clear Basket?',
-      'You are about to remove all items from the basket. All your unsaved changes will be lost.',
-      success, options);
-  }
-
-  backToReview() {
-    this.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.camsReview);
-  }
-
   cancel() {
     const self = this;
 
@@ -133,28 +97,136 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
       success, options);
   }
 
+  backToReview() {
+    this.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.camsReview);
+  }
+
+  clear() {
+    const self = this;
+    const success = (cancel) => {
+      if (cancel) {
+
+        this.noctuaReviewSearchService.clear();
+        this.camsService.clearCams();
+        this.noctuaReviewSearchService.clearBasket();
+      }
+    };
+
+    if (self.summary?.stats.totalChanges > 0) {
+      const options = {
+        title: 'Confirm Clear Basket?',
+        message: 'You are about to remove all items from the basket. All your unsaved changes will be lost. Please save changes or undo changes.',
+        cancelLabel: 'Go Back',
+        confirmLabel: 'Clear Anyway'
+      };
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, self.summary, options)
+    } else {
+      const options = {
+        cancelLabel: 'No',
+        confirmLabel: 'Yes'
+      };
+
+      this.confirmDialogService.openConfirmDialog('Confirm Clear Basket?',
+        'You are about to remove all items from the basket. All your unsaved changes will be lost.',
+        success, options);
+    }
+  }
+
+  close() {
+    this.noctuaSearchMenuService.closeLeftDrawer();
+  }
+
+
+  remove(cam: Cam) {
+    const self = this;
+    const summary = self.camsService.reviewCamChanges(cam)
+    const success = (ok) => {
+      if (ok) {
+        this.camsService.removeCamFromReview(cam);
+        this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
+      }
+    }
+
+    if (summary?.stats.totalChanges > 0) {
+      const options = {
+        title: 'Removing Unsaved Model',
+        message: `Please save changes or undo changes before removing model. Model Name:"${cam.title}"`,
+        cancelLabel: 'Cancel',
+        confirmLabel: 'Remove Anyway'
+      }
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, summary, options)
+    } else {
+      const options = {
+        cancelLabel: 'No',
+        confirmLabel: 'Yes'
+      };
+
+      this.confirmDialogService.openConfirmDialog('Removing Unsaved Model?',
+        `You are about to remove model from the basket. No changes were made. Model Name:"${cam.title}"`,
+        success, options);
+    }
+  }
+
   resetCam(cam: Cam) {
     const self = this;
 
-    self.camsService.resetCam(cam).subscribe((cams) => {
-      if (cams) {
-        self.camsService.loadCams();
-        self.noctuaReviewSearchService.onReplaceChanged.next(true);
-        self.camsService.reviewChanges();
+    const summary = self.camsService.reviewCamChanges(cam);
+    const success = (ok) => {
+      if (ok) {
+        self.camsService.resetCam(cam).subscribe((cams) => {
+          if (cams) {
+            self.camsService.loadCams();
+            self.noctuaReviewSearchService.onReplaceChanged.next(true);
+            self.camsService.reviewChanges();
+          }
+        });
       }
-    });
+    }
+
+    if (summary?.stats.totalChanges > 0) {
+
+      const options = {
+        title: 'Discard Unsaved Changes',
+        message: `All your changes will be discarded for model. Model Name:"${cam.title}"`,
+        cancelLabel: 'Cancel',
+        confirmLabel: 'OK'
+      }
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, summary, options)
+    } else {
+      success(true);
+    }
   }
 
   resetCams() {
     const self = this;
 
-    self.camsService.resetCams().subscribe((cams) => {
-      if (cams) {
-        self.camsService.loadCams();
-        self.noctuaReviewSearchService.onReplaceChanged.next(true);
-        self.camsService.reviewChanges();
+    const success = (ok) => {
+      if (ok) {
+        self.camsService.resetCams().subscribe((cams) => {
+          if (cams) {
+            self.camsService.loadCams();
+            self.noctuaReviewSearchService.onReplaceChanged.next(true);
+            self.camsService.reviewChanges();
+          }
+        });
       }
-    });
+    }
+    if (self.summary?.stats.totalChanges > 0) {
+
+      const options = {
+        title: 'Discard Unsaved Changes',
+        message: `All your changes will be discarded.`,
+        cancelLabel: 'Cancel',
+        confirmLabel: 'OK'
+      }
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, self.summary, options)
+    } else {
+      success(true);
+    }
   }
 
   reviewChanges() {
@@ -164,6 +236,22 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.reviewChanges);
   }
 
+  reviewCamChanges(cam: Cam) {
+    const self = this;
+
+    const success = (done) => {
+    }
+
+    const summary = self.camsService.reviewCamChanges(cam)
+    self.noctuaSearchDialogService.openCamReviewChangesDialog(success, summary)
+
+  }
+
+  selectItem(artBasketItem: ArtBasketItem) {
+    this.camsService.onSelectedCamChanged.next(artBasketItem.id);
+    const q = '#noc-review-cams-' + artBasketItem.displayId;
+    this.noctuaSearchMenuService.scrollTo(q);
+  }
 
   submitChanges() {
     const self = this;
@@ -172,12 +260,40 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
   }
 
   submitChange(cam: Cam) {
-    this.storeModels([cam])
+
+    const self = this;
+    const summary = self.camsService.reviewCamChanges(cam);
+
+    if (summary?.stats.totalChanges > 0) {
+      const success = (replace) => {
+        if (replace) {
+
+          self.camsService.storeModels([cam]).pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(cams => {
+              if (!cams) {
+                return;
+              }
+
+              self.noctuaSearchService.updateSearch();
+              self.noctuaReviewSearchService.updateSearch();
+              self.zone.run(() => {
+                self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
+              });
+            });
+        }
+      };
+
+      const options = {
+        title: 'Save Changes?',
+        message: `All your changes will be saved for model. Model Name:"${cam.title}"`,
+        cancelLabel: 'Go Back',
+        confirmLabel: 'Submit'
+      }
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, summary, options)
+    }
   }
 
-  close() {
-    this.noctuaSearchMenuService.closeLeftDrawer();
-  }
 
   private storeModels(cams: Cam[], reset = false) {
     const self = this;
@@ -202,6 +318,8 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
               self.noctuaReviewSearchService.clearBasket();
               self.noctuaReviewSearchService.onResetReview.next(true);
             }
+            self.noctuaSearchService.updateSearch();
+            self.noctuaReviewSearchService.updateSearch();
             self.zone.run(() => {
               self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
             });
@@ -210,19 +328,16 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     };
 
 
-    const options = {
-      cancelLabel: 'Go Back',
-      confirmLabel: 'Submit'
-    };
+    if (self.summary?.stats.totalChanges > 0) {
+      const options = {
+        title: 'Save Changes?',
+        message: `Bulk edit all changes`,
+        cancelLabel: 'Go Back',
+        confirmLabel: 'Submit'
+      }
 
-    if (self.summary) {
-      const occurrences = self.summary.stats.termsCount;
-      const models = self.summary.stats.camsCount;
-      this.confirmDialogService.openConfirmDialog('Save Changes?',
-        `Bulk edit ${occurrences} occurrences across ${models} models`,
-        success, options);
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, self.summary, options)
     }
   }
-
 
 }

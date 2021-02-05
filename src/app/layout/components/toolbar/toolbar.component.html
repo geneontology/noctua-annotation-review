@@ -1,4 +1,4 @@
-<mat-toolbar class="" fxLayout="row" fxLayoutAlign="start center">
+<mat-toolbar class="" fxLayout="row" fxLayoutAlign="start center" [ngClass]="{'noc-beta': is_beta}">
   <mat-progress-bar *ngIf="showLoadingBar" class="loading-bar" color="accent" mode="indeterminate"></mat-progress-bar>
   <div class="noc-br h-100-p" fxLayout="row" fxLayoutAlign="start center" fxFlex="200px">
     <div class="noc-logo pl-8" fxLayout="row" fxLayoutAlign="start">
@@ -12,12 +12,25 @@
       [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
       <mat-icon class="">apps</mat-icon>
     </button>
-    <a class="noc-main-logo" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
-      Noctua
-    </a>
-    <a class="noc-sub-logo" href="{{noctuaConfigService.homeUrl}}" target=" _blank">
-      Annotation Review Tool
-    </a>
+    <ng-container *ngIf="!is_beta">
+      <a class="noc-main-logo" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
+        Noctua
+      </a>
+      <a class="noc-sub-logo" href="{{noctuaConfigService.homeUrl}}" target=" _blank">
+        Review Tool
+      </a>
+    </ng-container>
+    <div *ngIf="is_beta" class="noc-beta-logo" fxLayout="column" fxLayoutAlign="center start ">
+      <div class="noc-title">
+        Noctua Review Tool (beta)
+      </div>
+      <div class="noc-description">
+        Testing Version. Visit <a class="" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
+          Noctua Review Tool
+        </a> for 2.0 version
+      </div>
+    </div>
+
   </div>
   <div fxLayout="row" fxLayoutAlign="end center" fxFlex="">
     <div class="noc-br pr-12" fxLayout="row" fxLayoutAlign="start center">

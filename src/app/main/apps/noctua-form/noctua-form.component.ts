@@ -48,6 +48,14 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
   noctuaFormConfig = noctuaFormConfig;
 
+  tableOptions = {
+    editableTerms: true,
+    editableEvience: true,
+    editableReference: true,
+    editableWith: true,
+    reviewMode: true,
+  };
+
   private _unsubscribeAll: Subject<any>;
 
   constructor(

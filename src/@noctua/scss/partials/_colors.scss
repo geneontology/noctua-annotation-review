@@ -183,7 +183,7 @@ A700;
   }
 }
 
-@mixin generatenoctuaColorClasses($primary, $accent, $warn) {
+@mixin generateNoctuaColorClasses($primary, $accent, $warn) {
   $colorMap: (primary: $primary, accent: $accent, warn: $warn);
 
   @each $name,

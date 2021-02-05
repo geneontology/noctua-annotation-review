@@ -1,20 +1,27 @@
-<div class="dialog-content-wrapper">
+<div class="dialog-content-wrapper noc-dialog">
   <mat-toolbar class="mat-primary m-0">
     <mat-toolbar-row fxFlex fxLayout="row" fxLayoutAlign="start center">
       <span class="title dialog-title">
-        Review Changes </span> (Under Construction)
+        {{title}} </span>
+      <span fxFlex></span>
+      <button mat-stroked-button (click)="cancel()" class="noc-rounded-button noc-sm" aria-label="Close dialog">
+        <mat-icon>close</mat-icon> Close
+      </button>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div class="noc-dialog-body  noc-form-section">
+  <div class="noc-dialog-body noc-form-section" noctuaPerfectScrollbar>
     <div class="noc-stats-results" fxLayout="column" fxLayoutAlign="start center">
-      <div class="noc-stat-summary">
-        <span class="noc-number">
-          {{summary?.stats.totalChanges }}
-        </span>
-        changes across
-        <span class="noc-number">
-          {{summary?.stats.camsCount }} models
-        </span>
+      <div class="alert alert-warning w-100-p">
+        {{message}}
+        <div class="noc-stat-summary w-100-p">
+          <span class="noc-number">
+            {{summary?.stats.totalChanges }}
+          </span>
+          unsaved changes across
+          <span class="noc-number">
+            {{summary?.stats.camsCount }} model(s)
+          </span>
+        </div>
       </div>
       <table fxFlex="1 1 auto" mat-table class="noc-summary-table" [dataSource]="stats"
         [@animateStagger]="{value:'50'}">
@@ -61,9 +68,14 @@
       </div> -->
     </div>
   </div>
-  <div class="m-0 p-16 noc-dialog-footer" fxLayout="row" fxLayoutAlign="space-between center">
-    <span fxFlex></span>
-    <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">Go Back</button>
-    <button (click)="save()" type="button" mat-raised-button color="warn">Save</button>
+  <div *ngIf="!readonlyDialog" class="m-0 p-16 noc-dialog-footer" fxLayout="row" fxLayoutAlign="space-between center">
+    <button (click)='cancel()' type="button" mat-raised-button color="" class="mr-8">
+      {{cancelLabel}}</button>
+    <button (click)="confirm()" type="button" mat-raised-button color="primary">
+      {{confirmLabel}}
+    </button>
+  </div>
+  <div *ngIf="readonlyDialog" class="m-0 p-16 noc-dialog-footer" fxLayout="row" fxLayoutAlign="space-between center">
+    <button (click)='cancel()' type="button" mat-raised-button color="" class="mr-8">Close</button>
   </div>
 </div>

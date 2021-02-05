@@ -129,7 +129,7 @@
     <mat-drawer-content class="w-100-p h-100-p" fxLayout="column" fxLayoutAlign="start stretch">
       <div [ngSwitch]="noctuaFormMenuService.selectedMiddlePanel" class="w-100-p h-100-p" noctuaPerfectScrollbar>
         <noc-cam-preview *ngSwitchCase="MiddlePanel.camPreview" [cam]="cam"></noc-cam-preview>
-        <noc-cam-table *ngSwitchCase="MiddlePanel.camTable" [cam]="cam"></noc-cam-table>
+        <noc-cam-table *ngSwitchCase="MiddlePanel.camTable" [cam]="cam" [options]="tableOptions"></noc-cam-table>
       </div>
     </mat-drawer-content>
     <mat-drawer #rightDrawer class="noc-right-drawer" mode="over" position="end">

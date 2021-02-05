@@ -214,6 +214,8 @@ export class CamsUnsavedDialogComponent implements OnInit, OnDestroy, AfterViewI
               self.noctuaReviewSearchService.clearBasket();
               self.noctuaReviewSearchService.onResetReview.next(true);
             }
+            self.noctuaSearchService.updateSearch();
+            self.noctuaReviewSearchService.updateSearch();
             self.zone.run(() => {
               self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
             });

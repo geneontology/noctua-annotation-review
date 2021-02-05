@@ -113,6 +113,8 @@ export class SearchCriteria {
             query.push('expand');
         }
 
+        query.push('debug')
+
         return query;
     }
 

@@ -21,14 +21,18 @@
       <div *ngIf="cam.modified" class="noc-modified-header w-100-p" fxLayout="row" fxLayoutAlign="start center">
         <div class="noc-title">Modified Model:
         </div>
-        (<strong class="mr-4">{{cam.modifiedStats?.totalChanges}}</strong> change(s) )
         <span fxFlex></span>
-        <button class="noc-rounded-button noc-xs noc-action-button mr-8" mat-stroked-button
+        <button class="noc-rounded-button noc-half-button noc-r noc-xs noc-action-button mr-4" mat-stroked-button
+          (click)="reviewCamChanges(cam); $event.stopPropagation()" color="primary" matTooltip="View Model Changes"
+          [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
+          {{cam.modifiedStats?.totalChanges}} change(s)
+        </button>
+        <button class="noc-rounded-button noc-half-button noc-m noc-xs noc-action-button mr-4" mat-stroked-button
           (click)="resetCam(cam); $event.stopPropagation()" color="primary" matTooltip="Undo Model Changes"
           [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
           Undo
         </button>
-        <button class="noc-rounded-button noc-xs noc-action-button" mat-stroked-button
+        <button class="noc-rounded-button noc-half-button noc-l noc-xs noc-action-button mr-4" mat-stroked-button
           (click)="submitChange(cam); $event.stopPropagation()" color="primary" matTooltip="Save Model Changes"
           [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
           Save

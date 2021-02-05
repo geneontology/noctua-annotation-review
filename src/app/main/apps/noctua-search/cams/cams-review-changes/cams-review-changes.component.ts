@@ -16,6 +16,7 @@ import { NoctuaReviewSearchService } from '@noctua.search/services/noctua-review
 import { ReviewMode } from '@noctua.search/models/review-mode';
 import { NoctuaSearchMenuService } from '@noctua.search/services/search-menu.service';
 import { MiddlePanel, LeftPanel, RightPanel } from '@noctua.search/models/menu-panels';
+import { ArtBasket } from '@noctua.search/models/art-basket';
 
 @Component({
   selector: 'noc-cams-review-changes',
@@ -30,7 +31,7 @@ export class CamsReviewChangesComponent implements OnInit, OnDestroy {
   MiddlePanel = MiddlePanel;
   RightPanel = RightPanel;
   stats: any[] = [];
-
+  artBasket: ArtBasket;
   summary;
 
   displayedColumns = [
@@ -67,6 +68,13 @@ export class CamsReviewChangesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.noctuaReviewSearchService.onArtBasketChanged.pipe(
+      takeUntil(this._unsubscribeAll))
+      .subscribe((artBasket: ArtBasket) => {
+        if (artBasket) {
+          this.artBasket = artBasket;
+        }
+      });
   }
 
   generateStats(stats: CamStats): any[] {
@@ -83,6 +91,9 @@ export class CamsReviewChangesComponent implements OnInit, OnDestroy {
     }, {
       category: 'Reference',
       count: stats.referencesCount
+    }, {
+      category: 'With',
+      count: stats.withsCount
     }, {
       category: 'Relations',
       count: stats.relationsCount

@@ -125,7 +125,7 @@ $accent: map-get($theme, accent);
   }
 
   .noc-dialog-body {
-    min-height: calc(100% - 90px);
+    @include deep-height(calc(100% - 90px));
   }
 
   .noc-dialog-footer {
