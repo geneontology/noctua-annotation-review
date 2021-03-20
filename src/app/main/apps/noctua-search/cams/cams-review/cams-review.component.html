@@ -2,7 +2,6 @@
   <div *ngIf="!noctuaUserService.user" class="noc-draw-body-disabled" fxLayoutAlign="center center">
     Log in to Continue
   </div>
-
   <div class="noc-summary-bar" fxLayout="row" fxLayoutAlign="start center">
     <span class="noc-header-title mr-8">
       Review Models</span>
@@ -12,21 +11,11 @@
     <div class="noc-cam-container" *ngFor="let cam of cams" id="{{'noc-review-cams-'+cam.displayId}}"
       [ngClass]=" {'noc-selected': cam.id===camsService.currentMatch?.modelId}" fxLayout="column"
       fxLayoutAlign="start stretch">
-      <div *ngIf="cam?.loading.status" class="noc-cam-heading noc-loading-container" fxLayout="column"
-        fxLayoutAlign="center center">
-        <mat-progress-spinner class="example-margin" [color]="loadingSpinner.color" [mode]="loadingSpinner.mode">
-        </mat-progress-spinner>
-        <div *ngIf="cam?.title" class="noc-title" fxLayout="row" fxLayoutAlign="start center">
-          <div class="text-truncate pr-8">
-            <strong>Title: </strong>{{cam?.title }}
-          </div>
-        </div>
-        <h3>
-          {{cam?.loading.message}}
-        </h3>
-      </div>
-      <div *ngIf="!cam?.loading.status" class="noc-cam-heading" fxFlex="1 1 auto" fxLayout="row"
-        fxLayoutAlign="start center" [@animateStagger]="{value:'50'}">
+      <div class="noc-cam-heading" fxFlex="1 1 auto" fxLayout="row" fxLayoutAlign="start center"
+        [@animateStagger]="{value:'50'}">
+        <mat-progress-bar *ngIf="cam.loading.status" class="noc-cam-progress" [color]="loadingSpinner.color"
+          [mode]="loadingSpinner.mode">
+        </mat-progress-bar>
         <button mat-icon-button (click)="cam.toggleExpand()" class="noc-toggle-expand-button">
           <fa-icon *ngIf="!cam.expanded" [icon]="['fas', 'caret-right']"></fa-icon>
           <fa-icon *ngIf="cam.expanded" [icon]="['fas', 'caret-down']"></fa-icon>

@@ -9,7 +9,14 @@ $accent: map-get($theme, accent);
   background-color: white;
   @include mat-elevation(4);
 
-
+  .noc-cam-progress {
+    position: absolute;
+    top: 0;
+    height: 5px;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+  }
 
   .noc-drawer {
     @include deep-width(380px);
@@ -42,6 +49,7 @@ $accent: map-get($theme, accent);
   }
 
   .noc-group-row {
+    position: relative;
     min-height: 40px;
     max-height: 500px;
     border-bottom: #CCC solid 1px;

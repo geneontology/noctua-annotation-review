@@ -75,7 +75,6 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
       const items = groups.map((group) => {
         return group.split('|');
       })
-      console.log(items);
 
     }
 
@@ -193,7 +192,6 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
       }).join('|');
     }).join(',');
 
-    console.log(withs);
 
     /*   if (accession.trim() === '') {
         const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  `${db.name} accession is required`);

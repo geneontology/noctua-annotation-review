@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { noctuaAnimations } from './../../../../../../../@noctua/animations';
-import { CamTableService } from './../services/cam-table.service';
 import { NoctuaFormDialogService } from './../../../services/dialog.service';
 
 import {
@@ -30,6 +29,7 @@ import { EditorCategory } from '@noctua.editor/models/editor-category';
 import { find } from 'lodash';
 import { InlineEditorService } from '@noctua.editor/inline-editor/inline-editor.service';
 import { NoctuaUtils } from '@noctua/utils/noctua-utils';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'noc-annoton-table',
@@ -42,18 +42,13 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
   AnnotonType = AnnotonType;
   camDisplayTypeOptions = noctuaFormConfig.camDisplayType.options;
   annotonTypeOptions = noctuaFormConfig.annotonType.options;
-
+  dataSource: MatTableDataSource<AnnotonNode>;
   displayedColumns = [
     'relationship',
     'aspect',
     'term',
-    'relationshipExt',
     'extension',
     'evidence',
-    'reference',
-    'with',
-    'assignedBy',
-    'contributor',
     'actions'];
 
   grid: any[] = [];
@@ -67,6 +62,8 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
   @Input('options')
   options: any = {};
 
+  optionsDisplay: any = {}
+
   gpNode: AnnotonNode;
   editableTerms = false;
   currentMenuEvent: any = {};
@@ -79,30 +76,32 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
     public noctuaFormMenuService: NoctuaFormMenuService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public camTableService: CamTableService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaAnnotonEntityService: NoctuaAnnotonEntityService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,
     private inlineEditorService: InlineEditorService) {
 
+
+    this.dataSource = new MatTableDataSource<AnnotonNode>();
     this.unsubscribeAll = new Subject();
+
+
   }
 
   ngOnInit(): void {
 
-    console.log(this.options)
     if (this.options?.editableTerms) {
       this.editableTerms = this.options.editableTerms
     }
-    this.loadCam();
-
-  }
-
-  loadCam() {
-    this.grid = this.annoton.grid;
     this.gpNode = this.annoton.getGPNode();
 
-    console.log(this.gpNode)
+    this.optionsDisplay = { ...this.options, hideHeader: true };
+    this.dataSource.data = this.annoton.nodes;
+    this.dataSource.filterPredicate = function customFilter(data, filter: string): boolean {
+      return (data.id !== filter);
+    }
+
+    this.dataSource.filter = this.gpNode?.id;
   }
 
   toggleExpand(annoton: Annoton) {
@@ -245,14 +244,6 @@ export class AnnotonTableComponent implements OnInit, OnDestroy {
     };
 
     self.noctuaFormDialogService.openSelectEvidenceDialog(evidences, success);
-  }
-
-  selectEntity(entity: AnnotonNode) {
-    this.camService.onCamChanged.next(this.cam);
-
-    this.noctuaAnnotonEntityService.initializeForm(this.annoton, entity);
-    //  this.noctuaFormMenuService.openRightDrawer(this.noctuaFormMenuService.panel.annotonEntityForm);
-
   }
 
   updateCurrentMenuEvent(event) {

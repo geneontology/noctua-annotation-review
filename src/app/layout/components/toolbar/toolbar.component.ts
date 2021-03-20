@@ -43,7 +43,11 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
     logoutUrl = '';
     noctuaUrl = '';
 
-    is_beta = environment.is_beta
+    isBeta = environment.isBeta
+    isDev = environment.isDev
+
+    betaText = '';
+
 
     private _unsubscribeAll: Subject<any>;
 
@@ -93,6 +97,14 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
                     this.artBasket = artBasket;
                 }
             });
+
+        if (this.isDev && this.isBeta) {
+            this.betaText = 'beta dev'
+        } else if (this.isDev) {
+            this.betaText = 'dev'
+        } else if (this.isBeta) {
+            this.betaText = 'beta'
+        }
     }
 
     openApps() {

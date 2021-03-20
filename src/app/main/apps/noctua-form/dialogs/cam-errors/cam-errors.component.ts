@@ -26,7 +26,6 @@ export class CamErrorsDialogComponent implements OnInit, OnDestroy {
 
     this.errors = this._data.errors
 
-    console.log(this.errors)
   }
 
   ngOnInit() {

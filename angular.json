@@ -20,6 +20,7 @@
             "customWebpackConfig": {
               "path": "./webpack.extra.js"
             },
+            "outputPath": "workbenches/noctiua-annotation-review/public",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -29,9 +30,18 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/jsplumb/dist/js/jsplumb.min.js"
+              "node_modules/jsplumb/dist/js/jsplumb.min.js",
+              "node_modules/jointjs/css/layout.css",
+              "node_modules/jointjs/css/themes/material.css",
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jqueryui/jquery-ui.min.js",
+              "node_modules/lodash/lodash.js",
+              "node_modules/backbone/backbone.js",
+              "node_modules/dagre/dist/dagre.min.js",
+              "node_modules/graphlib/dist/graphlib.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -49,10 +59,10 @@
               "vendorChunk": false,
               "buildOptimizer": true
             },
-            "beta-test": {
+            "dev-temp": {
               "fileReplacements": [{
                 "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.beta-test.ts"
+                "with": "src/environments/environment.dev-temp.ts"
               }],
               "optimization": true,
               "outputHashing": "all",
@@ -78,8 +88,8 @@
             "production": {
               "browserTarget": "noctua:build:production"
             },
-            "beta-test": {
-              "browserTarget": "noctua:build:beta-test"
+            "dev-temp": {
+              "browserTarget": "noctua:build:dev-temp"
             },
             "hmr": {
               "hmr": true,

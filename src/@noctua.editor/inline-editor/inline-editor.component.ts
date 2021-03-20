@@ -43,20 +43,23 @@ export class NoctuaInlineEditorComponent implements OnInit, OnDestroy {
         this._unsubscribeAll = new Subject();
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+
+    }
 
     openEditorDropdown(event) {
+        const displayEntity = cloneDeep(this.entity);
         const data = {
             cam: this.cam,
             annoton: this.annoton,
-            entity: this.entity,
+            entity: displayEntity,
             category: this.category,
             evidenceIndex: this.evidenceIndex
         };
         // this.camService.onCamChanged.next(this.cam);
         this.camService.onCamChanged.next(this.cam);
         this.camService.annoton = this.annoton;
-        this.noctuaAnnotonEntityService.initializeForm(this.annoton, this.entity);
+        this.noctuaAnnotonEntityService.initializeForm(this.annoton, displayEntity);
         this.inlineEditorService.open(event.target, { data });
     }
 

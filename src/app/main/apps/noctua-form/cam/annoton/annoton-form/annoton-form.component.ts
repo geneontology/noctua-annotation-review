@@ -5,7 +5,6 @@ import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 
-import { CamTableService } from './../../cam-table/services/cam-table.service';
 import { NoctuaFormDialogService } from './../../../services/dialog.service';
 import {
   Cam,
@@ -47,7 +46,6 @@ export class AnnotonFormComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
 
   constructor(private camService: CamService,
-    public camTableService: CamTableService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,

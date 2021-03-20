@@ -2,15 +2,8 @@
 
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription, Subject } from 'rxjs';
-
-
-declare const require: any;
-
-
-import { CamTableService } from './../../cam-table/services/cam-table.service';
 
 import {
   Cam,
@@ -62,7 +55,6 @@ export class AnnotonConnectorFormComponent implements OnInit, OnDestroy {
     private confirmDialogService: NoctuaConfirmDialogService,
     public noctuaAnnotonConnectorService: NoctuaAnnotonConnectorService,
     public noctuaUserService: NoctuaUserService,
-    public camTableService: CamTableService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaAnnotonFormService: NoctuaAnnotonFormService,

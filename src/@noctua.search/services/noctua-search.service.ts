@@ -127,7 +127,7 @@ export class NoctuaSearchService {
                 'initials': 'TM',
                 'color': '#e1bee7'
             } as Contributor;
-        //this.searchCriteria.contributors = [contributor];
+        //  this.searchCriteria.contributors = [contributor];
         this.updateSearch();
     }
 
@@ -307,7 +307,6 @@ export class NoctuaSearchService {
             cam.title = response.title;
             cam.date = response.date;
             cam.modified = response['modified-p'];
-            console.log('m', cam.modified)
             cam.model = Object.assign({}, {
                 modelInfo: this.noctuaFormConfigService.getModelUrls(modelId)
             });

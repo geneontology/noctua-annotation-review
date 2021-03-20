@@ -2,8 +2,8 @@ import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, from, Observable } from 'rxjs';
+import { map, finalize, switchMap, mergeMap } from 'rxjs/operators';
 
 import {
     Cam,
@@ -11,6 +11,9 @@ import {
     CamsService,
     CamQueryMatch,
     NoctuaUserService,
+    NoctuaGraphService,
+    CamStats,
+    CamService,
 } from 'noctua-form-base';
 import { SearchCriteria } from './../models/search-criteria';
 import { saveAs } from 'file-saver';
@@ -20,6 +23,11 @@ import { CamPage } from './../models/cam-page';
 import { SearchHistory } from './../models/search-history';
 import { ArtBasket } from '@noctua.search/models/art-basket';
 import { NoctuaSearchMenuService } from './search-menu.service';
+import { NoctuaSearchService } from './noctua-search.service';
+
+declare const require: any;
+
+const model = require('bbop-graph-noctua');
 
 @Injectable({
     providedIn: 'root'
@@ -53,8 +61,11 @@ export class NoctuaReviewSearchService {
 
     constructor(
         private noctuaUserService: NoctuaUserService,
-        public noctuaSearchMenuService: NoctuaSearchMenuService,
+        private _noctuaGraphService: NoctuaGraphService,
+        private _noctuaSearchService: NoctuaSearchService,
+        private noctuaSearchMenuService: NoctuaSearchMenuService,
         private httpClient: HttpClient,
+        private camService: CamService,
         private camsService: CamsService,
         private curieService: CurieService) {
         const self = this;
@@ -111,9 +122,83 @@ export class NoctuaReviewSearchService {
 
         if (artBasket) {
             this.artBasket = new ArtBasket(JSON.parse(artBasket));
-            this.camsService.addCamsToReview(this.artBasket.cams);
+            this.camsService.cams = [];
+            this.addCamsToReview(this.artBasket.cams, this.camsService.cams);
             this.onArtBasketChanged.next(this.artBasket);
         }
+    }
+
+    addCamsToReview(metaCams: any[], cams: Cam[]) {
+        const self = this;
+
+        if (!metaCams || metaCams.length === 0) return;
+
+        const ids = metaCams.map((cam: Cam) => {
+            return cam.id;
+        });
+
+        self.searchCamsByIds(ids).pipe(
+            switchMap((inCams: any[]) => {
+
+                const promises = [];
+
+                each(inCams, (inCam: Cam) => {
+                    const metaCam = find(metaCams, { id: inCam.id });
+
+                    inCam.expanded = true;
+                    inCam.dateReviewAdded = metaCam ? metaCam.dateAdded : Date.now();
+                    inCam.title = metaCam.title;
+                    cams.push(inCam);
+                    self.camService.loadCamMeta(inCam);
+
+                    inCam.loading.status = true;
+                    promises.push(inCam);
+                })
+                return from(promises);
+            }),
+            mergeMap((cam: Cam) => {
+                return self.camsService.getStoredModel(cam);
+            }),
+            finalize(() => {
+                //cam.loading.status = false;
+                self.camsService.sortCams();
+                self.camsService.updateDisplayNumber(cams);
+                self.camsService.onCamsChanged.next(cams);
+                //self.camsService.resetLoading(cams);
+            })).subscribe({
+                next: (response) => {
+                    const cam = find(cams, { id: response.activeModel.id });
+                    self._noctuaGraphService.rebuildStoredGraph(cam, response.activeModel);
+                    self.populateStoredModel(cam, response)
+                    cam.loading.status = false;
+                    self.camsService.onCamsChanged.next(cams);
+                },
+
+            })
+    }
+
+
+    populateStoredModel(cam: Cam, response) {
+        const self = this;
+        const noctua_graph = model.graph;
+
+        cam.storedGraph = new noctua_graph();
+        cam.storedGraph.load_data_basic(response.storedModel);
+        cam.storedAnnotons = self._noctuaGraphService.graphToAnnotons(cam.storedGraph)
+        cam.checkStored();
+        cam.reviewCamChanges();
+
+        return response;
+    }
+
+    searchCamsByIds(ids: string[]) {
+        const self = this;
+
+        const searchCriteria = new SearchCriteria();
+        searchCriteria['ids'] = ids;
+        self.camsService.resetMatch();
+
+        return self._noctuaSearchService.getCams(searchCriteria);
     }
 
     search(searchCriteria) {
@@ -184,13 +269,6 @@ export class NoctuaReviewSearchService {
         return this.currentMatchedEnity;
     }
 
-    replaceAll(replaceWith: string, category): Observable<any> {
-        return this.camsService.replace(this.matchedEntities, replaceWith, category);
-    }
-
-    replace(replaceWith: string, category): Observable<any> {
-        return this.camsService.replace([this.currentMatchedEnity], replaceWith, category);
-    }
 
     clear() {
         this.matchedEntities = [];
@@ -291,8 +369,9 @@ export class NoctuaReviewSearchService {
 
     getCams(searchCriteria: SearchCriteria): Observable<any> {
         const self = this;
-        this.searchCriteria.expand = false;
-        const query = searchCriteria.build();
+
+        searchCriteria.expand = false;
+        const query = searchCriteria.build(false);
         const url = `${this.searchApi}/models?${query}`;
 
         self.loading = true;

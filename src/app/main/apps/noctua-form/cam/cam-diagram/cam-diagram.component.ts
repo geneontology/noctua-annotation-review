@@ -1,16 +1,5 @@
 
 import { Component, OnInit, Input } from '@angular/core';
-
-import { Subject } from 'rxjs';
-
-
-
-declare const require: any;
-
-
-
-
-
 import { NoctuaFormConfigService } from 'noctua-form-base';
 
 
@@ -68,7 +57,6 @@ export class CamDiagramComponent implements OnInit {
 
   addNode(name: string) {
     this.nodes = [name];
-    console.log(this.nodes);
   }
 
   showConnectOnClick() {

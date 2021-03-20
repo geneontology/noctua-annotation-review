@@ -37,8 +37,6 @@ export class NodesContainerComponent implements OnChanges, AfterViewInit {
       x: event.clientX,
       y: event.clientY
     }
-    console.log(event.clientX + 'px');
-    console.log(event.clientY + 'px');
 
     this.openForm(location);
   }

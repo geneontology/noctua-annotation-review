@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NoctuaSharedModule } from '@noctua/shared.module';
 import { NoctuaFormModule } from './noctua-form/noctua-form.module';
+import { NoctuaGraphModule } from './noctua-graph/noctua-graph.module';
 import { NoctuaSearchModule } from './noctua-search/noctua-search.module';
 
 
@@ -10,12 +11,14 @@ import { NoctuaSearchModule } from './noctua-search/noctua-search.module';
   imports: [
     NoctuaSharedModule,
     NoctuaFormModule,
-    NoctuaSearchModule
+    NoctuaSearchModule,
+    NoctuaGraphModule
   ],
   exports: [
     NoctuaFormModule,
     NoctuaFormModule,
-    NoctuaSearchModule
+    NoctuaSearchModule,
+    NoctuaGraphModule
   ],
   providers: [
 

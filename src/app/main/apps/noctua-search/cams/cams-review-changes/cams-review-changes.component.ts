@@ -63,7 +63,6 @@ export class CamsReviewChangesComponent implements OnInit, OnDestroy {
 
         this.stats = this.generateStats(summary.stats);
 
-        console.log(this.summary);
       });
   }
 

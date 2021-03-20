@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { noctuaAnimations } from './../../../../../../../@noctua/animations';
-import { CamTableService } from './../services/cam-table.service';
 
 import {
   NoctuaFormConfigService,
@@ -43,7 +42,6 @@ export class TripleTableComponent implements OnInit, OnDestroy {
     public noctuaFormMenuService: NoctuaFormMenuService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     //  public noctuaFormMenuService: NoctuaFormMenuService,
-    public camTableService: CamTableService,
     public noctuaTripleFormService: NoctuaTripleFormService) {
 
     this.unsubscribeAll = new Subject();
@@ -54,11 +52,9 @@ export class TripleTableComponent implements OnInit, OnDestroy {
   }
 
   loadCam() {
-    this.grid = this.cam.generateTripleGrid();
   }
 
   selectTriple(triple) {
-    console.log(this.grid);
     this.camService.onCamChanged.next(this.cam);
 
     this.noctuaTripleFormService.initializeForm(triple);

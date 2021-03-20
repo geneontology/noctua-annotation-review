@@ -104,14 +104,6 @@ $accent: map-get($theme, accent);
     overflow-wrap: anywhere;
   }
 
-
-  .mat-tab-group,
-  .mat-tab-body-wrapper,
-  .tab-content {
-    flex: 1 1 auto;
-    max-width: 100%;
-  }
-
   .noc-annoton-table-heading {
     position: relative;
     margin-bottom: 1px;
@@ -277,22 +269,6 @@ $accent: map-get($theme, accent);
     }
 
 
-    .mat-cell {
-      display: inline-block !important;
-      padding: 0 30px 0 10px;
-      font-size: 12px !important;
-      color: #000;
-      border-right: #AAA solid 1px;
-      position: relative;
-      overflow-wrap: break-word;
-
-      .noc-edit-button {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-      }
-    }
-
     .mat-header-cell {
       padding: 0 10px;
       font-size: 10px !important;
@@ -326,6 +302,20 @@ $accent: map-get($theme, accent);
       min-width: 0;
       display: flex;
       align-items: center;
+
+      //display: inline-block !important;
+      padding: 0 30px 0 10px;
+      font-size: 12px !important;
+      color: #000;
+      border-right: #AAA solid 1px;
+      position: relative;
+      overflow-wrap: break-word;
+
+      .noc-edit-button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
 
       &.noc-highlight-match {
         background-color: #fffcd8;

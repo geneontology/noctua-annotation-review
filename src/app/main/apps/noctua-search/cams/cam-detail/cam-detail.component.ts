@@ -64,8 +64,6 @@ export class CamDetailComponent implements OnInit, OnDestroy {
       public noctuaFormMenuService: NoctuaFormMenuService) {
 
     this._unsubscribeAll = new Subject();
-
-    console.log(1)
     this.camService.onCamChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(cam => {

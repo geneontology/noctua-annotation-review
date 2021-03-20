@@ -15,16 +15,7 @@ import { NoctuaGraphService, NoctuaFormMenuService } from 'noctua-form-base';
 
 import { NoctuaAnnotonFormService } from 'noctua-form-base';
 import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
-import { NoctuaFormConfigService } from 'noctua-form-base';
 
-
-import { Contributor } from 'noctua-form-base';
-import { Group } from 'noctua-form-base';
-
-
-import { v4 as uuid } from 'uuid';
-declare const require: any;
-const each = require('lodash/forEach');
 
 @Injectable({
   providedIn: 'root'

@@ -1,8 +1,10 @@
 import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatDrawer, MatSidenav } from '@angular/material/sidenav';
 import { NoctuaGraphService, NoctuaUserService } from 'noctua-form-base';
+import { NoctuaPerfectScrollbarDirective } from '@noctua/directives/noctua-perfect-scrollbar/noctua-perfect-scrollbar.directive';
+import { LeftPanel, MiddlePanel, RightPanel } from './../models/menu-panels';
 
 
 
@@ -10,6 +12,13 @@ import { NoctuaGraphService, NoctuaUserService } from 'noctua-form-base';
   providedIn: 'root'
 })
 export class NoctuaCommonMenuService {
+  selectedLeftPanel;
+  selectedMiddlePanel;
+  selectedRightPanel;
+  resultsViewScrollbar: NoctuaPerfectScrollbarDirective;
+
+  private _leftDrawer: MatDrawer;
+  private _rightDrawer: MatDrawer;
   private _leftSidenav: MatSidenav;
 
   constructor(
@@ -49,5 +58,63 @@ export class NoctuaCommonMenuService {
     return this._leftSidenav.open();
   }
 
+
+  selectLeftPanel(panel: LeftPanel) {
+    this.selectedLeftPanel = panel;
+  }
+
+  selectMiddlePanel(panel: MiddlePanel) {
+    this.selectedMiddlePanel = panel;
+  }
+
+  selectRightPanel(panel: RightPanel) {
+    this.selectedRightPanel = panel;
+  }
+
+  public setLeftDrawer(leftDrawer: MatDrawer) {
+    this._leftDrawer = leftDrawer;
+  }
+
+  public closeLeftDrawer() {
+    return this._leftDrawer.close();
+  }
+
+  public setRightDrawer(rightDrawer: MatDrawer) {
+    this._rightDrawer = rightDrawer;
+  }
+
+  public openLeftDrawer() {
+    return this._leftDrawer.open();
+  }
+
+  public openRightDrawer() {
+    return this._rightDrawer.open();
+  }
+
+  public closeRightDrawer() {
+    return this._rightDrawer.close();
+  }
+
+  public toggleLeftDrawer(panel: LeftPanel) {
+    if (this.selectedLeftPanel === panel) {
+      this._leftDrawer.toggle();
+    } else {
+      this.selectLeftPanel(panel);
+      return this.openLeftDrawer();
+    }
+  }
+
+  scrollTo(q: string) {
+
+    setTimeout(() => {
+      if (this.resultsViewScrollbar) {
+        this.resultsViewScrollbar.update();
+
+        setTimeout(() => {
+          this.resultsViewScrollbar.scrollToElement(q, -140, 1000);
+        });
+      }
+    });
+  }
 
 }

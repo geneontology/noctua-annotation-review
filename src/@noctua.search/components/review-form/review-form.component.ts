@@ -3,7 +3,7 @@
 import { Component, OnDestroy, OnInit, Input, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
-import { Subject } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 
 
 import {
@@ -20,14 +20,16 @@ import {
   NoctuaLookupService,
   EntityDefinition,
   Entity,
-  Evidence
+  Evidence,
+  NoctuaGraphService,
+  CamLoadingIndicator
 } from 'noctua-form-base';
 
-import { takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged, debounceTime, take, concatMap, finalize } from 'rxjs/operators';
 import { noctuaAnimations } from '@noctua/animations';
 import { FormGroup, FormControl } from '@angular/forms';
 import { NoctuaReviewSearchService } from '@noctua.search/services/noctua-review-search.service';
-import { cloneDeep, groupBy } from 'lodash';
+import { cloneDeep, each, groupBy } from 'lodash';
 import { ArtReplaceCategory } from '@noctua.search/models/review-mode';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 import { InlineReferenceService } from '@noctua.editor/inline-reference/inline-reference.service';
@@ -64,6 +66,7 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
   constructor(
     private zone: NgZone,
     private camsService: CamsService,
+    private noctuaGraphService: NoctuaGraphService,
     private confirmDialogService: NoctuaConfirmDialogService,
     public noctuaReviewSearchService: NoctuaReviewSearchService,
     public noctuaUserService: NoctuaUserService,
@@ -191,13 +194,30 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
       replaceWith = Evidence.formatReference(value.replaceWith);
     }
 
-    this.noctuaReviewSearchService.replace(replaceWith, self.selectedCategory)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((cams) => {
-        if (cams) {
-          self.bulkStoredModel();
-        }
-      });
+    const cams = self.camsService.getReplaceObject([this.noctuaReviewSearchService.currentMatchedEnity],
+      replaceWith, self.selectedCategory);
+
+    this.camsService.replace(cams).pipe(
+      take(1),
+      concatMap((result) => {
+        console.log(result)
+        cams.forEach((cam: Cam) => {
+          // self.noctuaGraphService.rebuild(cam, result[0]);
+          //cam.checkStored();
+        })
+        return EMPTY;
+        //return self.camsService.bulkStoredModel(cams)
+      }),
+      finalize(() => {
+        self.zone.run(() => {
+          self.camsService.resetLoading(self.camsService.cams)
+          self.noctuaReviewSearchService.onReplaceChanged.next(true);
+          self.camsService.reviewChanges();
+        })
+      }))
+      .subscribe(() => {
+
+      })
   }
 
   replaceAll() {
@@ -219,32 +239,34 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
     }
     const success = (replace) => {
       if (replace) {
-        this.noctuaReviewSearchService.replaceAll(replaceWith, self.selectedCategory)
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((cams) => {
-            if (cams) {
-              self.bulkStoredModel();
-            }
-          });
+
+        const cams = self.camsService.getReplaceObject(this.noctuaReviewSearchService.matchedEntities,
+          replaceWith, self.selectedCategory);
+
+        self.camsService.resetLoading(cams, new CamLoadingIndicator(true, 'Loading...'))
+
+        this.camsService.replace(cams).pipe(
+          take(1),
+          concatMap((result) => {
+            return EMPTY;
+            //return self.camsService.bulkStoredModel(cams)
+          }),
+          finalize(() => {
+            self.zone.run(() => {
+              self.camsService.resetLoading(cams)
+              self.noctuaReviewSearchService.onReplaceChanged.next(true);
+              self.camsService.reviewChanges();
+            })
+          }))
+          .subscribe(() => {
+
+          })
       }
     };
 
     this.confirmDialogService.openConfirmDialog('Confirm ReplaceAll?',
-      `Replace ${occurrences} occurrences across ${models} models`,
+      `Replace ${occurrences} occurrences across ${models} model(s)`,
       success);
-  }
-
-  bulkStoredModel() {
-    const self = this;
-
-    this.camsService.bulkStoredModel()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((cams) => {
-        self.zone.run(() => {
-          self.noctuaReviewSearchService.onReplaceChanged.next(true);
-          this.camsService.reviewChanges();
-        });
-      });
   }
 
   findNext() {

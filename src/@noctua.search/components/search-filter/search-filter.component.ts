@@ -273,9 +273,6 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     const self = this;
     let reader = new FileReader();
 
-
-    //console.log(event, control)
-
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       reader.readAsText(file);

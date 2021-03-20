@@ -205,7 +205,6 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         entity.term = selectedAnnotonNode.term;
 
         entity.linkedNode = true;
-        console.log(1)
         //  self.noctuaAnnotonFormService.annoton.insertSubgraph(selected.annoton, entity.id);
         self.noctuaAnnotonFormService.initializeForm();
       }

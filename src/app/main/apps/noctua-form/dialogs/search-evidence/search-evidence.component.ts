@@ -91,17 +91,13 @@ export class SearchEvidenceDialogComponent implements OnInit, OnDestroy {
       this.searchCriteria.params)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
-        console.log(response);
         this.annotonNodes = response;
         this.dataSource.data = this._buildAnnotationTree(this.annotonNodes);
-
-        console.log(this.dataSource.data);
 
       });
   }
 
   save() {
-    console.log(this.checklistSelection.selected);
     const selection: Evidence[] = [];
 
     each(this.checklistSelection.selected, (evidenceFlatNode: EvidenceItemFlatNode) => {

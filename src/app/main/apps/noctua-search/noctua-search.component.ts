@@ -42,6 +42,11 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(NoctuaPerfectScrollbarDirective)
   private _noctuaPerfectScrollbarDirectives: QueryList<NoctuaPerfectScrollbarDirective>;
 
+  loadingSpinner: any = {
+    color: 'primary',
+    mode: 'indeterminate'
+  };
+
   ReviewMode = ReviewMode;
   LeftPanel = LeftPanel;
   MiddlePanel = MiddlePanel;
@@ -57,14 +62,7 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   searchCriteria: any = {};
   searchFormData: any = [];
   searchForm: FormGroup;
-  loadingSpinner: any = {
-    color: 'primary',
-    mode: 'indeterminate'
-  };
-  summary: any = {
-    expanded: false,
-    detail: {}
-  };
+
 
 
   cams: any[] = [];
@@ -74,7 +72,7 @@ export class NoctuaSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private camService: CamService,
-    private camsService: CamsService,
+    public camsService: CamsService,
     public noctuaReviewSearchService: NoctuaReviewSearchService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaCommonMenuService: NoctuaCommonMenuService,

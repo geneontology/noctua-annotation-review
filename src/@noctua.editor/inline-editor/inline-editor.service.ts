@@ -53,20 +53,20 @@ export class InlineEditorService {
         public noctuaAnnotonFormService: NoctuaAnnotonFormService,
         private noctuaAnnotonEntityService: NoctuaAnnotonEntityService) { }
 
-    openEditorDropdown(event, config) {
-        const data = {
-            cam: config.cam,
-            annoton: config.annoton,
-            entity: config.entity,
-            category: config.category,
-            evidenceIndex: config.evidenceIndex
-        };
-        // this.camService.onCamChanged.next(this.cam);
-        this.camService.onCamChanged.next(config.cam);
-        this.camService.annoton = config.annoton;
-        this.noctuaAnnotonEntityService.initializeForm(config.annoton, config.entity);
-        this.open(event.target, { data });
-    }
+    /*     openEditorDropdown(event, config) {
+            const data = {
+                cam: config.cam,
+                annoton: config.annoton,
+                entity: config.entity,
+                category: config.category,
+                evidenceIndex: config.evidenceIndex
+            };
+            // this.camService.onCamChanged.next(this.cam);
+            this.camService.onCamChanged.next(config.cam);
+            this.camService.annoton = config.annoton;
+            this.noctuaAnnotonEntityService.initializeForm(config.annoton, config.entity);
+            this.open(event.target, { data });
+        } */
 
     open(elementToConnectTo: ElementRef, config: EditorDropdownDialogConfig = {}) {
         const dialogConfig = { ...DEFAULT_CONFIG, ...config };

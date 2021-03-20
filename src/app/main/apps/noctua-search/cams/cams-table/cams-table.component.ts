@@ -181,7 +181,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   toggleSelection(cam: Cam) {
     this.selection.toggle(cam);
     if (this.selection.isSelected(cam)) {
-      this.openReview(cam);
+      this.addToReview(cam);
     } else {
       this.camsService.removeCamFromReview(cam);
       this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
@@ -200,10 +200,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.camsService.bulkStoredModel().subscribe((cams) => {
-      this.camsService.reviewChanges();
-      console.log('stored', cams)
-    });
+
   }
 
   /** The label for the checkbox on the passed row */
@@ -232,7 +229,6 @@ export class CamsTableComponent implements OnInit, OnDestroy {
   }
 
   setPage($event) {
-    console.log($event)
     if (this.camPage) {
       let pageIndex = $event.pageIndex;
       if (this.noctuaSearchService.searchCriteria.camPage.size > $event.pageSize) {
@@ -248,7 +244,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   toggleCamExpand(cam: Cam) {
     if (!cam.expanded) {
-      this.openDetails(cam);
+      this.openCam(cam);
     } else {
       cam.expanded = false;
     }
@@ -256,12 +252,12 @@ export class CamsTableComponent implements OnInit, OnDestroy {
 
   }
 
-  openReview(cam: Cam) {
-    this.camsService.addCamToReview(cam.id, cam);
+  addToReview(cam: Cam) {
+    this.noctuaReviewSearchService.addCamsToReview([cam], this.camsService.cams);
     this.noctuaReviewSearchService.addToArtBasket(cam.id, cam.title);
   }
 
-  openDetails(cam: Cam) {
+  openCam(cam: Cam) {
     this.camService.loadCam(cam);
     cam.expanded = true;
     this.camService.cam = cam;

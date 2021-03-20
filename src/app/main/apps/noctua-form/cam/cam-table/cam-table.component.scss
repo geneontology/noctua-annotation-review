@@ -102,16 +102,22 @@ $accent: map-get($theme, accent);
     }
   }
 
+  .noc-cam-table-body {
+    position: relative;
 
-  .noc-loading-container {
-    background-color: rgba(#555, 0.4);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    z-index: 1000;
+    .noc-loading-container {
+      background-color: rgba(#555, 0.4);
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 1000;
+    }
   }
+
+
 
   .noc-summary-bar {
     margin-bottom: 4px;
@@ -153,7 +159,7 @@ $accent: map-get($theme, accent);
   .noc-selected {
     background-color: #FFFFFF;
 
-    .noc-cam-table-body {
+    .noc-annotons-table-body {
 
       &::before {
         left: 37px;
@@ -165,7 +171,7 @@ $accent: map-get($theme, accent);
 
   }
 
-  .noc-cam-table-body {
+  .noc-annotons-table-body {
     position: relative;
     background-color: #FFF;
 
@@ -201,7 +207,7 @@ $accent: map-get($theme, accent);
     }
   }
 
-  .cam-table {
+  .noc-cam-table {
     width: 100%;
     @include deep-height(100%);
     padding-bottom: 300px;

@@ -1,4 +1,4 @@
-<mat-toolbar class="" fxLayout="row" fxLayoutAlign="start center" [ngClass]="{'noc-beta': is_beta}">
+<mat-toolbar class="" fxLayout="row" fxLayoutAlign="start center" [ngClass]="{'noc-beta': isBeta || isDev}">
   <mat-progress-bar *ngIf="showLoadingBar" class="loading-bar" color="accent" mode="indeterminate"></mat-progress-bar>
   <div class="noc-br h-100-p" fxLayout="row" fxLayoutAlign="start center" fxFlex="200px">
     <div class="noc-logo pl-8" fxLayout="row" fxLayoutAlign="start">
@@ -12,25 +12,30 @@
       [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
       <mat-icon class="">apps</mat-icon>
     </button>
-    <ng-container *ngIf="!is_beta">
+    <ng-container *ngIf="!isBeta && !isDev">
       <a class="noc-main-logo" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
         Noctua
       </a>
       <a class="noc-sub-logo" href="{{noctuaConfigService.homeUrl}}" target=" _blank">
-        Review Tool
+        ART
       </a>
     </ng-container>
-    <div *ngIf="is_beta" class="noc-beta-logo" fxLayout="column" fxLayoutAlign="center start ">
+    <div *ngIf="isDev || isBeta" class="noc-beta-logo" fxLayout="column" fxLayoutAlign="center start ">
       <div class="noc-title">
-        Noctua Review Tool (beta)
+        <a class="" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
+          Noctua
+        </a>
+        <a class="" href="{{noctuaConfigService.homeUrl}}" target="_blank">
+          ART
+        </a>
+        ({{betaText}})
       </div>
       <div class="noc-description">
-        Testing Version. Visit <a class="" href="{{noctuaConfigService.noctuaUrl}}" target="_blank">
-          Noctua Review Tool
-        </a> for 2.0 version
+        Testing Version. Visit <a class="" href="http://noctua.geneontology.org/" target="_blank">
+          Noctua
+        </a> for production version
       </div>
     </div>
-
   </div>
   <div fxLayout="row" fxLayoutAlign="end center" fxFlex="">
     <div class="noc-br pr-12" fxLayout="row" fxLayoutAlign="start center">

@@ -22,6 +22,11 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
   cams: Cam[] = [];
   summary;
 
+  loadingSpinner: any = {
+    color: 'primary',
+    mode: 'indeterminate'
+  };
+
   private _unsubscribeAll: Subject<any>;
 
   constructor(

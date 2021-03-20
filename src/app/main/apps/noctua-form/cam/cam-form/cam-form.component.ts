@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CamTableService } from './../cam-table/services/cam-table.service';
 
 import {
   Cam,
@@ -35,7 +34,6 @@ export class CamFormComponent implements OnInit, OnDestroy {
   constructor(public noctuaUserService: NoctuaUserService,
     private sparqlService: SparqlService,
     private camService: CamService,
-    public camTableService: CamTableService,
     private noctuaGraphService: NoctuaGraphService,
     public noctuaFormConfigService: NoctuaFormConfigService,
     public noctuaFormMenuService: NoctuaFormMenuService

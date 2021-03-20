@@ -1,0 +1,38 @@
+<div class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start">
+
+  <div class="noc-sidemenu" fxLayout="column" fxLayoutAlign="start center">
+    <button mat-icon-button color="" class="noc-rounded-button"
+      [ngClass]="{'noc-active': noctuaCommonMenuService.selectedMiddlePanel === MiddlePanel.camGraph}"
+      (click)="openGraph()" matTooltip="Filter" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
+    </button>
+    <button mat-icon-button color="" class="noc-rounded-button"
+      [ngClass]="{'noc-active': noctuaCommonMenuService.selectedMiddlePanel === MiddlePanel.camTable}"
+      (click)="openTable()" matTooltip="Filter" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'table']"></fa-icon>
+    </button>
+    <button mat-icon-button color="" class="noc-rounded-button"
+      [ngClass]="{'noc-active': noctuaCommonMenuService.selectedMiddlePanel === MiddlePanel.camPreview}"
+      (click)="openPreview()" matTooltip="Filter" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'list-alt']"></fa-icon>
+    </button>
+  </div>
+  <mat-drawer-container class="h-100-p" fxFlex="" fxLayout="row" fxLayoutAlign="start start" [hasBackdrop]="false"
+    autosize>
+    <mat-drawer #leftDrawer class="noc-left-drawer" mode="side" position="start" opened>
+      <div [ngSwitch]="noctuaCommonMenuService.selectedLeftPanel" class="h-100-p">
+
+      </div>
+    </mat-drawer>
+    <mat-drawer-content class="w-100-p h-100-p" fxLayout="column" fxLayoutAlign="start stretch">
+      <div [ngSwitch]="noctuaCommonMenuService.selectedMiddlePanel" class="w-100-p h-100-p" noctuaPerfectScrollbar>
+        <noc-cam-preview *ngSwitchCase="MiddlePanel.camPreview" [cam]="cam"></noc-cam-preview>
+        <noc-cam-table *ngSwitchCase="MiddlePanel.camTable" [cam]="cam" [options]="tableOptions"></noc-cam-table>
+        <noc-cam-graph *ngSwitchCase="MiddlePanel.camGraph" [cam]="cam"></noc-cam-graph>
+      </div>
+    </mat-drawer-content>
+    <mat-drawer #rightDrawer class="noc-right-drawer" mode="over" position="end">
+
+    </mat-drawer>
+  </mat-drawer-container>
+</div>
