@@ -5,7 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, Subject } from 'rxjs';
 import { startWith, map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { NoctuaFormConfigService, NoctuaUserService, Group, Contributor, Organism, EntityDefinition, AnnotonNode, EntityLookup } from 'noctua-form-base';
+import { NoctuaFormConfigService, NoctuaUserService, Group, Contributor, Organism, EntityDefinition, ActivityNode, EntityLookup } from 'noctua-form-base';
 import { NoctuaLookupService } from 'noctua-form-base';
 import { NoctuaSearchService } from './../../services/noctua-search.service';
 import { NoctuaSearchMenuService } from '../../services/search-menu.service';
@@ -62,8 +62,8 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   filteredContributors: Observable<any[]>;
   filteredStates: Observable<any[]>;
 
-  gpNode: AnnotonNode;
-  termNode: AnnotonNode;
+  gpNode: ActivityNode;
+  termNode: ActivityNode;
 
   private unsubscribeAll: Subject<any>;
 

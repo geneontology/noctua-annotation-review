@@ -18,7 +18,7 @@
         <span fxFlex></span>
       </div>
       <div class="noc-section-body" fxLayout="column" fxLayoutAlign="start stretch">
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Term</mat-label>
             <mat-chip-list #termChipList>
@@ -52,7 +52,7 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Gene Product</mat-label>
             <mat-chip-list #gpChipList>
@@ -86,7 +86,7 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Reference</mat-label>
             <mat-chip-list #pmidChipList>
@@ -110,7 +110,7 @@
             </mat-chip-list>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-chip-list #organismChipList>
               <mat-chip class="noc-form-chip" *ngFor="let organism of noctuaSearchService.searchCriteria.organisms"
@@ -154,7 +154,7 @@
         <span fxFlex></span>
       </div>
       <div class="noc-section-body" fxLayout="column" fxLayoutAlign="start stretch">
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Contributor</mat-label>
             <mat-chip-list #contributorChipList>
@@ -191,7 +191,7 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Group</mat-label>
             <mat-chip-list #groupChipList>
@@ -242,7 +242,7 @@
         </mat-radio-group>
       </div>
       <div class="noc-section-body" fxLayout="column" fxLayoutAlign="start stretch">
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field *ngIf="isExactDate" appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Exact Date</mat-label>
             <mat-chip-list #dateChipList>
@@ -316,7 +316,7 @@
         <span fxFlex></span>
       </div>
       <div class="noc-section-body" fxLayout="column" fxLayoutAlign="start stretch">
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Model Ids</mat-label>
             <mat-chip-list #idChipList>
@@ -336,7 +336,7 @@
             </mat-chip-list>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-group-row" fxLayout="column">
+        <div class="noc-activity-group-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by Title</mat-label>
             <mat-chip-list #titleChipList>
@@ -356,7 +356,7 @@
             </mat-chip-list>
           </mat-form-field>
         </div>
-        <div class="noc-annoton-state-row" fxLayout="column">
+        <div class="noc-activity-state-row" fxLayout="column">
           <mat-form-field appearance="outline" class="noc-sm w-100-p">
             <mat-label>Filter by State</mat-label>
             <mat-chip-list #stateChipList>

@@ -1,8 +1,17 @@
-import { Annoton, Cam, Entity, noctuaFormConfig, Predicate, Triple } from '@noctua.form';
+import {
+    Activity,
+    ActivityType,
+    Cam,
+    Entity,
+    noctuaFormConfig,
+    Predicate,
+    Triple
+} from 'noctua-form-base';
 import { NodeCellType } from '@noctua.graph/models/shapes';
 import { NodeCell, NodeLink, StencilNode } from '@noctua.graph/services/shapes.service';
 import * as joint from 'jointjs';
 import { each, cloneDeep } from 'lodash';
+import { StencilItemNode } from '@noctua.graph/data/cam-stencil';
 
 export class CamCanvas {
 
@@ -10,6 +19,7 @@ export class CamCanvas {
     canvasGraph: joint.dia.Graph;
     selectedStencilElement;
     elementOnClick: (element: joint.shapes.noctua.NodeCell) => void;
+    onElementAdd: (modelType: ActivityType) => Activity;
     cam: Cam;
 
     constructor() {
@@ -145,8 +155,8 @@ export class CamCanvas {
             evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
 
             const model = elementView.model;
-            const annoton = model.prop('annoton') as Annoton;
-            self.toggleAnnotonVisibility(model, annoton);
+            const activity = model.prop('activity') as Activity;
+            self.toggleActivityVisibility(model, activity);
         });
 
         this.canvasGraph.on('change:source change:target', function (link) {
@@ -165,16 +175,17 @@ export class CamCanvas {
 
     addElement(element: joint.shapes.noctua.NodeCell): NodeCell {
         const self = this;
+        const node = element.get('node') as StencilItemNode;
 
-        const annoton: Annoton = element.get('annoton');
+        const activity: Activity = self.onElementAdd(node.type);
         const el = new NodeCell()
             .position(0, 0)
             .size(120, 100)
 
-        // el.attr({ nodeType: { text: annoton.category } });
-        el.attr({ noctuaTitle: { text: annoton.title } });
+        // el.attr({ nodeType: { text: activity.category } });
+        el.attr({ noctuaTitle: { text: activity.title } });
 
-        // el.set({ annoton: new Annoton(annoton) });
+        // el.set({ activity: new Activity(activity) });
 
         self.canvasGraph.addCell(el);
 
@@ -187,7 +198,7 @@ export class CamCanvas {
         const predicate: Predicate = new Predicate(Entity.createEntity(noctuaFormConfig.edge.causallyUpstreamOf));
 
         link.set({
-            annoton: predicate,
+            activity: predicate,
             id: predicate.uuid
         });
 
@@ -205,13 +216,13 @@ export class CamCanvas {
     createLinkFromElements(source: joint.shapes.noctua.NodeCell, target: joint.shapes.noctua.NodeCell) {
         const self = this;
 
-        const subject = source.get('annoton') as Annoton;
-        const object = target.get('annoton') as Annoton;
+        const subject = source.get('activity') as Activity;
+        const object = target.get('activity') as Activity;
 
         self.createLink(subject, new Predicate(Entity.createEntity(noctuaFormConfig.edge.causallyUpstreamOf)), object)
     }
 
-    createLink(subject: Annoton, predicate: Predicate, object: Annoton) {
+    createLink(subject: Activity, predicate: Predicate, object: Activity) {
         const self = this;
         const triple = new Triple(subject, predicate, object);
 
@@ -220,13 +231,13 @@ export class CamCanvas {
         self.createLinkFromTriple(triple, true);
     }
 
-    createLinkFromTriple(triple: Triple<Annoton>, autoLayout?: boolean) {
+    createLinkFromTriple(triple: Triple<Activity>, autoLayout?: boolean) {
         const self = this;
 
         const link = NodeLink.create();
         link.setText(triple.predicate.edge.label);
         link.set({
-            annoton: triple.predicate,
+            activity: triple.predicate,
             id: triple.predicate.edge.id,
             source: {
                 id: triple.subject.id,
@@ -241,7 +252,7 @@ export class CamCanvas {
         link.addTo(self.canvasGraph);
         if (autoLayout) {
             self._layoutGraph(self.canvasGraph);
-            // self.addCanvasGraph(self.annoton);
+            // self.addCanvasGraph(self.activity);
         }
     }
 
@@ -272,17 +283,17 @@ export class CamCanvas {
         this.zoom(1);
     };
 
-    toggleAnnotonVisibility(cell: joint.dia.Element, annoton: Annoton) {
+    toggleActivityVisibility(cell: joint.dia.Element, activity: Activity) {
         const self = this;
 
         console.log(cell.position())
 
-        //self.annoton.subgraphVisibility(annoton, !annoton.expanded);
+        //self.activity.subgraphVisibility(activity, !activity.expanded);
         const elements = self.canvasGraph.getSuccessors(cell).concat(cell);
         // find all the links between successors and the element
         const subgraph = self.canvasGraph.getSubgraph(elements);
 
-        if (annoton.expanded) {
+        if (activity.expanded) {
             subgraph.forEach((element) => {
                 element.attr('./visibility', 'hidden');
             });
@@ -293,7 +304,7 @@ export class CamCanvas {
         }
 
         cell.attr('./visibility', 'visible');
-        annoton.expanded = !annoton.expanded;
+        activity.expanded = !activity.expanded;
 
         self._layoutGraph(self.canvasGraph);
 
@@ -309,44 +320,40 @@ export class CamCanvas {
         self.cam = cam;
         self.canvasGraph.resetCells(nodes);
 
-        each(cam.annotons, (annoton: Annoton) => {
-            if (annoton.visible) {
+        each(cam.activities, (activity: Activity) => {
+            if (activity.visible) {
 
                 const el = new NodeCell()
-                //.addAnnotonPorts()
-                // .addColor(annoton.backgroundColor)
-                //.setSuccessorCount(annoton.successorCount)
+                //.addActivityPorts()
+                // .addColor(activity.backgroundColor)
+                //.setSuccessorCount(activity.successorCount)
 
-                el.attr({ nodeType: { text: annoton.id ? annoton.annotonType : 'Activity Unity' } });
-                el.attr({ noctuaTitle: { text: annoton.id ? annoton.title : 'New Annoton' } });
+                el.attr({ nodeType: { text: activity.id ? activity.activityType : 'Activity Unity' } });
+                el.attr({ noctuaTitle: { text: activity.id ? activity.title : 'New Activity' } });
                 el.attr({
                     expand: {
                         event: 'element:expand:pointerdown',
                         stroke: 'black',
                         strokeWidth: 2
                     },
-                    expandLabel: {
-                        fontSize: 8,
-                        fontWeight: 'bold'
-                    }
                 })
                 el.set({
-                    annoton: annoton,
-                    id: annoton.id,
-                    position: annoton.position,
-                    size: annoton.size,
+                    activity: activity,
+                    id: activity.id,
+                    position: activity.position,
+                    size: activity.size,
                 });
 
                 nodes.push(el);
             }
         });
 
-        each(cam.triples, (triple: Triple<Annoton>) => {
+        each(cam.triples, (triple: Triple<Activity>) => {
             if (triple.predicate.visible) {
                 const link = NodeLink.create();
                 link.setText(triple.predicate.edge.label);
                 link.set({
-                    annoton: triple.predicate,
+                    activity: triple.predicate,
                     id: triple.predicate.edge.id,
                     source: {
                         id: triple.subject.id,
@@ -370,17 +377,17 @@ export class CamCanvas {
         self.canvasPaper.render();
     }
 
-    addStencilGraph(graph: joint.dia.Graph, annotons: Annoton[]) {
+    addStencilGraph(graph: joint.dia.Graph, activities: Activity[]) {
         const self = this;
         const nodes = [];
 
-        each(annotons, (annoton: Annoton) => {
+        each(activities, (activity: Activity) => {
             const el = new StencilNode()
             // .size(120, 80)
-            // .setColor(annoton.backgroundColor)
-            //.setIcon(annoton.iconUrl);
-            el.attr('label/text', annoton.title);
-            el.set({ annoton: cloneDeep(annoton) });
+            // .setColor(activity.backgroundColor)
+            //.setIcon(activity.iconUrl);
+            el.attr('label/text', activity.title);
+            el.set({ activity: cloneDeep(activity) });
 
             nodes.push(el);
         });

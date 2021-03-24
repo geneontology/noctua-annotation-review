@@ -20,7 +20,7 @@
             "customWebpackConfig": {
               "path": "./webpack.extra.js"
             },
-            "outputPath": "workbenches/noctiua-annotation-review/public",
+            "outputPath": "workbenches/noctua-annotation-review/public",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -59,10 +59,10 @@
               "vendorChunk": false,
               "buildOptimizer": true
             },
-            "dev-temp": {
+            "beta-test": {
               "fileReplacements": [{
                 "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.dev-temp.ts"
+                "with": "src/environments/environment.beta-test.ts"
               }],
               "optimization": true,
               "outputHashing": "all",
@@ -88,8 +88,8 @@
             "production": {
               "browserTarget": "noctua:build:production"
             },
-            "dev-temp": {
-              "browserTarget": "noctua:build:dev-temp"
+            "beta-test": {
+              "browserTarget": "noctua:build:beta-test"
             },
             "hmr": {
               "hmr": true,

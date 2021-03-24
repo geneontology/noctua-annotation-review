@@ -47,7 +47,7 @@ $primary: #324c74;
   #noc-palette {
     background-color: #DDD;
     border-right: solid 1px #002255;
-    @include deep-width(200px);
+    @include deep-width(120px);
     @include deep-height(100%);
     overflow-x: hidden;
     overflow-y: auto;

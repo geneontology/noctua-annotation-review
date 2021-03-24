@@ -8,8 +8,8 @@ import {
     NoctuaUserService,
     NoctuaFormConfigService,
     NoctuaGraphService,
-    NoctuaAnnotonFormService,
-    AnnotonType,
+    NoctuaActivityFormService,
+    ActivityType,
     NoctuaFormMenuService,
     LeftPanel,
 } from 'noctua-form-base';
@@ -30,7 +30,7 @@ import { NoctuaSearchDialogService } from '@noctua.search/services/dialog.servic
 })
 
 export class NoctuaToolbarComponent implements OnInit, OnDestroy {
-    AnnotonType = AnnotonType;
+    ActivityType = ActivityType;
     artBasket: ArtBasket
     public cam: Cam;
     userStatusOptions: any[];
@@ -60,7 +60,7 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
         private confirmDialogService: NoctuaConfirmDialogService,
         private noctuaSearchDialogService: NoctuaSearchDialogService,
         public noctuaConfigService: NoctuaFormConfigService,
-        public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+        public noctuaActivityFormService: NoctuaActivityFormService,
         public noctuaFormMenuService: NoctuaFormMenuService,
         public noctuaReviewSearchService: NoctuaReviewSearchService,
     ) {
@@ -116,9 +116,9 @@ export class NoctuaToolbarComponent implements OnInit, OnDestroy {
         this.noctuaFormMenuService.openLeftDrawer(LeftPanel.camForm);
     }
 
-    openAnnotonForm(annotonType: AnnotonType) {
-        this.noctuaAnnotonFormService.setAnnotonType(annotonType);
-        this.noctuaFormMenuService.openLeftDrawer(LeftPanel.annotonForm);
+    openActivityForm(activityType: ActivityType) {
+        this.noctuaActivityFormService.setActivityType(activityType);
+        this.noctuaFormMenuService.openLeftDrawer(LeftPanel.activityForm);
     }
 
     logout() {

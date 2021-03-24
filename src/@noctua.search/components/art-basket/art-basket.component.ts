@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Cam, CamService, CamsService, NoctuaFormConfigService, NoctuaUserService } from 'noctua-form-base';
+import { Cam, CamLoadingIndicator, CamService, CamsService, NoctuaFormConfigService, NoctuaUserService } from 'noctua-form-base';
 import { NoctuaSearchService } from './../..//services/noctua-search.service';
 import { NoctuaSearchMenuService } from '../../services/search-menu.service';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { ArtBasket, ArtBasketItem } from './../..//models/art-basket';
 import { NoctuaReviewSearchService } from './../../services/noctua-review-search.service';
 import { NoctuaConfirmDialogService } from '@noctua/components/confirm-dialog/confirm-dialog.service';
 import { LeftPanel, MiddlePanel } from './../../models/menu-panels';
 import { NoctuaSearchDialogService } from './../../services/dialog.service';
-import { SearchCriteria } from '@noctua.search/models/search-criteria';
+import { ReloadType } from './../../models/review-mode';
 
 @Component({
   selector: 'noc-art-basket',
@@ -148,8 +148,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     const summary = self.camsService.reviewCamChanges(cam)
     const success = (ok) => {
       if (ok) {
-        this.camsService.removeCamFromReview(cam);
-        this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
+        this.noctuaReviewSearchService.removeCamFromReview(cam);
       }
     }
 
@@ -180,13 +179,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     const summary = self.camsService.reviewCamChanges(cam);
     const success = (ok) => {
       if (ok) {
-        self.camsService.resetCam(cam).subscribe((cams) => {
-          if (cams) {
-            self.camsService.loadCams();
-            self.noctuaReviewSearchService.onReplaceChanged.next(true);
-            self.camsService.reviewChanges();
-          }
-        });
+        self._resetCamsQuery([cam]);
       }
     }
 
@@ -210,13 +203,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
 
     const success = (ok) => {
       if (ok) {
-        self.camsService.resetCams().subscribe((cams) => {
-          if (cams) {
-            self.camsService.loadCams();
-            self.noctuaReviewSearchService.onReplaceChanged.next(true);
-            self.camsService.reviewChanges();
-          }
-        });
+        self._resetCamsQuery(self.camsService.cams);
       }
     }
     if (self.summary?.stats.totalChanges > 0) {
@@ -261,7 +248,28 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
   submitChanges() {
     const self = this;
 
-    this.storeModels(self.camsService.cams, true)
+    const success = (replace) => {
+      if (replace) {
+        const element = document.querySelector('#noc-review-results');
+
+        if (element) {
+          element.scrollTop = 0;
+        }
+
+        self._storeCamsQuery(self.camsService.cams, true);
+      };
+    }
+
+    if (self.summary?.stats.totalChanges > 0) {
+      const options = {
+        title: 'Save Changes?',
+        message: `Bulk edit all changes`,
+        cancelLabel: 'Go Back',
+        confirmLabel: 'Submit'
+      }
+
+      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, self.summary, options)
+    }
   }
 
   submitChange(cam: Cam) {
@@ -272,19 +280,7 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
     if (summary?.stats.totalChanges > 0) {
       const success = (replace) => {
         if (replace) {
-
-          self.camsService.storeModels([cam]).pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(cams => {
-              if (!cams) {
-                return;
-              }
-
-              self.noctuaSearchService.updateSearch();
-              self.noctuaReviewSearchService.updateSearch();
-              self.zone.run(() => {
-                self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
-              });
-            });
+          self._storeCamsQuery([cam]);
         }
       };
 
@@ -300,49 +296,16 @@ export class ArtBasketComponent implements OnInit, OnDestroy {
   }
 
 
-  private storeModels(cams: Cam[], reset = false) {
+  private _storeCamsQuery(cams: Cam[], reset = false) {
     const self = this;
-    const success = (replace) => {
-      if (replace) {
-        const element = document.querySelector('#noc-review-results');
 
-        if (element) {
-          element.scrollTop = 0;
-        }
-        self.camsService.storeModels(cams).pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(cams => {
-            if (!cams) {
-              return;
-            }
+    self.noctuaReviewSearchService.reloadCams(cams, self.camsService.cams, ReloadType.STORE, reset)
 
-            if (reset) {
-              self.noctuaSearchMenuService.selectMiddlePanel(MiddlePanel.cams);
-              self.noctuaSearchMenuService.selectLeftPanel(LeftPanel.filter);
-              self.noctuaReviewSearchService.clear();
-              self.camsService.clearCams();
-              self.noctuaReviewSearchService.clearBasket();
-              self.noctuaReviewSearchService.onResetReview.next(true);
-            }
-            self.noctuaSearchService.updateSearch();
-            self.noctuaReviewSearchService.updateSearch();
-            self.zone.run(() => {
-              self.confirmDialogService.openSuccessfulSaveToast('Changes successfully saved.', 'OK');
-            });
-          });
-      }
-    };
-
-
-    if (self.summary?.stats.totalChanges > 0) {
-      const options = {
-        title: 'Save Changes?',
-        message: `Bulk edit all changes`,
-        cancelLabel: 'Go Back',
-        confirmLabel: 'Submit'
-      }
-
-      self.noctuaSearchDialogService.openCamReviewChangesDialog(success, self.summary, options)
-    }
   }
 
+  private _resetCamsQuery(cams: Cam[], reset = false) {
+    const self = this;
+
+    self.noctuaReviewSearchService.reloadCams(cams, self.camsService.cams, ReloadType.RESET, reset)
+  }
 }

@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 import {
   NoctuaFormConfigService,
-  NoctuaAnnotonFormService,
+  NoctuaActivityFormService,
   noctuaFormConfig,
   Entity,
 } from 'noctua-form-base';
@@ -31,7 +31,7 @@ export class NoctuaDetailDropdownComponent implements OnInit, OnDestroy {
     @Inject(detailDropdownData) public data: any,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
   ) {
     this._unsubscribeAll = new Subject();
     this.formControl = data.formControl;
@@ -55,7 +55,7 @@ export class NoctuaDetailDropdownComponent implements OnInit, OnDestroy {
     let canSave = true;
 
     if (accession.trim() === '') {
-      self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+      self.noctuaFormDialogService.openActivityErrorsDialog(errors);
       canSave = false;
     }
 

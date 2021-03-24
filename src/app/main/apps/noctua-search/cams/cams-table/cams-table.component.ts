@@ -183,8 +183,7 @@ export class CamsTableComponent implements OnInit, OnDestroy {
     if (this.selection.isSelected(cam)) {
       this.addToReview(cam);
     } else {
-      this.camsService.removeCamFromReview(cam);
-      this.noctuaReviewSearchService.removeFromArtBasket(cam.id);
+      this.noctuaReviewSearchService.removeCamFromReview(cam);
     }
   }
 

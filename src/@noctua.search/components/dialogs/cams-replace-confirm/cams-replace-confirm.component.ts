@@ -7,14 +7,14 @@ import { Subject } from 'rxjs';
 
 import {
   Cam,
-  AnnotonType,
+  ActivityType,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaFormMenuService,
-  NoctuaAnnotonFormService,
+  NoctuaActivityFormService,
   noctuaFormConfig,
   CamsService,
-  AnnotonNode,
+  ActivityNode,
   EntityLookup,
   NoctuaLookupService,
   EntityDefinition,
@@ -55,7 +55,7 @@ export class CamsReplaceConfirmDialogComponent implements OnInit, OnDestroy {
       public noctuaSearchService: NoctuaSearchService,
       public noctuaUserService: NoctuaUserService,
       public noctuaFormConfigService: NoctuaFormConfigService,
-      public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+      public noctuaActivityFormService: NoctuaActivityFormService,
       public noctuaFormMenuService: NoctuaFormMenuService) {
     this._unsubscribeAll = new Subject();
   }

@@ -3,8 +3,8 @@ import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Subscription, Subject, EMPTY } from 'rxjs';
 import {
   NoctuaFormConfigService,
-  NoctuaAnnotonFormService,
-  NoctuaAnnotonEntityService,
+  NoctuaActivityFormService,
+  NoctuaActivityEntityService,
   CamService,
   Entity,
   noctuaFormConfig,
@@ -13,8 +13,8 @@ import {
 } from 'noctua-form-base';
 
 import { Cam } from 'noctua-form-base';
-import { Annoton } from 'noctua-form-base';
-import { AnnotonNode } from 'noctua-form-base';
+import { Activity } from 'noctua-form-base';
+import { ActivityNode } from 'noctua-form-base';
 import { Evidence } from 'noctua-form-base';
 
 import { editorDropdownData } from './editor-dropdown.tokens';
@@ -33,16 +33,16 @@ import { InlineReferenceService } from './../../inline-reference/inline-referenc
 
 export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
   EditorCategory = EditorCategory;
-  annoton: Annoton;
+  activity: Activity;
   cam: Cam;
   insertEntity = false;
-  entity: AnnotonNode;
+  entity: ActivityNode;
   category: EditorCategory;
   evidenceIndex: number;
   entityFormGroup: FormGroup;
   evidenceFormGroup: FormGroup;
   entityFormSub: Subscription;
-  termNode: AnnotonNode;
+  termNode: ActivityNode;
 
   private _unsubscribeAll: Subject<any>;
 
@@ -62,15 +62,15 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     private noctuaGraphService: NoctuaGraphService,
     private camsService: CamsService,
     private camService: CamService,
-    private noctuaAnnotonEntityService: NoctuaAnnotonEntityService,
+    private noctuaActivityEntityService: NoctuaActivityEntityService,
     private inlineReferenceService: InlineReferenceService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
   ) {
     this._unsubscribeAll = new Subject();
 
     this.cam = data.cam;
-    this.annoton = data.annoton;
+    this.activity = data.activity;
     this.entity = data.entity;
     this.category = data.category;
     this.evidenceIndex = data.evidenceIndex;
@@ -79,7 +79,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._displaySection(this.category);
-    this.entityFormSub = this.noctuaAnnotonEntityService.entityFormGroup$
+    this.entityFormSub = this.noctuaActivityEntityService.entityFormGroup$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(entityFormGroup => {
         if (!entityFormGroup) {
@@ -108,7 +108,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
       case EditorCategory.reference:
       case EditorCategory.with:
         this.close();
-        self.noctuaAnnotonEntityService.saveAnnotonReplace(self.cam).pipe(
+        self.noctuaActivityEntityService.saveActivityReplace(self.cam).pipe(
           take(1),
           concatMap((result) => {
             return EMPTY;
@@ -130,7 +130,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
           });
         break;
       default:
-        self.noctuaAnnotonEntityService.saveAnnoton().then(() => {
+        self.noctuaActivityEntityService.saveActivity().then(() => {
           this.close();
           self.noctuaFormDialogService.openSuccessfulSaveToast('Activity successfully updated.', 'OK');
         });
@@ -141,23 +141,23 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     const self = this;
 
     self.entity.predicate.addEvidence();
-    self.noctuaAnnotonFormService.initializeForm();
+    self.noctuaActivityFormService.initializeForm();
   }
 
   removeEvidence(index: number) {
     const self = this;
 
     self.entity.predicate.removeEvidence(index);
-    self.noctuaAnnotonFormService.initializeForm();
+    self.noctuaActivityFormService.initializeForm();
   }
 
   toggleIsComplement() {
 
   }
 
-  openSearchDatabaseDialog(entity: AnnotonNode) {
+  openSearchDatabaseDialog(entity: ActivityNode) {
     const self = this;
-    const gpNode = this.noctuaAnnotonFormService.annoton.getGPNode();
+    const gpNode = this.noctuaActivityFormService.activity.getGPNode();
 
     if (gpNode) {
       const data = {
@@ -178,14 +178,14 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
           if (selected.evidences && selected.evidences.length > 0) {
             entity.predicate.setEvidence(selected.evidences);
           }
-          self.noctuaAnnotonFormService.initializeForm();
+          self.noctuaActivityFormService.initializeForm();
         }
       }
       self.noctuaFormDialogService.openSearchDatabaseDialog(data, success);
     } else {
-      // const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  "Please enter a gene product", meta)
+      // const error = new ActivityError(ErrorLevel.error, ErrorType.general,  "Please enter a gene product", meta)
       //errors.push(error);
-      // self.dialogService.openAnnotonErrorsDialog(ev, entity, errors)
+      // self.dialogService.openActivityErrorsDialog(ev, entity, errors)
     }
   }
 
@@ -198,7 +198,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
 
     if (term) {
       self.entity.term = new Entity(term.id, term.label);
-      self.noctuaAnnotonFormService.initializeForm();
+      self.noctuaActivityFormService.initializeForm();
 
       const evidence = new Evidence();
       evidence.setEvidence(new Entity(
@@ -206,7 +206,7 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
         noctuaFormConfig.evidenceAutoPopulate.nd.evidence.label));
       evidence.reference = noctuaFormConfig.evidenceAutoPopulate.nd.reference;
       self.entity.predicate.setEvidence([evidence]);
-      self.noctuaAnnotonFormService.initializeForm();
+      self.noctuaActivityFormService.initializeForm();
     }
   }
 
@@ -214,16 +214,16 @@ export class NoctuaEditorDropdownComponent implements OnInit, OnDestroy {
     const self = this;
 
     self.entity.clearValues();
-    self.noctuaAnnotonFormService.initializeForm();
+    self.noctuaActivityFormService.initializeForm();
   }
 
   openSelectEvidenceDialog() {
     const self = this;
-    const evidences: Evidence[] = this.camService.getUniqueEvidence(self.noctuaAnnotonFormService.annoton);
+    const evidences: Evidence[] = this.camService.getUniqueEvidence(self.noctuaActivityFormService.activity);
     const success = (selected) => {
       if (selected.evidences && selected.evidences.length > 0) {
         self.entity.predicate.setEvidence(selected.evidences);
-        self.noctuaAnnotonFormService.initializeForm();
+        self.noctuaActivityFormService.initializeForm();
       }
     };
 

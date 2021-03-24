@@ -9,11 +9,11 @@ import { InlineEditorService, EditorDropdownDialogConfig } from './inline-editor
 
 import {
     CamService,
-    NoctuaAnnotonEntityService,
-    AnnotonNode,
-    Annoton,
+    NoctuaActivityEntityService,
+    ActivityNode,
+    Activity,
     Cam,
-    NoctuaAnnotonFormService
+    NoctuaActivityFormService
 } from 'noctua-form-base';
 import { EditorCategory } from './../models/editor-category';
 
@@ -27,8 +27,8 @@ export class NoctuaInlineEditorComponent implements OnInit, OnDestroy {
     noctuaConfig: any;
 
     @Input() cam: Cam;
-    @Input() annoton: Annoton;
-    @Input() entity: AnnotonNode;
+    @Input() activity: Activity;
+    @Input() entity: ActivityNode;
     @Input() category: EditorCategory;
     @Input() evidenceIndex = 0;
 
@@ -38,8 +38,8 @@ export class NoctuaInlineEditorComponent implements OnInit, OnDestroy {
 
     constructor(private inlineEditorService: InlineEditorService,
         private camService: CamService,
-        public noctuaAnnotonFormService: NoctuaAnnotonFormService,
-        private noctuaAnnotonEntityService: NoctuaAnnotonEntityService) {
+        public noctuaActivityFormService: NoctuaActivityFormService,
+        private noctuaActivityEntityService: NoctuaActivityEntityService) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -51,15 +51,15 @@ export class NoctuaInlineEditorComponent implements OnInit, OnDestroy {
         const displayEntity = cloneDeep(this.entity);
         const data = {
             cam: this.cam,
-            annoton: this.annoton,
+            activity: this.activity,
             entity: displayEntity,
             category: this.category,
             evidenceIndex: this.evidenceIndex
         };
         // this.camService.onCamChanged.next(this.cam);
         this.camService.onCamChanged.next(this.cam);
-        this.camService.annoton = this.annoton;
-        this.noctuaAnnotonEntityService.initializeForm(this.annoton, displayEntity);
+        this.camService.activity = this.activity;
+        this.noctuaActivityEntityService.initializeForm(this.activity, displayEntity);
         this.inlineEditorService.open(event.target, { data });
     }
 

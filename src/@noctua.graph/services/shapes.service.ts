@@ -5,8 +5,7 @@ import * as _ from 'lodash';
 import * as joint from 'jointjs';
 import * as shapes from './../models/shapes';
 import * as Backbone from 'backbone';
-import { each } from 'lodash';
-import { getColor } from '@noctua.form/data/noc-colors';
+import { getColor } from '@noctua.common/data/noc-colors';
 
 export class StencilNode extends shapes.StencilNode {
 
@@ -54,12 +53,6 @@ export class NodeCell extends shapes.NodeCell {
     return this;
   }
 
-
-
-  setSuccessorCount(count: number): this {
-    this.attr({ expandLabel: { text: count.toString() } });
-    return this;
-  }
 
   hover(on: boolean): this {
     const self = this;

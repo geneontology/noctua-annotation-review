@@ -8,14 +8,14 @@ import { EMPTY, Subject } from 'rxjs';
 
 import {
   Cam,
-  AnnotonType,
+  ActivityType,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaFormMenuService,
-  NoctuaAnnotonFormService,
+  NoctuaActivityFormService,
   noctuaFormConfig,
   CamsService,
-  AnnotonNode,
+  ActivityNode,
   EntityLookup,
   NoctuaLookupService,
   EntityDefinition,
@@ -41,7 +41,7 @@ import { InlineReferenceService } from '@noctua.editor/inline-reference/inline-r
   animations: noctuaAnimations,
 })
 export class ReviewFormComponent implements OnInit, OnDestroy {
-  AnnotonType = AnnotonType;
+  ActivityType = ActivityType;
   ArtReplaceCategory = ArtReplaceCategory;
   searchForm: FormGroup;
   cams: Cam[] = [];
@@ -51,10 +51,10 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
   };
   noctuaFormConfig = noctuaFormConfig;
   categories: any;
-  findNode: AnnotonNode;
-  replaceNode: AnnotonNode;
-  gpNode: AnnotonNode;
-  termNode: AnnotonNode;
+  findNode: ActivityNode;
+  replaceNode: ActivityNode;
+  gpNode: ActivityNode;
+  termNode: ActivityNode;
   selectedCategory;
 
   textboxDetail = {
@@ -72,7 +72,7 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
     public noctuaUserService: NoctuaUserService,
     private noctuaLookupService: NoctuaLookupService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
     public noctuaFormMenuService: NoctuaFormMenuService,
     private inlineReferenceService: InlineReferenceService,) {
 
@@ -186,38 +186,10 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
     const value = this.searchForm.value;
     let replaceWith = value.replaceWith;
 
-    if (self.selectedCategory.name !== noctuaFormConfig.findReplaceCategory.options.reference.name) {
-      replaceWith = value.replaceWith?.id;
-    }
-
-    if (self.selectedCategory.name === noctuaFormConfig.findReplaceCategory.options.reference.name) {
-      replaceWith = Evidence.formatReference(value.replaceWith);
-    }
-
     const cams = self.camsService.getReplaceObject([this.noctuaReviewSearchService.currentMatchedEnity],
       replaceWith, self.selectedCategory);
 
-    this.camsService.replace(cams).pipe(
-      take(1),
-      concatMap((result) => {
-        console.log(result)
-        cams.forEach((cam: Cam) => {
-          // self.noctuaGraphService.rebuild(cam, result[0]);
-          //cam.checkStored();
-        })
-        return EMPTY;
-        //return self.camsService.bulkStoredModel(cams)
-      }),
-      finalize(() => {
-        self.zone.run(() => {
-          self.camsService.resetLoading(self.camsService.cams)
-          self.noctuaReviewSearchService.onReplaceChanged.next(true);
-          self.camsService.reviewChanges();
-        })
-      }))
-      .subscribe(() => {
-
-      })
+    self.replaceCams(cams);
   }
 
   replaceAll() {
@@ -230,37 +202,13 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
     const occurrences = this.noctuaReviewSearchService.matchedCount;
     let replaceWith = value.replaceWith;
 
-    if (self.selectedCategory.name !== noctuaFormConfig.findReplaceCategory.options.reference.name) {
-      replaceWith = value.replaceWith?.id;
-    }
-
-    if (self.selectedCategory.name === noctuaFormConfig.findReplaceCategory.options.reference.name) {
-      replaceWith = Evidence.formatReference(value.replaceWith);
-    }
     const success = (replace) => {
       if (replace) {
-
         const cams = self.camsService.getReplaceObject(this.noctuaReviewSearchService.matchedEntities,
           replaceWith, self.selectedCategory);
 
         self.camsService.resetLoading(cams, new CamLoadingIndicator(true, 'Loading...'))
-
-        this.camsService.replace(cams).pipe(
-          take(1),
-          concatMap((result) => {
-            return EMPTY;
-            //return self.camsService.bulkStoredModel(cams)
-          }),
-          finalize(() => {
-            self.zone.run(() => {
-              self.camsService.resetLoading(cams)
-              self.noctuaReviewSearchService.onReplaceChanged.next(true);
-              self.camsService.reviewChanges();
-            })
-          }))
-          .subscribe(() => {
-
-          })
+        self.replaceCams(cams);
       }
     };
 
@@ -419,6 +367,27 @@ export class ReviewFormComponent implements OnInit, OnDestroy {
       return (a.name === b.name);
     }
     return false;
+  }
+
+  private replaceCams(cams: Cam[]) {
+    const self = this;
+
+    this.camsService.replace(cams).pipe(
+      take(1),
+      concatMap((result) => {
+        return EMPTY;
+        //return self.camsService.bulkStoredModel(cams)
+      }),
+      finalize(() => {
+        self.zone.run(() => {
+          self.camsService.resetLoading(cams)
+          self.noctuaReviewSearchService.onReplaceChanged.next(true);
+          self.camsService.reviewChanges();
+        })
+      }))
+      .subscribe(() => {
+
+      })
   }
 
 }

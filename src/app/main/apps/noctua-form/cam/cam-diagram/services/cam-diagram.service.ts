@@ -13,8 +13,8 @@ import { CurieService } from './../../../../../../../@noctua.curie/services/curi
 import { NoctuaGraphService, NoctuaFormMenuService } from 'noctua-form-base';
 
 
-import { NoctuaAnnotonFormService } from 'noctua-form-base';
-import { NoctuaAnnotonConnectorService } from 'noctua-form-base';
+import { NoctuaActivityFormService } from 'noctua-form-base';
+import { NoctuaActivityConnectorService } from 'noctua-form-base';
 
 
 @Injectable({
@@ -31,8 +31,8 @@ export class CamDiagramService {
   }
 
   constructor(
-    private noctuaAnnotonConnectorService: NoctuaAnnotonConnectorService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    private noctuaActivityConnectorService: NoctuaActivityConnectorService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
     public noctuaFormMenuService: NoctuaFormMenuService) {
   }
 
@@ -104,24 +104,24 @@ export class CamDiagramService {
     return this._scale;
   }
 
-  openAnnotonForm() {
+  openActivityForm() {
     const self = this;
 
-    self.noctuaAnnotonFormService.initializeForm();
-    // self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.annotonForm)
+    self.noctuaActivityFormService.initializeForm();
+    // self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.activityForm)
   }
 
   openConnectorForm(sourceId, targetId) {
     const self = this;
 
-    self.noctuaAnnotonConnectorService.initializeForm(sourceId, targetId);
+    self.noctuaActivityConnectorService.initializeForm(sourceId, targetId);
     //self.noctuaFormMenuService.openRightDrawer(self.noctuaFormMenuService.panel.connectorForm);
   }
 
   getCausalEffect(sourceId, targetId) {
     const self = this;
 
-    //  self.noctuaAnnotonConnectorService.getCausalEffect(sourceId, targetId);
+    //  self.noctuaActivityConnectorService.getCausalEffect(sourceId, targetId);
   }
 
 }

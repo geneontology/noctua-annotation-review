@@ -5,8 +5,8 @@ import { debounceTime, distinctUntilChanged, takeUntil, startWith, map } from 'r
 
 import {
   NoctuaFormConfigService,
-  NoctuaAnnotonFormService,
-  AnnotonError,
+  NoctuaActivityFormService,
+  ActivityError,
   noctuaFormConfig,
   Article,
   NoctuaLookupService,
@@ -61,7 +61,7 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
     private noctuaLookupService: NoctuaLookupService,
     private noctuaFormDialogService: NoctuaFormDialogService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
   ) {
     this._unsubscribeAll = new Subject();
     this.formControl = data.formControl;
@@ -184,7 +184,7 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
     const withs = this.myForm.value.companies.map((project) => {
       return project.projects.map((item) => {
         if (!item.projectName.includes(':')) {
-          const error = new AnnotonError(ErrorLevel.error, ErrorType.general, `${item.projectName} wrong format, Did you forget ':'`);
+          const error = new ActivityError(ErrorLevel.error, ErrorType.general, `${item.projectName} wrong format, Did you forget ':'`);
           errors.push(error);
           canSave = false;
         }
@@ -194,9 +194,9 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
 
 
     /*   if (accession.trim() === '') {
-        const error = new AnnotonError(ErrorLevel.error, ErrorType.general,  `${db.name} accession is required`);
+        const error = new ActivityError(ErrorLevel.error, ErrorType.general,  `${db.name} accession is required`);
         errors.push(error);
-        self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+        self.noctuaFormDialogService.openActivityErrorsDialog(errors);
         canSave = false;
       } */
 
@@ -204,7 +204,7 @@ export class NoctuaWithDropdownComponent implements OnInit, OnDestroy {
       this.formControl.setValue(withs);
       this.close();
     } else {
-      self.noctuaFormDialogService.openAnnotonErrorsDialog(errors);
+      self.noctuaFormDialogService.openActivityErrorsDialog(errors);
     }
   }
 

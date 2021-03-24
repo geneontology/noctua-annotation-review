@@ -159,7 +159,7 @@ $accent: map-get($theme, accent);
   .noc-selected {
     background-color: #FFFFFF;
 
-    .noc-annotons-table-body {
+    .noc-activities-table-body {
 
       &::before {
         left: 37px;
@@ -171,7 +171,7 @@ $accent: map-get($theme, accent);
 
   }
 
-  .noc-annotons-table-body {
+  .noc-activities-table-body {
     position: relative;
     background-color: #FFF;
 

@@ -39,7 +39,7 @@ const portAttrs = {
 };
 
 export const StencilNode = joint.dia.Element.define('noctua.StencilNode', {
-  size: { width: 180, height: 40 },
+  size: { width: 90, height: 110 },
   attrs: {
     body: {
       refWidth: '100%',
@@ -47,37 +47,33 @@ export const StencilNode = joint.dia.Element.define('noctua.StencilNode', {
       fill: '#FFFFFF',
       stroke: 'black'
     },
-    statusLine: {
-      x: 0,
-      y: 0,
-      width: 4,
-      refHeight: '100%',
-      fill: '#CCC'
-    },
     iconBackground: {
+      ref: 'icon',
+      refWidth: '100%',
       refHeight: '100%',
-      fill: '#DDDDDD',
-      width: 40,
-      x: 4,
+      fill: '#FF0'
     },
     icon: {
-      width: 25,
-      height: 25,
-      x: 8,
-      y: 8,
+      x: 5,
+      y: 5,
+      refWidth: '100%',
+      height: 70,
     },
     label: {
-      x: 50,
-      refY: '50%',
+      y: 85,
+      height: '30px',
+      refX: '50%',
+      // refY: '50%',
       // refY2: 10,
       fill: '#555555',
-      textAnchor: 'start',
+      textAnchor: 'middle',
       textVerticalAnchor: 'middle',
       //fontWeight: 'bold',
       fontFamily: 'sans-serif',
-      fontSize: 14,
+      fontSize: 12,
       textWrap: {
-        ellipsis: true
+        ellipsis: false,
+        width: '90%'
       }
     }
   }
@@ -153,46 +149,6 @@ export const NodeCell = joint.dia.Element.define('noctua.NodeCell', {
         height: -40,
         ellipsis: true
       }
-    },
-    expandLine: {
-      x: 0,
-      y: 0,
-      width: 20,
-      height: 2,
-      cursor: 'pointer',
-      ref: 'expand',
-      fill: '#000000',
-      // refWidth: '150%',
-      // refHeight: '150%',
-      refX: '-20px',
-      refY: '50%'
-    },
-    expand: {
-      rx: 5,
-      ry: 5,
-      width: 40,
-      height: 20,
-      cursor: 'pointer',
-      //ref: 'expandLabel',
-      fill: '#FFFFFF',
-      'stroke': 'black',
-      'stroke-width': 1,
-      //refWidth: '150%',
-      // refHeight: '150%',
-      refX: '100%',
-      refY: '50%',
-      refX2: '20',
-      refY2: '-10'
-    },
-    expandLabel: {
-      pointerEvents: 'none',
-      ref: 'expand',
-      refWidth: '100%',
-      refX: '50%',
-      // refX2: '25px',
-      refY: '50%',
-      textAnchor: 'middle',
-      textVerticalAnchor: 'middle'
     }
   },
   inPorts: ['top', 'bottom', 'left',],
@@ -266,15 +222,6 @@ export const NodeCell = joint.dia.Element.define('noctua.NodeCell', {
   }, {
     tagName: 'text',
     selector: 'noctuaTitle'
-  }, {
-    tagName: 'rect',
-    selector: 'expand'
-  }, {
-    tagName: 'rect',
-    selector: 'expandLine'
-  }, {
-    tagName: 'text',
-    selector: 'expandLabel'
   }],
 
 }, {

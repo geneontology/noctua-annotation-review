@@ -6,11 +6,12 @@ import { CamCanvas } from '../models/cam-canvas';
 import { CamStencil } from '../models/cam-stencil';
 import { NoctuaCommonMenuService } from '@noctua.common/services/noctua-common-menu.service';
 import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
-import { Annoton, Cam, CamService, NoctuaAnnotonFormService, RightPanel } from '@noctua.form';
+import { Activity, Cam, CamService, NoctuaActivityFormService, NoctuaFormConfigService } from 'noctua-form-base';
 import { NodeLink, NodeCell, NoctuaShapesService } from '@noctua.graph/services/shapes.service';
 import { NodeType } from 'scard-graph-ts';
 import { NodeCellType } from '@noctua.graph/models/shapes';
 import { noctuaStencil } from '@noctua.graph/data/cam-stencil';
+import { RightPanel } from '@noctua.common/models/menu-panels';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,8 @@ export class CamGraphService {
   constructor(
     private _camService: CamService,
     private noctuaDataService: NoctuaDataService,
-    private annotonFormService: NoctuaAnnotonFormService,
+    private noctuaFormConfigService: NoctuaFormConfigService,
+    private activityFormService: NoctuaActivityFormService,
     public noctuaCommonMenuService: NoctuaCommonMenuService,
     private noctuaShapesService: NoctuaShapesService) {
 
@@ -59,7 +61,8 @@ export class CamGraphService {
     const self = this;
 
     self.camCanvas = new CamCanvas();
-    self.camCanvas.elementOnClick = self.openForm.bind(self);
+    self.camCanvas.elementOnClick = self.openTable.bind(self);
+    self.camCanvas.onElementAdd = self.noctuaFormConfigService.createActivityModel.bind(self);
   }
 
   initializeStencils() {
@@ -81,12 +84,21 @@ export class CamGraphService {
     this.camCanvas.resetZoom();
   }
 
+
   openForm(element: joint.shapes.noctua.NodeCell) {
-    const annoton = element.prop('annoton') as Annoton
+    const activity = element.prop('activity') as Activity
     this.selectedElement = element;
-    // annoton.type = element.get('type');
-    this.annotonFormService.initializeForm(annoton);
-    this.noctuaCommonMenuService.selectRightPanel(RightPanel.annotonForm);
+    // activity.type = element.get('type');
+    this.activityFormService.initializeForm(activity);
+    this.noctuaCommonMenuService.selectRightPanel(RightPanel.activityForm);
+    this.noctuaCommonMenuService.openRightDrawer();
+  }
+
+  openTable(element: joint.shapes.noctua.NodeCell) {
+    const activity = element.prop('activity') as Activity
+    this.selectedElement = element;
+    // activity.type = element.get('type');
+    this.noctuaCommonMenuService.selectRightPanel(RightPanel.camTable);
     this.noctuaCommonMenuService.openRightDrawer();
   }
 

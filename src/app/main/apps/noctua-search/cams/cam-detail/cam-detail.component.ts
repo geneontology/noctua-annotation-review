@@ -8,12 +8,12 @@ import { Subject } from 'rxjs';
 
 import {
   Cam,
-  AnnotonType,
+  ActivityType,
   Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaFormMenuService,
-  NoctuaAnnotonFormService,
+  NoctuaActivityFormService,
   CamService,
   noctuaFormConfig,
   CamsService
@@ -32,7 +32,7 @@ import { FormGroup, FormControl } from '@angular/forms';
   animations: noctuaAnimations,
 })
 export class CamDetailComponent implements OnInit, OnDestroy {
-  AnnotonType = AnnotonType;
+  ActivityType = ActivityType;
 
   @Input('panelDrawer')
   panelDrawer: MatDrawer;
@@ -60,7 +60,7 @@ export class CamDetailComponent implements OnInit, OnDestroy {
       public noctuaSearchService: NoctuaSearchService,
       public noctuaUserService: NoctuaUserService,
       public noctuaFormConfigService: NoctuaFormConfigService,
-      public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+      public noctuaActivityFormService: NoctuaActivityFormService,
       public noctuaFormMenuService: NoctuaFormMenuService) {
 
     this._unsubscribeAll = new Subject();

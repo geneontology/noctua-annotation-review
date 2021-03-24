@@ -1,5 +1,5 @@
 <div id="noc-canvas" class="">
-  <div id="noc-palette" fxFlex="200px" class="">
+  <div id="noc-palette" class="">
     <div fxLayout="column" fxLayoutAlign="start stretch" class="noc-cam-form noc-drawer h-100-p">
       <div class="noc-drawer-header" fxLayout="row" fxLayoutAlign="start center">
         <span class="noc-drawer-header-title">
@@ -9,7 +9,7 @@
       <div class="noc-drawer-body w-100-p" noctuaPerfectScrollbar>
         <div #stencils *ngFor="let stencil of stencils">
           <div class="noc-heading">
-            {{stencil.title}}
+            {{stencil.label}}
           </div>
           <div [attr.id]="stencil.id" class=""></div>
         </div>
@@ -29,7 +29,7 @@
       <button mat-icon-button (click)="zoomIn()" color="" class="noc-rounded-button noc-half-button noc-l">
         <fa-icon class="" [icon]="['fas', 'search-plus']"></fa-icon>
       </button>
-      <button mat-icon-button (click)="noctuaCamGraphService.resetZoom()" color=""
+      <button mat-icon-button (click)="noctuaCamGraphService.reset()" color=""
         class="noc-rounded-button noc-half-button noc-l">
         <mat-icon>youtube_searched_for</mat-icon>
       </button>

@@ -1,10 +1,10 @@
-import { AnnotonType, noctuaFormConfig } from "@noctua.form";
+import { ActivityType, noctuaFormConfig } from "noctua-form-base";
 import { cloneDeep } from "lodash";
 
 export interface StencilItemNode {
     id: string;
     label: string;
-    type: AnnotonType,
+    type: ActivityType,
 }
 
 export interface StencilItem {
@@ -18,13 +18,13 @@ const camStencil: StencilItem[] = [{
     id: 'activity_unit',
     label: 'Activity Type',
     nodes: [{
-        type: AnnotonType.default,
-        id: noctuaFormConfig.annotonType.options.default.name,
-        label: noctuaFormConfig.annotonType.options.default.label
+        type: ActivityType.default,
+        id: noctuaFormConfig.activityType.options.default.name,
+        label: noctuaFormConfig.activityType.options.default.label
     }, {
-        type: AnnotonType.bpOnly,
-        id: noctuaFormConfig.annotonType.options.bpOnly.name,
-        label: noctuaFormConfig.annotonType.options.bpOnly.label
+        type: ActivityType.bpOnly,
+        id: noctuaFormConfig.activityType.options.bpOnly.name,
+        label: noctuaFormConfig.activityType.options.bpOnly.label
     }]
 }]
 

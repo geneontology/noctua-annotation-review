@@ -12,7 +12,7 @@ $accent: map-get($theme, accent);
     padding: 20px 10px;
   }
 
-  .noc-annoton-table-header {
+  .noc-activity-table-header {
     @include deep-height(30px);
     border-bottom: $noc-primary-color-light solid 1px;
 
@@ -31,7 +31,7 @@ $accent: map-get($theme, accent);
     padding: 20px 10px;
     border-bottom: #CCC solid 1px;
 
-    .noc-annoton-box {
+    .noc-activity-box {
       padding: 8px;
       @include deep-width(150px);
       @include deep-height(110px);
@@ -62,7 +62,7 @@ $accent: map-get($theme, accent);
       @include mat-elevation(2);
       background-color: #E2E2E2;
 
-      .noc-annoton-box {
+      .noc-activity-box {
         @include mat-elevation(6);
         border: 1px solid darken(#2e6f9a, 10%);
         background-color: #F2F2F2;
@@ -103,7 +103,7 @@ $accent: map-get($theme, accent);
     }
   }
 
-  .annoton-table {
+  .activity-table {
     // position: relative;
     //  flex: 1 1 auto;
     //    border-bottom: 1px solid rgba(0, 0, 0, .12);
@@ -145,7 +145,7 @@ $accent: map-get($theme, accent);
       @include deep-height(0);
     }
 
-    .annoton {
+    .activity {
       position: relative;
       cursor: pointer;
       min-height: 40px;

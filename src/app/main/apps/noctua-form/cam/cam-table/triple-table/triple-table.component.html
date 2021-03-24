@@ -1,7 +1,7 @@
 <div class="w-100-p">
   <div *ngFor="let triple of cam.triples" (click)="selectTriple(triple)" class="noc-triple noc-sm w-100-p"
     fxLayout="row" fxLayoutAlign="start center">
-    <div class="noc-annoton-box" fxLayout="column" fxLayoutAlign="center center">
+    <div class="noc-activity-box" fxLayout="column" fxLayoutAlign="center center">
       <span>
         {{ triple.subject.getTerm().label}}
       </span>
@@ -12,13 +12,13 @@
       <div class="noc-line" fxFlex="" fxLayout="column" fxLayoutAlign="end stretch"></div>
       <mat-icon class="s-32 noc-arrow">chevron_right</mat-icon>
     </div>
-    <div class="noc-annoton-box" fxLayout="column" fxLayoutAlign="center center">
+    <div class="noc-activity-box" fxLayout="column" fxLayoutAlign="center center">
       <span>
         {{ triple.object.getTerm().label}}
       </span>
     </div>
   </div>
-  <!--   <div class="noc-annoton-table-header w-100-p" fxLayout="row" fxLayoutAlign="start center">
+  <!--   <div class="noc-activity-table-header w-100-p" fxLayout="row" fxLayoutAlign="start center">
     <div fxFlex="150px" class="noc-header-cell"> Subject </div>
     <div fxFlex="50px" class="noc-header-cell"> Asp </div>
     <div fxFlex="120px" class="noc-header-cell"> Relationship </div>
@@ -30,8 +30,8 @@
     <div fxFlex="120px" class="noc-header-cell"> With </div>
     <div fxFlex="120px" class="noc-header-cell"> Assigned By </div>
   </div>
-  <div class="noc-annoton-table-body w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start">
-    <div class="annoton-table" fxFlex="">
+  <div class="noc-activity-table-body w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start">
+    <div class="activity-table" fxFlex="">
       <mat-table class="w-100-p" #table [dataSource]="grid" matSort [@animateStagger]="{value:'50'}"
         noctuaPerfectScrollbar>
         <ng-container cdkColumnDef="subject">
@@ -90,8 +90,8 @@
         </ng-container>
         <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *cdkRowDef="let entity; columns: displayedColumns;" class="" matRipple
-          [ngClass]="{'noc-row-selected': entity.node?.uuid === noctuaAnnotonEntityService.termNode?.uuid}"
-          (click)="selectEntity(entity.annoton, entity.node)"></mat-row>
+          [ngClass]="{'noc-row-selected': entity.node?.uuid === noctuaActivityEntityService.termNode?.uuid}"
+          (click)="selectEntity(entity.activity, entity.node)"></mat-row>
       </mat-table>
       <div *ngIf="grid?.length===0" class="noc-no-info">
         no results yet.

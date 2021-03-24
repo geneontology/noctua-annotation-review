@@ -1,5 +1,4 @@
 
-import { Annoton, Cam } from '@noctua.form';
 import { StencilItem, StencilItemNode } from '@noctua.graph/data/cam-stencil';
 import { StencilNode } from '@noctua.graph/models/shapes';
 import { NodeCell } from '@noctua.graph/services/shapes.service';
@@ -24,7 +23,6 @@ export class CamStencil {
 
         self.onAddElement = camCanvas.addElement.bind(self.camCanvas);
         self._initializeStencils(stencils);
-
     }
 
     private _initializeStencils(stencils: StencilItem[]) {
@@ -51,13 +49,13 @@ export class CamStencil {
         const self = this;
         const nodes = [];
 
-        each(stencilNodes, (stencilNode: StencilItemNode) => {
-            const el = new StencilNode()
+        each(stencilNodes, (stencilItemNode: StencilItemNode) => {
+            const el = new StencilNode();
             // .size(120, 80)
             // .setColor(cam.backgroundColor)
             // .setIcon(cam.iconUrl);
-            el.attr('label/text', stencilNode.label);
-            el.set({ node: cloneDeep(stencilNode) });
+            el.attr('label/text', stencilItemNode.label);
+            el.set({ node: cloneDeep(stencilItemNode) });
 
             nodes.push(el);
         });
@@ -69,7 +67,7 @@ export class CamStencil {
     private generateStencilPaper(stencil: StencilItem, stencilGraph: joint.dia.Graph): joint.dia.Paper {
         const stencilPaper = new joint.dia.Paper({
             el: document.getElementById(stencil.id),
-            height: stencil.nodes.length * 52,
+            height: stencil.nodes.length * 120,
             width: '100%',
             model: stencilGraph,
             interactive: false
@@ -133,6 +131,28 @@ export class CamStencil {
             //Sel.getBBox().bottomRight();
             el.position(10, currentY);
             currentY += el.size().height + 10;
+        });
+    }
+
+    private _layoutGraph(graph: joint.dia.Graph) {
+        const autoLayoutElements = [];
+        const manualLayoutElements = [];
+        graph.getElements().forEach((el) => {
+            if (el.attr('./visibility') !== 'hidden') {
+                autoLayoutElements.push(el);
+            }
+        });
+        // Automatic Layout
+        joint.layout.DirectedGraph.layout(graph.getSubgraph(autoLayoutElements), {
+            align: 'UR',
+            setVertices: true,
+            setLabels: true,
+            marginX: 0,
+            marginY: 0,
+            rankSep: 0,
+            // nodeSep: 2000,
+            //edgeSep: 2000,
+            rankDir: "LR"
         });
     }
 

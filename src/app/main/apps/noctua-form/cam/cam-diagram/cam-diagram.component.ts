@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NoctuaFormConfigService } from 'noctua-form-base';
 
 
-import { NoctuaAnnotonFormService } from 'noctua-form-base';
+import { NoctuaActivityFormService } from 'noctua-form-base';
 import { CamDiagramService } from './services/cam-diagram.service';
 
 import { Cam } from 'noctua-form-base';
@@ -28,7 +28,7 @@ export class CamDiagramComponent implements OnInit {
 
   constructor(
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
     public camDiagramService: CamDiagramService) {
 
   }
@@ -46,8 +46,8 @@ export class CamDiagramComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cam.onGraphChanged.subscribe((annotons) => {
-      if (annotons) {
+    this.cam.onGraphChanged.subscribe((activities) => {
+      if (activities) {
 
       }
     });

@@ -10,7 +10,7 @@ import {
   NoctuaFormConfigService,
   CamService,
   CamsService,
-  Annoton
+  Activity
 } from 'noctua-form-base';
 
 import { FormGroup } from '@angular/forms';
@@ -70,7 +70,6 @@ export class NoctuaGraphComponent implements OnInit, AfterViewInit, OnDestroy {
     editableEvidence: true,
     editableReference: true,
     editableWith: true,
-    reviewMode: true,
   };
 
   private _unsubscribeAll: Subject<any>;
@@ -112,17 +111,15 @@ export class NoctuaGraphComponent implements OnInit, AfterViewInit, OnDestroy {
     this.noctuaCommonMenuService.setLeftDrawer(this.leftDrawer);
     this.noctuaCommonMenuService.setRightDrawer(this.rightDrawer);
 
-
     this.cam.onGraphChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((annotons: Annoton[]) => {
-        if (!annotons) {
+      .subscribe((activities: Activity[]) => {
+        if (!activities) {
           return;
         }
-        this.cam.updateAnnotonDisplayNumber();
+        this.cam.updateActivityDisplayNumber();
       });
   }
-
 
   ngAfterViewInit(): void {
     this.noctuaCommonMenuService.resultsViewScrollbar = this._noctuaPerfectScrollbarDirectives.find((directive) => {

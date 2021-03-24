@@ -7,17 +7,17 @@ import { noctuaAnimations } from './../../../../@noctua/animations';
 
 import {
   Cam,
-  AnnotonType,
+  ActivityType,
   Contributor,
   NoctuaUserService,
   NoctuaFormConfigService,
   NoctuaFormMenuService,
-  NoctuaAnnotonFormService,
+  NoctuaActivityFormService,
   CamService,
   noctuaFormConfig,
   MiddlePanel,
   LeftPanel,
-  Annoton
+  Activity
 } from 'noctua-form-base';
 
 import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { NoctuaDataService } from '@noctua.common/services/noctua-data.service';
   animations: noctuaAnimations
 })
 export class NoctuaFormComponent implements OnInit, OnDestroy {
-  AnnotonType = AnnotonType;
+  ActivityType = ActivityType;
   LeftPanel = LeftPanel;
   MiddlePanel = MiddlePanel;
 
@@ -53,7 +53,6 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     editableEvience: true,
     editableReference: true,
     editableWith: true,
-    reviewMode: true,
   };
 
   private _unsubscribeAll: Subject<any>;
@@ -64,7 +63,7 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     private noctuaDataService: NoctuaDataService,
     public noctuaUserService: NoctuaUserService,
     public noctuaFormConfigService: NoctuaFormConfigService,
-    public noctuaAnnotonFormService: NoctuaAnnotonFormService,
+    public noctuaActivityFormService: NoctuaActivityFormService,
     public noctuaFormMenuService: NoctuaFormMenuService) {
 
     this._unsubscribeAll = new Subject();
@@ -96,18 +95,15 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
 
     this.cam.onGraphChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((annotons: Annoton[]) => {
-        if (!annotons) {
+      .subscribe((activities: Activity[]) => {
+        if (!activities) {
           return;
         }
-        this.cam.updateAnnotonDisplayNumber();
+        this.cam.updateActivityDisplayNumber();
       });
   }
 
   loadCam(modelId) {
-    const self = this;
-
-
     this.cam = this.camService.getCam(modelId);
   }
 
@@ -116,9 +112,9 @@ export class NoctuaFormComponent implements OnInit, OnDestroy {
     this.noctuaFormMenuService.openLeftDrawer(LeftPanel.camForm);
   }
 
-  openAnnotonForm(annotonType: AnnotonType) {
-    this.noctuaAnnotonFormService.setAnnotonType(annotonType);
-    this.noctuaFormMenuService.openLeftDrawer(LeftPanel.annotonForm);
+  openActivityForm(activityType: ActivityType) {
+    this.noctuaActivityFormService.setActivityType(activityType);
+    this.noctuaFormMenuService.openLeftDrawer(LeftPanel.activityForm);
   }
 
   ngOnDestroy(): void {

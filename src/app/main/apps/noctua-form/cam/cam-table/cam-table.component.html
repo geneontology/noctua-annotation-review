@@ -40,12 +40,12 @@
         {{cam?.loading.message}}
       </h3>
     </div>
-    <div *ngFor="let annoton of cam.annotons" [attr.id]="annoton.displayId" class="w-100-p"
-      [ngClass]="{'noc-selected': annoton.displayId===camsService.currentMatch?.annotonDisplayId}">
+    <div *ngFor="let activity of cam.activities" [attr.id]="activity.displayId" class="w-100-p"
+      [ngClass]="{'noc-selected': activity.displayId===camsService.currentMatch?.activityDisplayId}">
 
-      <noc-annoton-table [options]="options" [cam]="cam" [annoton]="annoton" class="noc-annotons-table-body"
+      <noc-activity-table [options]="options" [cam]="cam" [activity]="activity" class="noc-activities-table-body"
         fxLayout="row" fxLayoutAlign="start center">
-      </noc-annoton-table>
+      </noc-activity-table>
     </div>
   </div>
 </div>
