@@ -69,8 +69,6 @@ export class ArtBasket {
         this.cams.sort(this._compareDateReviewAdded);
     }
 
-
-
     private _compareDateReviewAdded(a: ArtBasketItem, b: ArtBasketItem): number {
         if (a.dateAdded > b.dateAdded) {
             return -1;

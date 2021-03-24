@@ -15,6 +15,7 @@ import {
     CamStats,
     CamService,
     CamLoadingIndicator,
+    _compareEntityWeight,
 } from 'noctua-form-base';
 import { SearchCriteria } from './../models/search-criteria';
 import { saveAs } from 'file-saver';
@@ -75,6 +76,7 @@ export class NoctuaReviewSearchService {
         private camsService: CamsService,
         private curieService: CurieService) {
         const self = this;
+
         this.onArtBasketChanged = new BehaviorSubject(null);
         this.onResetReview = new BehaviorSubject(false);
         this.onReplaceChanged = new BehaviorSubject(false);
@@ -93,11 +95,13 @@ export class NoctuaReviewSearchService {
             self.camsService.resetMatch();
 
             if (searchCriteria.ids.length > 0) {
-                this.getCams(searchCriteria).subscribe(() => {
-                    // this.cams = response;
-                    this.matchedCountCursor = 0;
-                    this.calculateMatched();
-                    this.goto(0);
+                self.getCams(searchCriteria).subscribe(() => {
+                    // self.cams = response;
+                    self.matchedCountCursor = 0;
+                    self.calculateMatched();
+                    self.camsService.applyMatchWeights(self.camsService.cams);
+                    self.sortMatched();
+                    self.goto(0);
                 });
 
                 const element = document.querySelector('#noc-review-results');
@@ -192,6 +196,7 @@ export class NoctuaReviewSearchService {
                     self.camsService.sortCams();
                     self.camsService.updateDisplayNumber(cams);
                     self.camsService.onCamsChanged.next(cams);
+                    self.updateSearch();
                 },
             })
     }
@@ -620,6 +625,11 @@ export class NoctuaReviewSearchService {
 
         this.matchedCount = this.matchedEntities.length;
         this.matchedCountCursor = 0;
+    }
+
+
+    sortMatched() {
+        this.matchedEntities = this.matchedEntities.sort(_compareEntityWeight)
     }
 
 }
